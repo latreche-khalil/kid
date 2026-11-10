@@ -12,7 +12,8 @@ import {
   Sparkles,
   ChevronDown,
   UserCheck,
-  GraduationCap
+  GraduationCap,
+  Cpu
 } from 'lucide-react';
 import { StudentProfile } from '../../types/student';
 import { CharacterAvatar } from '../characters/CharacterAvatars';
@@ -44,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'home', labelAr: 'مغامرتي', icon: <Compass className="w-4 h-4" /> },
     { id: 'map', labelAr: 'خريطة العوالم', icon: <Map className="w-4 h-4" /> },
     { id: 'missions', labelAr: 'المهمات (24)', icon: <Layers className="w-4 h-4" /> },
+    { id: 'simulator3d', labelAr: 'المحاكي 3D', icon: <Cpu className="w-4 h-4 text-cyan-500 animate-pulse" /> },
     { id: 'games', labelAr: 'الألعاب التعليمية', icon: <Gamepad2 className="w-4 h-4" /> },
     { id: 'projects', labelAr: 'معرض المشاريع', icon: <FolderGit2 className="w-4 h-4" /> },
     { id: 'achievements', labelAr: 'الأوسمة', icon: <Award className="w-4 h-4" /> },

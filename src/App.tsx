@@ -13,6 +13,7 @@ import { AchievementsPage } from './pages/Achievements/AchievementsPage';
 import { InstructorDashboard } from './pages/Instructor/InstructorDashboard';
 import { ClassroomMode } from './components/classroom/ClassroomMode';
 import { CreateProfileModal } from './components/common/CreateProfileModal';
+import { Arduino3DExplorer } from './components/simulator/Arduino3DExplorer';
 import { getLessonByWeek } from './data/lessons';
 import { soundFx } from './services/sound/webAudio';
 
@@ -92,6 +93,12 @@ export const App: React.FC = () => {
             activeProfile={activeProfile}
             onSelectLesson={handleOpenLesson}
           />
+        )}
+
+        {currentTab === 'simulator3d' && (
+          <div className="space-y-6">
+            <Arduino3DExplorer />
+          </div>
         )}
 
         {currentTab === 'lesson' && (
