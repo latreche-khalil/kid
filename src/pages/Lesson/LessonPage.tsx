@@ -29,6 +29,7 @@ import { QuizSection } from '../../components/lesson/QuizSection';
 import { Arduino3DExplorer } from '../../components/simulator/Arduino3DExplorer';
 import { CircuitPlayground3D } from '../../components/simulator/CircuitPlayground3D';
 import { MissionChallengeVerifier } from '../../components/simulator/MissionChallengeVerifier';
+import { CodeSimulationEngine } from '../../components/simulator/CodeSimulationEngine';
 import { soundFx } from '../../services/sound/webAudio';
 import { CharacterAvatar } from '../../components/characters/CharacterAvatars';
 
@@ -45,7 +46,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
 }) => {
   const [activeStage, setActiveStage] = useState<string>('story');
   const [codeTab, setCodeTab] = useState<'repaired' | 'broken'>('repaired');
-  const [labViewMode, setLabViewMode] = useState<'verifier' | 'playground3d' | 'circuit' | 'board3d'>('verifier');
+  const [labViewMode, setLabViewMode] = useState<'playground3d' | 'verifier' | 'code3d' | 'circuit' | 'board3d'>('playground3d');
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
 
   const lessonDetail = getLessonByWeek(weekNumber);
@@ -301,21 +302,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
               </div>
 
               {/* Lab Visual View Switcher */}
-              <div className="flex flex-wrap items-center justify-between p-1.5 rounded-2xl bg-slate-100 max-w-2xl gap-1">
-                <button
-                  onClick={() => {
-                    soundFx.playClick();
-                    setLabViewMode('verifier');
-                  }}
-                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                    labViewMode === 'verifier'
-                      ? 'bg-emerald-600 text-white shadow-md font-black'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Cpu className="w-3.5 h-3.5" />
-                  <span>🧪 فحص التحدي آلياً</span>
-                </button>
+              <div className="flex flex-wrap items-center justify-between p-1.5 rounded-2xl bg-slate-100 max-w-3xl gap-1">
                 <button
                   onClick={() => {
                     soundFx.playClick();
@@ -327,7 +314,34 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <span>🌀 مختبر الدوائر 3D</span>
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>⚡ دارة المشروع 3D</span>
+                </button>
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setLabViewMode('verifier');
+                  }}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    labViewMode === 'verifier'
+                      ? 'bg-emerald-600 text-white shadow-md font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span>🧪 فحص التحدي آلياً</span>
+                </button>
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setLabViewMode('code3d');
+                  }}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    labViewMode === 'code3d'
+                      ? 'bg-indigo-600 text-white shadow-md font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span>💻 محاكي الكود</span>
                 </button>
                 <button
                   onClick={() => {
@@ -340,7 +354,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  ⚡ مخطط التوصيل
+                  <span>⚡ مخطط التوصيل</span>
                 </button>
                 <button
                   onClick={() => {
@@ -357,10 +371,12 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 </button>
               </div>
 
-              {labViewMode === 'verifier' ? (
-                <MissionChallengeVerifier weekNumber={lessonDetail.week} />
-              ) : labViewMode === 'playground3d' ? (
+              {labViewMode === 'playground3d' ? (
                 <CircuitPlayground3D />
+              ) : labViewMode === 'verifier' ? (
+                <MissionChallengeVerifier weekNumber={lessonDetail.week} />
+              ) : labViewMode === 'code3d' ? (
+                <CodeSimulationEngine />
               ) : labViewMode === 'circuit' ? (
                 <InteractiveBreadboardCircuit wiringSteps={lessonDetail.circuit.wiringSteps} />
               ) : (

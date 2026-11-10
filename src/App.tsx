@@ -13,10 +13,6 @@ import { AchievementsPage } from './pages/Achievements/AchievementsPage';
 import { InstructorDashboard } from './pages/Instructor/InstructorDashboard';
 import { ClassroomMode } from './components/classroom/ClassroomMode';
 import { CreateProfileModal } from './components/common/CreateProfileModal';
-import { Arduino3DExplorer } from './components/simulator/Arduino3DExplorer';
-import { CircuitPlayground3D } from './components/simulator/CircuitPlayground3D';
-import { CodeSimulationEngine } from './components/simulator/CodeSimulationEngine';
-import { MissionChallengeVerifier } from './components/simulator/MissionChallengeVerifier';
 import { getLessonByWeek } from './data/lessons';
 import { soundFx } from './services/sound/webAudio';
 
@@ -25,7 +21,6 @@ export const App: React.FC = () => {
   const [activeProfile, setActiveProfile] = useState<StudentProfile>(() => storageService.getActiveProfile());
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [selectedLessonWeek, setSelectedLessonWeek] = useState<number>(1);
-  const [sim3dMode, setSim3dMode] = useState<'verifier' | 'code' | 'playground' | 'board'>('verifier');
   const [isClassroomModeOpen, setIsClassroomModeOpen] = useState<boolean>(false);
   const [isCreateProfileOpen, setIsCreateProfileOpen] = useState<boolean>(false);
 
@@ -97,76 +92,6 @@ export const App: React.FC = () => {
             activeProfile={activeProfile}
             onSelectLesson={handleOpenLesson}
           />
-        )}
-
-        {currentTab === 'simulator3d' && (
-          <div className="space-y-6">
-            {/* 3D Simulation Mode Selector Tabs - All 4 Phases */}
-            <div className="flex flex-wrap items-center justify-between p-1.5 rounded-2xl bg-white border border-slate-200 shadow-sm max-w-3xl mx-auto gap-1">
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  setSim3dMode('verifier');
-                }}
-                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all ${
-                  sim3dMode === 'verifier'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                🧪 فحص التحديات آلياً (المرحلة 4)
-              </button>
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  setSim3dMode('code');
-                }}
-                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all ${
-                  sim3dMode === 'code'
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                💻 محرك محاكاة الكود (المرحلة 3)
-              </button>
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  setSim3dMode('playground');
-                }}
-                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all ${
-                  sim3dMode === 'playground'
-                    ? 'bg-[#FF5B5A] text-white shadow-coral-glow'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                ⚡ مختبر الدوائر 3D (المرحلة 2)
-              </button>
-              <button
-                onClick={() => {
-                  soundFx.playClick();
-                  setSim3dMode('board');
-                }}
-                className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all ${
-                  sim3dMode === 'board'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                🔍 لوحة UNO 3D (المرحلة 1)
-              </button>
-            </div>
-
-            {sim3dMode === 'verifier' ? (
-              <MissionChallengeVerifier weekNumber={1} />
-            ) : sim3dMode === 'code' ? (
-              <CodeSimulationEngine />
-            ) : sim3dMode === 'playground' ? (
-              <CircuitPlayground3D />
-            ) : (
-              <Arduino3DExplorer />
-            )}
-          </div>
         )}
 
         {currentTab === 'lesson' && (

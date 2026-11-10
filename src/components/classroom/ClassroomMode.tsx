@@ -5,6 +5,7 @@ import { SessionTimer } from './SessionTimer';
 import { CharacterSpeechBubble } from '../characters/CharacterSpeechBubble';
 import { InteractiveBreadboardCircuit } from '../circuit/InteractiveBreadboardCircuit';
 import { ReactionGameSimulator } from '../simulator/ReactionGameSimulator';
+import { CircuitPlayground3D } from '../simulator/CircuitPlayground3D';
 import { BugHunterGame } from '../games/BugHunterGame';
 import { soundFx } from '../../services/sound/webAudio';
 
