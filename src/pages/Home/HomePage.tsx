@@ -1,9 +1,8 @@
 import React from 'react';
-import { Sparkles, Trophy, Award, ArrowLeft, ArrowRight, Play, BookOpen, Cpu, CheckCircle2, Star, Zap } from 'lucide-react';
+import { Sparkles, ArrowLeft, BookOpen, Cpu, CheckCircle2, Star, Zap, Eye, Map, Layers } from 'lucide-react';
 import { StudentProfile } from '../../types/student';
 import { LESSONS_DATA } from '../../data/curriculum';
 import { WORLDS_DATA } from '../../data/curriculum/worlds';
-import { BADGES_DATA } from '../../data/badges';
 import { CharacterAvatar } from '../../components/characters/CharacterAvatars';
 import { soundFx } from '../../services/sound/webAudio';
 
@@ -20,19 +19,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onNavigateToMap,
   onNavigateToLesson,
   onNavigateToGames,
-  onNavigateToAchievements,
 }) => {
-  const currentWeek = activeProfile.progress.currentWeek;
-  const currentLesson = LESSONS_DATA.find((l) => l.week === currentWeek) || LESSONS_DATA[0];
-  const currentWorld = WORLDS_DATA.find((w) => w.id === currentLesson.worldId) || WORLDS_DATA[0];
-
-  const completedCount = activeProfile.progress.completedWeeks.length;
-  const progressPercent = Math.round((completedCount / 24) * 100);
-
-  const earnedBadges = BADGES_DATA.filter((b) =>
-    activeProfile.progress.earnedBadgeIds.includes(b.id)
-  );
-
   return (
     <div className="space-y-16 pb-16">
       {/* Hero Section inspired by Reference Image */}
@@ -41,9 +28,9 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Left Column (Text & CTAs) */}
           <div className="lg:col-span-7 space-y-6 text-right">
             {/* Friendly Greeting Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-black">
-              <span className="text-amber-500">✦</span>
-              <span>مرحباً بك يا {activeProfile.nickname || activeProfile.name}!</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-black">
+              <span className="text-emerald-500">✦</span>
+              <span>منصة Young Innovators • وضع العرض والاستعراض المفتوح</span>
             </div>
 
             {/* Big Headline */}
@@ -56,7 +43,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             {/* Subtitle */}
             <p className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl font-medium">
-              نحن لا نقدم مجرد دروس نظرية جافة، بل رحلة تفاعلية حية تبني فيها دوائر الآردوينو UNO بيديك، تطارد أخطاء غليتش البرمجية، وتتحكم بالروبوتات وعوالم الذكاء الاصطناعي.
+              رحلة تعليمية ممتدة لـ 6 أشهر للأطفال من سن 7 إلى 14 عاماً، تمزج بين برمجة Arduino UNO، والتفكير الحاسوبي، والإلكترونيات، والذكاء الاصطناعي، والمحاكاة ثلاثية الأبعاد التفاعلية.
             </p>
 
             {/* Action Buttons */}
@@ -64,27 +51,28 @@ export const HomePage: React.FC<HomePageProps> = ({
               <button
                 onClick={() => {
                   soundFx.playClick();
-                  onNavigateToLesson(currentWeek);
+                  onNavigateToMap();
                 }}
                 className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#FF5B5A] hover:bg-[#E84A5F] active:scale-95 text-white font-black text-sm shadow-coral-glow transition-all"
               >
-                <span>متابعة المهمة الحالية (أسبوع {currentWeek})</span>
+                <Map className="w-4 h-4" />
+                <span>استعراض خريطة المنهج (24 أسبوعاً)</span>
                 <ArrowLeft className="w-4 h-4" />
               </button>
 
               <button
                 onClick={() => {
                   soundFx.playClick();
-                  onNavigateToMap();
+                  onNavigateToLesson(1);
                 }}
                 className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-sm transition-all"
               >
-                <span>استكشاف خريطة العوالم</span>
+                <span>دخول الدرس الأول مباشرة</span>
                 <span className="text-indigo-500">←</span>
               </button>
             </div>
 
-            {/* Social Proof / Stats Pill */}
+            {/* Platform Feature Highlights */}
             <div className="flex items-center gap-4 pt-4 border-t border-slate-100 text-xs text-slate-500">
               <div className="flex -space-x-2 overflow-hidden">
                 <div className="w-8 h-8 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold">
@@ -97,11 +85,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                   🧠
                 </div>
               </div>
-              <span className="font-bold text-slate-700">أكثر من 24 مهمة عملية متكاملة مع Arduino UNO R3</span>
+              <span className="font-bold text-slate-700">كافة الدروس الـ 24 والمختبرات ثلاثية الأبعاد متاحة للعرض الفوري</span>
             </div>
           </div>
 
-          {/* Right Column: Character Collage on Geometric Block Background */}
+          {/* Right Column: Character Showcase on Geometric Block Frame */}
           <div className="lg:col-span-5 relative flex items-center justify-center">
             {/* Colorful Geometric Block Frame (as seen in Reference image) */}
             <div className="relative w-full max-w-sm aspect-square rounded-3xl bg-gradient-to-tr from-amber-300 via-orange-300 to-rose-300 p-2 shadow-2xl overflow-hidden flex items-center justify-center">
@@ -109,16 +97,16 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="w-full h-full rounded-2xl bg-gradient-to-b from-white to-slate-50 p-6 flex flex-col items-center justify-center relative">
                 <CharacterAvatar character="robo" size="xl" expression="excited" />
 
-                {/* Floating Admission Completed Pill (from Reference) */}
-                <div className="absolute -bottom-2 -right-2 bg-white rounded-2xl p-3 border border-slate-100 shadow-xl flex items-center gap-3 animate-bounce">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
-                    <Sparkles className="w-4 h-4" />
+                {/* Floating Showcase Pill (from Reference) */}
+                <div className="absolute -bottom-2 -right-2 bg-white rounded-2xl p-3 border border-slate-100 shadow-xl flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+                    <Eye className="w-4 h-4" />
                   </div>
                   <div className="text-right">
-                    <div className="text-xs font-black text-slate-900">مبتكر نشط ومبدع!</div>
+                    <div className="text-xs font-black text-slate-900">وضع الاستعراض المفتوح</div>
                     <div className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" />
-                      <span>{activeProfile.progress.xp} XP مجمّعة</span>
+                      <span>24 درساً مفتوحاً بالكامل</span>
                     </div>
                   </div>
                 </div>
@@ -133,147 +121,148 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* Current Progress Dashboard Cards */}
+      {/* 3 Pillars Overview Cards */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Card 1: Current World & Mission */}
+        {/* Card 1: 6 Educational Worlds */}
         <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-4 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700">
-                العالم الحالي • الشهر {currentWorld.month}
+                المنهج المتكامل
               </span>
-              <CharacterAvatar character={currentWorld.character} size="sm" className="w-8 h-8" />
+              <BookOpen className="w-5 h-5 text-blue-600" />
             </div>
-            <h3 className="text-lg font-black text-slate-800">{currentWorld.titleAr}</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">{currentWorld.subtitleAr}</p>
+            <h3 className="text-lg font-black text-slate-800">6 عوالم تعليمية متصلة</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              من التفكير البرمجي، إلى الخوارزميات، والإلكترونيات، وهندسة الروبوتات، وبايثون وعلم البيانات، وصولاً للذكاء الاصطناعي.
+            </p>
           </div>
 
           <div className="pt-3 border-t border-slate-100">
-            <div className="text-xs text-slate-400 font-bold">المهمة النشطة:</div>
-            <div className="font-bold text-sm text-slate-900 mt-0.5">{currentLesson.missionNameAr}</div>
             <button
-              onClick={() => onNavigateToLesson(currentWeek)}
-              className="mt-3 w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2"
+              onClick={() => onNavigateToMap()}
+              className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2"
             >
-              <span>فتح الدرس الآن</span>
+              <span>تصفح خريطة العوالم الستة</span>
               <ArrowLeft className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        {/* Card 2: Curriculum Completion */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-4 flex flex-col justify-between">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400">إجمالي تقدم الرحلة</span>
-              <span className="text-lg font-black text-amber-600 font-mono">{progressPercent}%</span>
-            </div>
-
-            <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-amber-500 to-[#FF5B5A] h-full rounded-full transition-all duration-500"
-                style={{ width: `${Math.max(5, progressPercent)}%` }}
-              />
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-600 font-bold pt-1">
-              <span>{completedCount} مهمة مكتملة</span>
-              <span>24 مهمة إجمالية</span>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-500 text-center font-medium">
-            🎯 الأسبوع التالي: {LESSONS_DATA[currentWeek]?.missionNameAr || 'بطولة الابتكار الختامية'}
-          </div>
-        </div>
-
-        {/* Card 3: Badges & Rewards */}
+        {/* Card 2: 24 Weekly Lessons */}
         <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-4 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400">الأوسمة المحصودة</span>
-              <span className="text-xs font-bold text-amber-600">
-                {earnedBadges.length} من {BADGES_DATA.length}
+              <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-50 text-amber-800">
+                المهمات العملية
               </span>
+              <Layers className="w-5 h-5 text-amber-600" />
             </div>
-            <h3 className="text-lg font-black text-slate-800">قاعة الأوسمة والتكريم</h3>
+            <h3 className="text-lg font-black text-slate-800">24 درساً مع Arduino UNO</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              تطبيق فيزيائي وكود برمجي حقيقي لكل درس، مع جدول زمني مقسم إلى 6 مراحل زمنية لكل جلسة مدتها ساعتان.
+            </p>
           </div>
 
-          <div className="flex items-center gap-2 py-2">
-            {BADGES_DATA.slice(0, 4).map((badge) => {
-              const isEarned = activeProfile.progress.earnedBadgeIds.includes(badge.id);
-              return (
-                <div
-                  key={badge.id}
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${
-                    isEarned
-                      ? 'bg-amber-100 border-amber-300 text-amber-700 shadow-sm'
-                      : 'bg-slate-50 border-slate-200 text-slate-300 opacity-60'
-                  }`}
-                  title={badge.titleAr}
-                >
-                  <Award className="w-6 h-6" />
-                </div>
-              );
-            })}
+          <div className="pt-3 border-t border-slate-100">
+            <button
+              onClick={() => onNavigateToLesson(1)}
+              className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2"
+            >
+              <span>معاينة درس صائدو الثغرات (W1)</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Card 3: 3D Simulation Workbench */}
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-4 flex flex-col justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-800">
+                المحاكاة ثلاثية الأبعاد
+              </span>
+              <Cpu className="w-5 h-5 text-emerald-600" />
+            </div>
+            <h3 className="text-lg font-black text-slate-800">مختبر الدوائر 3D والمحاكي</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              لوحة تجارب Breadboard، وأسلاك ثلاثية الأبعاد، ومحاكي آردوينو حقيقي يربط الكود بالسلوك الفيزيائي للمكونات.
+            </p>
           </div>
 
-          <button
-            onClick={onNavigateToAchievements}
-            className="w-full py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs transition-colors"
-          >
-            عرض كافة الأوسمة والإنجازات ←
-          </button>
+          <div className="pt-3 border-t border-slate-100">
+            <button
+              onClick={() => onNavigateToLesson(1)}
+              className="w-full py-2.5 rounded-xl bg-[#FF5B5A] hover:bg-[#E84A5F] text-white font-bold text-xs shadow-coral-glow transition-all flex items-center justify-center gap-2"
+            >
+              <span>تشغيل المحاكي ثلاثي الأبعاد</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Educational Pillars (Inspired by 'Our Program' in reference image) */}
+      {/* 6 Worlds Quick Directory */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF5B5A]">
-              <span>🔥</span>
-              <span>ركائز التعلم التفاعلي</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mt-1">
-              كيف يتعلم الأطفال مثل المهندسين الحقيقيين؟
-            </h2>
+            <h2 className="text-2xl font-black text-slate-900">استعراض عوالم المنهج الستة</h2>
+            <p className="text-xs text-slate-500">اختر أي شهر للانتقال واستكشاف دروسه الأربعة فوراً</p>
           </div>
+          <button
+            onClick={() => onNavigateToMap()}
+            className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+          >
+            <span>عرض الخريطة التفاعلية كاملة</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-rose-100 text-[#FF5B5A] flex items-center justify-center font-bold">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-slate-800">1. تفكيك الشفرات وتصحيح الأخطاء</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              لا نكتفي بإعطاء الكود الجاهز، بل يتعلم الطالب كيف يقرأ الكود سطراً بسطر ويكتشف ثغرات غليتش البرمجية بنفسه.
-            </p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {WORLDS_DATA.map((world) => {
+            const worldLessons = LESSONS_DATA.filter((l) => l.worldId === world.id);
+            return (
+              <div
+                key={world.id}
+                onClick={() => onNavigateToLesson(worldLessons[0]?.week || 1)}
+                className="p-6 rounded-3xl bg-white border border-slate-200 shadow-card hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
+                    style={{ backgroundColor: world.accentBg }}
+                  >
+                    <CharacterAvatar character={world.character} size="sm" />
+                  </div>
+                  <div>
+                    <span
+                      className="px-2 py-0.5 rounded-full text-[10px] font-black text-white"
+                      style={{ backgroundColor: world.themeColor }}
+                    >
+                      الشهر {world.month}
+                    </span>
+                    <h3 className="font-black text-slate-900 text-base mt-1 group-hover:text-[#FF5B5A] transition-colors">
+                      {world.titleAr}
+                    </h3>
+                  </div>
+                </div>
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
-              <Cpu className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-slate-800">2. عتاد فيزيائي حقيقي (Arduino UNO)</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              توصيل الأزرار، الحساسات، المحركات، والمصابيح على لوحة التجارب ليرى الطالب نتيجة أسطر الكود تتجسد فيزيائياً في العالم الحقيقي.
-            </p>
-          </div>
+                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                  {world.storyAr}
+                </p>
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
-              <Trophy className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-slate-800">3. ثلاثة مستويات للتحدي في كل حصة</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              المستكشف (Explorer)، البنّاء (Builder)، والمخترع (Inventor)؛ ليجد كل طالب في قاعة الدرس التحدي المناسب لقدراته دون فصل أو عزلة.
-            </p>
-          </div>
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] font-bold text-slate-400">4 مهمات أسبوعية</span>
+                  <span className="font-bold text-blue-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span>استعراض الدروس</span>
+                    <ArrowLeft className="w-3 h-3" />
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
   );
 };
-

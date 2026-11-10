@@ -5,7 +5,6 @@ import {
   Layers,
   Gamepad2,
   FolderGit2,
-  Award,
   ScreenShare,
   Users,
   Plus,
@@ -13,7 +12,8 @@ import {
   ChevronDown,
   UserCheck,
   GraduationCap,
-  Cpu
+  Cpu,
+  Eye
 } from 'lucide-react';
 import { StudentProfile } from '../../types/student';
 import { CharacterAvatar } from '../characters/CharacterAvatars';
@@ -42,14 +42,13 @@ export const Header: React.FC<HeaderProps> = ({
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const navItems = [
-    { id: 'home', labelAr: 'مغامرتي', icon: <Compass className="w-4 h-4" /> },
-    { id: 'map', labelAr: 'خريطة العوالم', icon: <Map className="w-4 h-4" /> },
-    { id: 'missions', labelAr: 'المهمات (24)', icon: <Layers className="w-4 h-4" /> },
-    { id: 'simulator3d', labelAr: 'المحاكي 3D', icon: <Cpu className="w-4 h-4 text-cyan-500 animate-pulse" /> },
+    { id: 'home', labelAr: 'الرئيسية', icon: <Compass className="w-4 h-4" /> },
+    { id: 'map', labelAr: 'خريطة المنهج (24 أسبوعاً)', icon: <Map className="w-4 h-4" /> },
+    { id: 'missions', labelAr: 'فهرس الدروس', icon: <Layers className="w-4 h-4" /> },
+    { id: 'simulator3d', labelAr: 'المختبر ثلاثي الأبعاد 3D', icon: <Cpu className="w-4 h-4 text-cyan-500 animate-pulse" /> },
     { id: 'games', labelAr: 'الألعاب التعليمية', icon: <Gamepad2 className="w-4 h-4" /> },
     { id: 'projects', labelAr: 'معرض المشاريع', icon: <FolderGit2 className="w-4 h-4" /> },
-    { id: 'achievements', labelAr: 'الأوسمة', icon: <Award className="w-4 h-4" /> },
-    { id: 'instructor', labelAr: 'لوحة المعلم', icon: <GraduationCap className="w-4 h-4" /> },
+    { id: 'instructor', labelAr: 'لوحة المعلم والعرض', icon: <GraduationCap className="w-4 h-4" /> },
   ];
 
   return (
@@ -94,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-[#FF5B5A] text-white shadow-coral-glow scale-102'
+                      ? 'bg-[#FF5B5A] text-white shadow-coral-glow scale-102 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
@@ -105,22 +104,28 @@ export const Header: React.FC<HeaderProps> = ({
             })}
           </nav>
 
-          {/* Right Action Tools: Classroom Mode & Profile Selector */}
+          {/* Right Action Tools: Classroom Mode & Showcase Mode Pill */}
           <div className="flex items-center gap-3">
-            {/* Classroom Mode Button (Big standout pill from Reference) */}
+            {/* Open Showcase Badge */}
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-black">
+              <Eye className="w-3.5 h-3.5 text-emerald-600" />
+              <span>وضع العرض المفتوح</span>
+            </div>
+
+            {/* Classroom Presentation Mode Button */}
             <button
               onClick={() => {
                 soundFx.playClick();
                 onOpenClassroom();
               }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-xs shadow-indigo-glow transition-all"
-              title="عرض قاعة الدرس بشاشة كاملة للمعلّم"
+              title="عرض قاعة الدرس بشاشة كاملة للمعلّم أو العرض التقديمي"
             >
               <ScreenShare className="w-4 h-4" />
-              <span className="hidden sm:inline">وضع قاعة الدرس</span>
+              <span className="hidden sm:inline">شاشة العرض (Classroom)</span>
             </button>
 
-            {/* Student Profile Switcher Dropdown */}
+            {/* Profile / Visitor Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -137,9 +142,8 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="text-xs font-bold text-slate-800 leading-tight">
                     {activeProfile.nickname || activeProfile.name}
                   </div>
-                  <div className="text-[10px] text-amber-600 font-black flex items-center gap-1">
-                    <Sparkles className="w-2.5 h-2.5" />
-                    <span>{activeProfile.progress.xp} XP</span>
+                  <div className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                    <span>مستعرض المنهج</span>
                   </div>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 mr-1" />
@@ -149,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
               {isProfileDropdownOpen && (
                 <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl border border-slate-100 shadow-2xl p-2.5 z-50 animate-fadeIn">
                   <div className="px-3 py-2 border-b border-slate-100 text-xs font-bold text-slate-400">
-                    تبديل ملف الطالب (المحلي):
+                    ملفات الاستعراض والمطالعة:
                   </div>
 
                   <div className="space-y-1 my-2 max-h-56 overflow-y-auto">
@@ -172,7 +176,7 @@ export const Header: React.FC<HeaderProps> = ({
                           <CharacterAvatar character={(p.avatarSeed as any) || 'sparky'} size="sm" className="w-7 h-7" />
                           <span>{p.nickname || p.name}</span>
                         </div>
-                        <span className="text-[10px] text-amber-600 font-mono font-bold">{p.progress.xp} XP</span>
+                        <span className="text-[10px] text-slate-400 font-mono">طالب</span>
                       </button>
                     ))}
                   </div>
@@ -182,10 +186,10 @@ export const Header: React.FC<HeaderProps> = ({
                       setIsProfileDropdownOpen(false);
                       onOpenCreateProfile();
                     }}
-                    className="w-full flex items-center justify-center gap-1.5 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors"
+                    className="w-full mt-2 flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>إضافة طالب جديد</span>
+                    <Plus className="w-4 h-4" />
+                    <span>إضافة مستعرض جديد</span>
                   </button>
                 </div>
               )}
@@ -193,8 +197,8 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Mobile Sub-Navigation Bar */}
-        <div className="lg:hidden flex items-center overflow-x-auto gap-1 pb-3 scrollbar-none">
+        {/* Mobile Horizontal Navigation Bar */}
+        <div className="lg:hidden flex items-center gap-2 overflow-x-auto py-2.5 border-t border-slate-100 scrollbar-none">
           {navItems.map((item) => {
             const isActive = currentTab === item.id;
             return (
@@ -206,8 +210,8 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                   isActive
-                    ? 'bg-[#FF5B5A] text-white shadow-sm'
-                    : 'text-slate-600 bg-slate-50'
+                    ? 'bg-[#FF5B5A] text-white font-black'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 {item.icon}
@@ -220,4 +224,3 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
-

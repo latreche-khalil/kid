@@ -16,7 +16,8 @@ import {
   Zap,
   ChevronLeft,
   CheckCircle2,
-  Clock
+  Clock,
+  Eye
 } from 'lucide-react';
 import { getLessonByWeek } from '../../data/lessons';
 import { LESSONS_DATA } from '../../data/curriculum';
@@ -75,9 +76,9 @@ export const LessonPage: React.FC<LessonPageProps> = ({
           </button>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 text-xs font-black border border-amber-200">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>+{lessonDetail.xpReward} XP</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-black border border-emerald-200">
+              <Eye className="w-4 h-4 text-emerald-600" />
+              <span>متاح للعرض والاستعراض المفتوح</span>
             </div>
 
             <button
