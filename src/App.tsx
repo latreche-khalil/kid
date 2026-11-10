@@ -14,6 +14,7 @@ import { InstructorDashboard } from './pages/Instructor/InstructorDashboard';
 import { ClassroomMode } from './components/classroom/ClassroomMode';
 import { CreateProfileModal } from './components/common/CreateProfileModal';
 import { Arduino3DExplorer } from './components/simulator/Arduino3DExplorer';
+import { CircuitPlayground3D } from './components/simulator/CircuitPlayground3D';
 import { getLessonByWeek } from './data/lessons';
 import { soundFx } from './services/sound/webAudio';
 
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
   const [activeProfile, setActiveProfile] = useState<StudentProfile>(() => storageService.getActiveProfile());
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [selectedLessonWeek, setSelectedLessonWeek] = useState<number>(1);
+  const [sim3dMode, setSim3dMode] = useState<'board' | 'playground'>('playground');
   const [isClassroomModeOpen, setIsClassroomModeOpen] = useState<boolean>(false);
   const [isCreateProfileOpen, setIsCreateProfileOpen] = useState<boolean>(false);
 
@@ -97,7 +99,37 @@ export const App: React.FC = () => {
 
         {currentTab === 'simulator3d' && (
           <div className="space-y-6">
-            <Arduino3DExplorer />
+            {/* 3D Mode Selector Pills */}
+            <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-slate-200 shadow-sm max-w-lg mx-auto">
+              <button
+                onClick={() => {
+                  soundFx.playClick();
+                  setSim3dMode('playground');
+                }}
+                className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all ${
+                  sim3dMode === 'playground'
+                    ? 'bg-[#FF5B5A] text-white shadow-coral-glow'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                ⚡ مختبر الدوائر ولوحة التجارب (المرحلة 2)
+              </button>
+              <button
+                onClick={() => {
+                  soundFx.playClick();
+                  setSim3dMode('board');
+                }}
+                className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all ${
+                  sim3dMode === 'board'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                🔍 مستكشف لوحة Arduino UNO 3D (المرحلة 1)
+              </button>
+            </div>
+
+            {sim3dMode === 'playground' ? <CircuitPlayground3D /> : <Arduino3DExplorer />}
           </div>
         )}
 

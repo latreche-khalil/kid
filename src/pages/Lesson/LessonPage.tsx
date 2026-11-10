@@ -26,6 +26,7 @@ import { ReactionGameSimulator } from '../../components/simulator/ReactionGameSi
 import { BugHunterGame } from '../../components/games/BugHunterGame';
 import { QuizSection } from '../../components/lesson/QuizSection';
 import { Arduino3DExplorer } from '../../components/simulator/Arduino3DExplorer';
+import { CircuitPlayground3D } from '../../components/simulator/CircuitPlayground3D';
 import { soundFx } from '../../services/sound/webAudio';
 import { CharacterAvatar } from '../../components/characters/CharacterAvatars';
 
@@ -42,7 +43,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
 }) => {
   const [activeStage, setActiveStage] = useState<string>('story');
   const [codeTab, setCodeTab] = useState<'repaired' | 'broken'>('repaired');
-  const [labViewMode, setLabViewMode] = useState<'circuit' | '3d'>('circuit');
+  const [labViewMode, setLabViewMode] = useState<'circuit' | 'playground3d' | 'board3d'>('playground3d');
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
 
   const lessonDetail = getLessonByWeek(weekNumber);
@@ -298,37 +299,53 @@ export const LessonPage: React.FC<LessonPageProps> = ({
               </div>
 
               {/* Lab Visual View Switcher */}
-              <div className="flex items-center justify-between p-1.5 rounded-2xl bg-slate-100 max-w-md">
+              <div className="flex flex-wrap items-center justify-between p-1.5 rounded-2xl bg-slate-100 max-w-xl">
+                <button
+                  onClick={() => {
+                    soundFx.playClick();
+                    setLabViewMode('playground3d');
+                  }}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    labViewMode === 'playground3d'
+                      ? 'bg-[#FF5B5A] text-white shadow-coral-glow font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>🌀 مختبر الدوائر 3D</span>
+                </button>
                 <button
                   onClick={() => {
                     soundFx.playClick();
                     setLabViewMode('circuit');
                   }}
-                  className={`flex-1 py-2 px-4 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all ${
                     labViewMode === 'circuit'
                       ? 'bg-white text-slate-900 shadow-sm font-black'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  ⚡ مخطط التوصيل العملي (Circuit)
+                  ⚡ مخطط التوصيل
                 </button>
                 <button
                   onClick={() => {
                     soundFx.playClick();
-                    setLabViewMode('3d');
+                    setLabViewMode('board3d');
                   }}
-                  className={`flex-1 py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                    labViewMode === '3d'
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    labViewMode === 'board3d'
                       ? 'bg-blue-600 text-white shadow-sm font-black'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Cpu className="w-3.5 h-3.5 text-cyan-300" />
-                  <span>المستكشف ثلاثي الأبعاد 3D</span>
+                  <span>🔍 لوحة UNO 3D</span>
                 </button>
               </div>
 
-              {labViewMode === 'circuit' ? (
+              {labViewMode === 'playground3d' ? (
+                <CircuitPlayground3D />
+              ) : labViewMode === 'circuit' ? (
                 <InteractiveBreadboardCircuit wiringSteps={lessonDetail.circuit.wiringSteps} />
               ) : (
                 <Arduino3DExplorer />
