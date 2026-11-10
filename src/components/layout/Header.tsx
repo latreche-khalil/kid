@@ -45,8 +45,6 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'home', labelAr: 'الرئيسية', icon: <Compass className="w-4 h-4" /> },
     { id: 'map', labelAr: 'خريطة المنهج (24 أسبوعاً)', icon: <Map className="w-4 h-4" /> },
     { id: 'missions', labelAr: 'فهرس الدروس', icon: <Layers className="w-4 h-4" /> },
-    { id: 'games', labelAr: 'الألعاب التعليمية', icon: <Gamepad2 className="w-4 h-4" /> },
-    { id: 'projects', labelAr: 'معرض المشاريع', icon: <FolderGit2 className="w-4 h-4" /> },
     { id: 'instructor', labelAr: 'لوحة المعلم والعرض', icon: <GraduationCap className="w-4 h-4" /> },
   ];
 

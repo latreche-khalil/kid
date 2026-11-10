@@ -10,15 +10,11 @@ interface HomePageProps {
   activeProfile: StudentProfile;
   onNavigateToMap: () => void;
   onNavigateToLesson: (week: number) => void;
-  onNavigateToGames: () => void;
-  onNavigateToAchievements: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
-  activeProfile,
   onNavigateToMap,
   onNavigateToLesson,
-  onNavigateToGames,
 }) => {
   return (
     <div className="space-y-16 pb-16">

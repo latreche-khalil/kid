@@ -7,9 +7,6 @@ import { HomePage } from './pages/Home/HomePage';
 import { AdventureMap } from './pages/AdventureMap/AdventureMap';
 import { MissionsPage } from './pages/Missions/MissionsPage';
 import { LessonPage } from './pages/Lesson/LessonPage';
-import { GamesPage } from './pages/Games/GamesPage';
-import { ProjectsPage } from './pages/Projects/ProjectsPage';
-import { AchievementsPage } from './pages/Achievements/AchievementsPage';
 import { InstructorDashboard } from './pages/Instructor/InstructorDashboard';
 import { ClassroomMode } from './components/classroom/ClassroomMode';
 import { CreateProfileModal } from './components/common/CreateProfileModal';
@@ -69,14 +66,6 @@ export const App: React.FC = () => {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onNavigateToLesson={handleOpenLesson}
-            onNavigateToGames={() => {
-              setCurrentTab('games');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onNavigateToAchievements={() => {
-              setCurrentTab('achievements');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
           />
         )}
 
@@ -100,19 +89,6 @@ export const App: React.FC = () => {
             onBackToMap={() => setCurrentTab('map')}
             onOpenClassroom={() => setIsClassroomModeOpen(true)}
           />
-        )}
-
-        {currentTab === 'games' && <GamesPage />}
-
-        {currentTab === 'projects' && (
-          <ProjectsPage
-            activeProfile={activeProfile}
-            onRefreshProfile={refreshProfiles}
-          />
-        )}
-
-        {currentTab === 'achievements' && (
-          <AchievementsPage activeProfile={activeProfile} />
         )}
 
         {currentTab === 'instructor' && (

@@ -17,6 +17,7 @@ interface ClassroomModeProps {
 export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose }) => {
   const [currentStageIdx, setCurrentStageIdx] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [classroomLabMode, setClassroomLabMode] = useState<'3d' | '2d' | 'simulator'>('3d');
 
   const stages = lesson.timeline;
   const currentStage = stages[currentStageIdx];
@@ -261,24 +262,70 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
 
           {/* STAGE 5: ARDUINO LAB */}
           {currentStage.stage === 'lab' && (
-            <div className="space-y-8">
-              <div className="flex items-center gap-3">
-                <span className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
-                  <Cpu className="w-5 h-5" />
-                </span>
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-black text-slate-900">المختبر العملي والدارة الفيزيائية</h2>
-                  <p className="text-sm text-slate-500">توصيل عناصر الدارة على لوحة التجارب واختبار سرعة الاستجابة الحية</p>
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                    <Cpu className="w-5 h-5" />
+                  </span>
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900">المختبر العملي والدارة الفيزيائية</h2>
+                    <p className="text-sm text-slate-500">توصيل عناصر الدارة على لوحة التجارب واختبار سرعة الاستجابة الحية</p>
+                  </div>
+                </div>
+
+                {/* View Switcher Tabs */}
+                <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 text-xs font-bold">
+                  <button
+                    onClick={() => {
+                      soundFx.playClick();
+                      setClassroomLabMode('3d');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition-all ${
+                      classroomLabMode === '3d'
+                        ? 'bg-[#FF5B5A] text-white shadow-coral-glow font-black'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    ⚡ دارة المشروع 3D
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundFx.playClick();
+                      setClassroomLabMode('2d');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition-all ${
+                      classroomLabMode === '2d'
+                        ? 'bg-blue-600 text-white shadow-sm font-black'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    📋 مخطط التوصيل 2D
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundFx.playClick();
+                      setClassroomLabMode('simulator');
+                    }}
+                    className={`px-3 py-1.5 rounded-xl transition-all ${
+                      classroomLabMode === 'simulator'
+                        ? 'bg-emerald-600 text-white shadow-sm font-black'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    ⏱️ جهاز قياس السرعة
+                  </button>
                 </div>
               </div>
 
-              {/* Interactive Circuit Component */}
-              <InteractiveBreadboardCircuit wiringSteps={lesson.circuit.wiringSteps} />
-
-              {/* Realtime Hardware Simulator */}
-              <div className="pt-4">
+              {/* Lab Content View */}
+              {classroomLabMode === '3d' ? (
+                <CircuitPlayground3D />
+              ) : classroomLabMode === '2d' ? (
+                <InteractiveBreadboardCircuit wiringSteps={lesson.circuit.wiringSteps} />
+              ) : (
                 <ReactionGameSimulator />
-              </div>
+              )}
             </div>
           )}
 
