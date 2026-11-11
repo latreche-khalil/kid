@@ -166,8 +166,8 @@ export const LessonPage: React.FC<LessonPageProps> = ({
         </button>
       </div>
 
-      {/* Hero Lesson Header + Clear Numbered Stepper */}
-      <div className="rounded-3xl bg-gradient-to-br from-white via-amber-50/30 to-blue-50/40 p-4 sm:p-6 md:p-8 border border-amber-200/70 shadow-card">
+      {/* Hero Lesson Header */}
+      <div className="rounded-3xl bg-gradient-to-br from-white via-amber-50/30 to-blue-50/40 p-4 sm:p-6 md:p-7 border border-amber-200/70 shadow-card">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-5">
           <div className="space-y-2">
             <span className="inline-block px-3.5 py-1 rounded-full bg-blue-600 text-white text-xs font-black">
@@ -185,44 +185,44 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             <CharacterAvatar character={lessonDetail.story.characterSpeaker || 'robo'} size="lg" />
           </div>
         </div>
+      </div>
 
-        {/* Kid-Friendly Numbered Stepper (Zero Hidden Overflow on Mobile) */}
-        <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-slate-200/80">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {lessonDetail.timeline.map((stage, idx) => {
-              const isActive = activeStage === stage.stage;
-              const isCompleted = idx < currentStageIdx;
-              const label = KID_STAGE_TITLES[stage.stage] || stage.titleAr;
+      {/* Sticky 6-Stage Lesson Stepper (Stays Pinned Below Header While Scrolling) */}
+      <div className="sticky top-[65px] sm:top-[81px] z-30 bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 border border-amber-200/80 shadow-sm">
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2">
+          {lessonDetail.timeline.map((stage, idx) => {
+            const isActive = activeStage === stage.stage;
+            const isCompleted = idx < currentStageIdx;
+            const label = KID_STAGE_TITLES[stage.stage] || stage.titleAr;
 
-              return (
-                <button
-                  key={stage.stage}
-                  onClick={() => goToStage(stage.stage)}
-                  className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all min-h-[44px] ${
+            return (
+              <button
+                key={stage.stage}
+                onClick={() => goToStage(stage.stage)}
+                className={`flex items-center justify-center sm:justify-start gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2.5 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all min-h-[38px] sm:min-h-[44px] ${
+                  isActive
+                    ? 'bg-[#FF5B5A] text-white shadow-coral-glow font-black'
+                    : isCompleted
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                    : 'bg-slate-50/80 border border-slate-200 text-slate-700 hover:bg-amber-50'
+                }`}
+              >
+                <span
+                  className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full text-[10px] sm:text-[11px] font-black flex items-center justify-center shrink-0 ${
                     isActive
-                      ? 'bg-[#FF5B5A] text-white shadow-coral-glow font-black'
+                      ? 'bg-white text-[#FF5B5A]'
                       : isCompleted
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-white text-slate-600 border border-slate-200'
                   }`}
                 >
-                  <span
-                    className={`w-5 h-5 rounded-full text-[11px] font-black flex items-center justify-center shrink-0 ${
-                      isActive
-                        ? 'bg-white text-[#FF5B5A]'
-                        : isCompleted
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {idx + 1}
-                  </span>
-                  {stageIcons[stage.stage]}
-                  <span className="truncate">{label}</span>
-                </button>
-              );
-            })}
-          </div>
+                  {idx + 1}
+                </span>
+                <span className="hidden sm:inline shrink-0">{stageIcons[stage.stage]}</span>
+                <span className="truncate">{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
