@@ -16,6 +16,8 @@ import {
   ChevronDown,
   ChevronUp,
   Wrench,
+  Code2,
+  Cable,
 } from 'lucide-react';
 import { getLessonByWeek } from '../../data/lessons';
 import { CharacterSpeechBubble } from '../../components/characters/CharacterSpeechBubble';
@@ -45,6 +47,56 @@ const KID_STAGE_TITLES: Record<string, string> = {
   lab: 'ركّب وجرّب 3D',
   quiz: 'اختبر نفسك',
 };
+
+function extractPinCodeLines(fromPin: string, code: string): string | null {
+  const upper = fromPin.toUpperCase();
+  if (upper.includes('GND') && !/\b[DA]\d{1,2}\b/.test(upper)) {
+    return '// الخط السالب المشترك (GND) لجميع القطع في الدارة';
+  }
+  if (upper.includes('5V') && !/\b[DA]\d{1,2}\b/.test(upper)) {
+    return '// خط الطاقة الموجب (+5V) لتغذية القطع والحساسات';
+  }
+
+  const analogMatch = upper.match(/\b(A\d)\b/);
+  const digitalMatch = upper.match(/\bD(\d{1,2})\b/);
+  const pinToken = analogMatch ? analogMatch[1] : digitalMatch ? digitalMatch[1] : null;
+  if (!pinToken) return null;
+
+  const lines = code
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  const declLine = lines.find((line) => {
+    if (line.startsWith('//') || line.startsWith('/*')) return false;
+    const eqRegex = new RegExp(`=\\s*${pinToken}\\b`);
+    const defRegex = new RegExp(`#define\\s+\\w+\\s+${pinToken}\\b`);
+    return eqRegex.test(line) || defRegex.test(line);
+  });
+
+  if (!declLine) {
+    const directLine = lines.find((line) => {
+      if (line.startsWith('//')) return false;
+      const directRegex = new RegExp(
+        `(?:pinMode|digitalRead|digitalWrite|analogRead|analogWrite|tone)\\s*\\(\\s*${pinToken}\\b`
+      );
+      return directRegex.test(line);
+    });
+    return directLine || null;
+  }
+
+  const varMatch = declLine.match(/(?:int|byte|define)\s+(\w+)/i);
+  const varName = varMatch ? varMatch[1] : null;
+  if (!varName) return declLine;
+
+  const modeLine = lines.find((line) => {
+    if (line.startsWith('//')) return false;
+    const modeRegex = new RegExp(`(?:pinMode|attach)\\s*\\([^)]*\\b${varName}\\b`);
+    return modeRegex.test(line);
+  });
+
+  return modeLine ? `${declLine}\n${modeLine}` : declLine;
+}
 
 export const LessonPage: React.FC<LessonPageProps> = ({
   weekNumber,
@@ -331,7 +383,191 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             {/* Primary Kid Experience: Project-Specific 3D Assembly & Test */}
             <CircuitPlayground3D lessonWeek={lessonDetail.week} />
 
-            {/* Collapsible Toggle for Code, 2D Diagrams, Challenge Verifier & Extra Simulators */}
+            {/* Always-Visible: Step-by-Step Arduino Wiring Stages Linked to Code */}
+            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-card space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                    <Cable className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-xl font-black text-slate-800">
+                      مراحل التركيب في الآردوينو حسب الكود 🔌
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      {lessonDetail.circuit.descriptionAr}
+                    </p>
+                  </div>
+                </div>
+                <SpeakButton
+                  text={`${lessonDetail.circuit.descriptionAr}. ${lessonDetail.circuit.wiringSteps
+                    .map((s) => `المرحلة ${s.step}: ${s.instructionAr}`)
+                    .join(' ')}`}
+                  labelAr="اسمع مراحل التركيب"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                {lessonDetail.circuit.wiringSteps.map((step) => {
+                  const matchedCode = extractPinCodeLines(step.from, lessonDetail.code.repairedCode);
+                  return (
+                    <div
+                      key={step.step}
+                      className="rounded-2xl bg-slate-50 border border-slate-200 p-4 flex flex-col justify-between space-y-3"
+                    >
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 font-black text-xs">
+                              المرحلة {step.step}
+                            </span>
+                            <span
+                              className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0"
+                              style={{ backgroundColor: step.color }}
+                              title={`لون السلك: ${step.color}`}
+                            />
+                          </div>
+                          <SpeakButton text={step.instructionAr} labelAr="اسمع" />
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
+                          <span className="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-mono" dir="ltr">
+                            {step.from}
+                          </span>
+                          <span className="text-slate-400">←</span>
+                          <span className="px-2.5 py-0.5 rounded-lg bg-white border border-slate-200 text-slate-700" dir="ltr">
+                            {step.to}
+                          </span>
+                        </div>
+
+                        <p className="text-xs sm:text-sm text-slate-800 font-bold leading-relaxed">
+                          {step.instructionAr}
+                        </p>
+
+                        {step.cautionAr && (
+                          <div className="flex items-start gap-1.5 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-bold">
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                            <span>{step.cautionAr}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {matchedCode && (
+                        <div className="rounded-xl bg-slate-950 border border-slate-800 p-2.5 space-y-1">
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-300">
+                            <Code2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                            <span>الكود الموافق لهذه المرحلة:</span>
+                          </div>
+                          <pre
+                            className="font-mono text-[11px] text-emerald-400 leading-relaxed overflow-x-auto whitespace-pre select-text"
+                            dir="ltr"
+                          >
+                            {matchedCode}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Always-Visible: Full Arduino Code Section (Repaired vs Glitch Broken Code) */}
+            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-card space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <Code2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-xl font-black text-slate-800">
+                      الكود البرمجي الكامل للآردوينو (Arduino Code) 💻
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      انسخ الكود السليم لرفعه على لوحة Arduino UNO R3، أو قارنه مع كود غليتش المعطوب
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                  <button
+                    onClick={() => {
+                      soundFx.playClick();
+                      setCodeTab('repaired');
+                    }}
+                    className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      codeTab === 'repaired'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    الكود السليم الكامل ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundFx.playClick();
+                      setCodeTab('broken');
+                    }}
+                    className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      codeTab === 'broken'
+                        ? 'bg-rose-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    كود غليتش المعطوب ⚠️
+                  </button>
+                </div>
+              </div>
+
+              <div className="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950">
+                <div className="flex items-center justify-between gap-2 px-4 py-2.5 bg-slate-900 border-b border-slate-800" dir="ltr">
+                  <span className="font-mono text-xs font-bold text-slate-300">
+                    week_{String(lessonDetail.week).padStart(2, '0')}_{codeTab === 'repaired' ? 'final' : 'glitch_buggy'}.ino
+                  </span>
+                  <button
+                    onClick={() =>
+                      handleCopyCode(
+                        codeTab === 'repaired' ? lessonDetail.code.repairedCode : lessonDetail.code.brokenCode
+                      )
+                    }
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors border border-slate-700"
+                    dir="rtl"
+                  >
+                    {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedCode ? 'تم النسخ!' : 'نسخ الكود كاملاً'}</span>
+                  </button>
+                </div>
+
+                <div
+                  className="p-4 sm:p-5 font-mono text-xs text-emerald-400 overflow-x-auto max-h-[520px]"
+                  dir="ltr"
+                >
+                  <pre className="whitespace-pre leading-relaxed select-text">
+                    {codeTab === 'repaired' ? lessonDetail.code.repairedCode : lessonDetail.code.brokenCode}
+                  </pre>
+                </div>
+              </div>
+
+              {codeTab === 'broken' && (
+                <div className="space-y-3 pt-2">
+                  <h4 className="font-bold text-rose-800 text-sm">الأخطاء في كود غليتش وكيف أصلحناها:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {lessonDetail.code.bugsList.map((bug, i) => (
+                      <div key={i} className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs space-y-1">
+                        <div className="font-black text-rose-900 flex items-center justify-between">
+                          <span>سطر #{bug.line}</span>
+                          <span className="text-[10px] text-rose-600">Bug #{i + 1}</span>
+                        </div>
+                        <p className="text-rose-950 font-bold">{bug.bugAr}</p>
+                        <p className="text-emerald-700 font-bold">الحل: {bug.fixAr}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Collapsible Toggle for Extra 2D Diagrams, Challenge Verifier & Extra Simulators */}
             <div className="rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-sm">
               <button
                 onClick={() => {
@@ -346,10 +582,10 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                   </div>
                   <div>
                     <span className="font-black text-sm sm:text-base text-slate-900 block">
-                      أدوات إضافية والكود الكامل (للمتقدمين والمعلّم 💻)
+                      أدوات إضافية وتحديات متقدمة (مخططات 2D وفاحص التحديات 🧪)
                     </span>
                     <span className="text-xs text-slate-500">
-                      اضغط هنا لفتح الكود البرمجي الكامل، مخططات التوصيل 2D، وفاحص التحديات
+                      اضغط هنا لفتح مخطط التوصيل 2D التفاعلي، محاكي الكود، فاحص التحديات، ومستويات التطوير الثلاثة
                     </span>
                   </div>
                 </div>
@@ -427,77 +663,6 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                       <InteractiveBreadboardCircuit wiringSteps={lessonDetail.circuit.wiringSteps} />
                     ) : (
                       <Arduino3DExplorer />
-                    )}
-                  </div>
-
-                  {/* Code Comparator: Repaired vs Broken Code */}
-                  <div className="bg-slate-50 rounded-3xl p-5 sm:p-6 border border-slate-200 space-y-5">
-                    <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
-                      <div>
-                        <h3 className="text-lg font-black text-slate-800">شفرة البرنامج (Arduino Code)</h3>
-                        <p className="text-xs text-slate-500">قارن بين كود غليتش المعطوب وكود المشروع السليم</p>
-                      </div>
-
-                      <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200">
-                        <button
-                          onClick={() => setCodeTab('repaired')}
-                          className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                            codeTab === 'repaired'
-                              ? 'bg-emerald-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          الكود السليم
-                        </button>
-                        <button
-                          onClick={() => setCodeTab('broken')}
-                          className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                            codeTab === 'broken'
-                              ? 'bg-rose-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          كود غليتش المعطوب
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="relative">
-                      <button
-                        onClick={() =>
-                          handleCopyCode(
-                            codeTab === 'repaired' ? lessonDetail.code.repairedCode : lessonDetail.code.brokenCode
-                          )
-                        }
-                        className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors"
-                      >
-                        {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                        <span>{copiedCode ? 'تم النسخ!' : 'نسخ الكود'}</span>
-                      </button>
-
-                      <div className="bg-slate-950 rounded-2xl p-5 font-mono text-xs text-emerald-400 border border-slate-800 overflow-x-auto max-h-[420px]" dir="ltr">
-                        <pre className="whitespace-pre leading-relaxed select-text">
-                          {codeTab === 'repaired' ? lessonDetail.code.repairedCode : lessonDetail.code.brokenCode}
-                        </pre>
-                      </div>
-                    </div>
-
-                    {codeTab === 'broken' && (
-                      <div className="space-y-3 pt-2">
-                        <h4 className="font-bold text-rose-800 text-sm">الأخطاء في كود غليتش:</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {lessonDetail.code.bugsList.map((bug, i) => (
-                            <div key={i} className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs space-y-1">
-                              <div className="font-black text-rose-900 flex items-center justify-between">
-                                <span>سطر #{bug.line}</span>
-                                <span className="text-[10px] text-rose-600">Bug #{i + 1}</span>
-                              </div>
-                              <p className="text-rose-950 font-bold">{bug.bugAr}</p>
-                              <p className="text-emerald-700 font-bold">الحل: {bug.fixAr}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
                     )}
                   </div>
 

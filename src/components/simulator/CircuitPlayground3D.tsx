@@ -10,6 +10,7 @@ import {
   Move3d,
   Trophy,
   Flag,
+  Code2,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundFx } from '../../services/sound/webAudio';
@@ -36,6 +37,7 @@ interface AssemblyStep {
   wireColor: string;
   fromPin: string;
   toLocation: string;
+  codeLine: string;
   instructionAr: string;
   sparkyTipAr: string;
 }
@@ -48,6 +50,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'بدون أسلاك',
     fromPin: '-',
     toLocation: 'قاعدة التجارب',
+    codeLine: '// تجهيز اللوحة قبل كتابة المنافذ:\nvoid setup() { Serial.begin(9600); }',
     instructionAr: 'ضع لوحة الآردوينو إلى اليسار ولوحة التجارب (Breadboard) إلى اليمين لتسهيل التوصيل المنظم.',
     sparkyTipAr: 'احرص دائماً على فصل كابل USB قبل البدء في تركيب أو تعديل الأسلاك لمنع أي تلامس كهربائي خاطئ!'
   },
@@ -58,6 +61,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'أسود (Black)',
     fromPin: 'Arduino GND',
     toLocation: 'خط السالب الأزرق (-) في لوحة التجارب',
+    codeLine: '// الخط السالب المشترك لكل المكونات:\n// Arduino GND  --->  Breadboard (-)',
     instructionAr: 'وصّل سلكاً أسود من أحد منافذ GND في الآردوينو إلى المسار الطولي الأزرق السالب (-) في لوحة التجارب.',
     sparkyTipAr: 'التأريض المشترك يمنح كل عناصر الدارة الجهد المرجعي نفسه (0 فولت) لتعمل بشكل سليم.'
   },
@@ -68,6 +72,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'أحمر (Red) للموجب + مقاومة للأرضي',
     fromPin: 'Arduino Pin D8',
     toLocation: 'المصعد (+) للـ LED، والمهبط (-) عبر المقاومة للأرضي',
+    codeLine: 'const int LED_PIN = 8;\npinMode(LED_PIN, OUTPUT);',
     instructionAr: 'وصّل السلك الأحمر من المنفذ الرقمي D8 إلى الطرف الطويل للـ LED (المصعد Anode). وصّل الطرف القصير (المهبط Cathode) بمقاومة 220Ω متجهة إلى خط السالب.',
     sparkyTipAr: 'المقاومة تحمي الـ LED من الاحتراق! ألوان حلقاتها: أحمر - أحمر - بني - ذهبي.'
   },
@@ -78,6 +83,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'أزرق (Blue) للإشارة + أسود للأرضي',
     fromPin: 'Arduino Pin D2',
     toLocation: 'طرف زر اللاعب 1، والطرف المقابل للأرضي GND',
+    codeLine: 'const int P1_BTN = 2; // اللاعب الأول\npinMode(P1_BTN, INPUT_PULLUP);',
     instructionAr: 'ثبّت الزر الأزرق الخاص باللاعب الأول في لوحة التجارب. وصّل سلكاً أزرق من المنفذ D2 إلى طرف الزر، وسلكاً أسود إلى خط السالب.',
     sparkyTipAr: 'هذا الزر يتحكم فيه اللاعب الأول! عند ضغطه يرسل إشارة LOW عبر مقاومة الشد الداخلية INPUT_PULLUP.'
   },
@@ -88,6 +94,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'أخضر (Green) للإشارة + أسود للأرضي',
     fromPin: 'Arduino Pin D3',
     toLocation: 'طرف زر اللاعب 2، والطرف المقابل للأرضي GND',
+    codeLine: 'const int P2_BTN = 3; // اللاعب الثاني\npinMode(P2_BTN, INPUT_PULLUP);',
     instructionAr: 'ثبّت الزر الأخضر الخاص باللاعب الثاني بجانب الزر الأزرق. وصّل سلكاً أخضر من المنفذ D3 إلى طرف الزر، وسلكاً أسود إلى خط السالب.',
     sparkyTipAr: 'الآن يتحدى لاعبان بعضهما! من يضغط بعد الإشارة أولاً يفوز، والأخير يخسر — ومن يتسرع قبل الإشارة يخسر فوراً!'
   },
@@ -98,6 +105,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'أصفر (Yellow) للإشارة + أسود للأرضي',
     fromPin: 'Arduino Pin D9',
     toLocation: 'الطرف الموجب (+) للجرس، والسالب للأرضي',
+    codeLine: 'const int BUZZER_PIN = 9;\npinMode(BUZZER_PIN, OUTPUT);',
     instructionAr: 'ثبّت الجرس على لوحة التجارب. وصّل سلكاً أصفر من المنفذ D9 إلى الطرف الموجب (+) للجرس، وسلكاً أسود من الطرف الآخر إلى خط السالب.',
     sparkyTipAr: 'الجرس يصدر نغمة بداية السباق، وصوت إنذار عند تسرّع أحد اللاعبين، ونغمة الفوز للفائز!'
   },
@@ -108,6 +116,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'جميع الأسلاك متصلة',
     fromPin: 'D2, D3, D8, D9, GND',
     toLocation: 'جميع المكونات تعمل بانسجام',
+    codeLine: '// ملخص منافذ الكود الكامل:\n// D2=P1_BTN | D3=P2_BTN | D8=LED | D9=BUZZER',
     instructionAr: 'رائع جداً! تم تركيب جميع مكونات لعبة التحدّي الثنائي. اضغطا زر بدء السباق بالأسفل، وانتظرا الضوء الأحمر ثم تسابقا!',
     sparkyTipAr: 'الأسرع بعد الضوء يفوز والأبطأ يخسر! انتبها: من يضغط قبل أن تشتعل اللمبة يخسر فوراً بالانطلاق المبكر!'
   }
@@ -1178,6 +1187,21 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   {gameMessage}
                 </p>
 
+                {/* Helpful shortcut if browsing an intermediate assembly step */}
+                {currentStep < 6 && (
+                  <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-amber-500/15 border border-amber-400/40 text-[11px] text-amber-200">
+                    <span className="font-bold">
+                      🔧 أنت تستعرض الآن مرحلة التركيب ({currentStep} من 6)
+                    </span>
+                    <button
+                      onClick={() => handleSelectStep(6)}
+                      className="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black transition-colors"
+                    >
+                      أكمل كل الأسلاك الآن ✨
+                    </button>
+                  </div>
+                )}
+
                 {/* Start Round Bar */}
                 <button
                   onClick={handleStartDuel}
@@ -1304,6 +1328,27 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
             {/* Current Step Wiring Details */}
             {activeProject === 'reaction' ? (
               <div className="space-y-3">
+                {/* Clickable Step Navigator Chips (0..6) */}
+                <div className="flex flex-wrap items-center gap-1.5 bg-white p-2 rounded-2xl border border-slate-200">
+                  <span className="text-[11px] font-black text-slate-500 ml-1">المراحل:</span>
+                  {REACTION_ASSEMBLY_STEPS.map((s) => (
+                    <button
+                      key={s.step}
+                      onClick={() => handleSelectStep(s.step)}
+                      title={s.titleAr}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all ${
+                        currentStep === s.step
+                          ? 'bg-[#FF5B5A] text-white shadow-sm'
+                          : s.step < currentStep
+                          ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      {s.step === 6 ? 'الكل ✓' : `${s.step}`}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">
                     {activeStepDetail.componentAr}
@@ -1332,6 +1377,20 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                     <span className="text-slate-500 font-bold">لون السلك:</span>
                     <span className="font-black text-slate-900">{activeStepDetail.wireColor}</span>
                   </div>
+                </div>
+
+                {/* Matching Arduino Code Line for This Step */}
+                <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3 space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-300">
+                    <Code2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>السطر المقابل في كود الآردوينو:</span>
+                  </div>
+                  <pre
+                    className="font-mono text-[11px] sm:text-xs text-emerald-400 leading-relaxed whitespace-pre-wrap select-text"
+                    dir="ltr"
+                  >
+                    {activeStepDetail.codeLine}
+                  </pre>
                 </div>
 
                 {/* Step Instructions */}
