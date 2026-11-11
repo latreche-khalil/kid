@@ -20,22 +20,22 @@ interface BugLevel {
 const BUG_LEVELS: BugLevel[] = [
   {
     id: 1,
-    titleAr: 'المستوى 1: مقاومة الشد المفقودة',
-    descriptionAr: 'قام غليتش بتعريف زر الاستجابة كمدخل عادي دون مقاومة شد مما جعل القراءة عائمة وعشوائية!',
+    titleAr: 'المستوى 1: مقاومة الشد المفقودة لزر اللاعب الأول',
+    descriptionAr: 'في سباق 1 ضد 1، عبث غليتش بتعريف زر اللاعب الأول (الأزرق على D2) فجعله INPUT عادياً دون مقاومة شد مما جعل القراءة عائمة وعشوائية!',
     codeLines: [
       'void setup() {',
       '  Serial.begin(9600);',
       '  pinMode(8, OUTPUT);',
-      '  pinMode(3, INPUT); // ⚠️ زر الاستجابة',
-      '  pinMode(9, OUTPUT);',
+      '  pinMode(2, INPUT); // ⚠️ زر اللاعب 1 (الأزرق)',
+      '  pinMode(3, INPUT_PULLUP); // زر اللاعب 2 (الأخضر)',
       '}',
     ],
     buggyLineIndex: 3,
-    bugExplanationAr: 'السطر 4 يحتوي على INPUT بدلاً من INPUT_PULLUP. الزر يحتاج تثبيت جهد حتى لا يتأثر بالضجيج الكهرومغناطيسي.',
+    bugExplanationAr: 'السطر 4 يحتوي على INPUT بدلاً من INPUT_PULLUP لزر اللاعب 1 (D2). كلا الزرين يحتاج مقاومة الشد الداخلية حتى لا يخسر اللاعب بضغطة وهمية!',
     options: [
-      { textAr: 'استبدال السطر بـ: pinMode(3, INPUT_PULLUP);', isCorrect: true },
+      { textAr: 'استبدال السطر بـ: pinMode(2, INPUT_PULLUP);', isCorrect: true },
       { textAr: 'حذف السطر بالكامل.', isCorrect: false },
-      { textAr: 'تغييره إلى: pinMode(3, OUTPUT);', isCorrect: false },
+      { textAr: 'تغييره إلى: pinMode(2, OUTPUT);', isCorrect: false },
     ],
   },
   {

@@ -380,10 +380,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
               </div>
             </div>
 
-            {/* Primary Kid Experience: Project-Specific 3D Assembly & Test */}
-            <CircuitPlayground3D lessonWeek={lessonDetail.week} />
-
-            {/* Always-Visible: Step-by-Step Arduino Wiring Stages Linked to Code */}
+            {/* Always-Visible Step 2: Step-by-Step Arduino Wiring Stages Linked to Code */}
             <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-card space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-3">
@@ -471,6 +468,9 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 })}
               </div>
             </div>
+
+            {/* Step 3: Interactive 3D Assembly & Live Test */}
+            <CircuitPlayground3D lessonWeek={lessonDetail.week} />
 
             {/* Always-Visible: Full Arduino Code Section (Repaired vs Glitch Broken Code) */}
             <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-card space-y-4">
