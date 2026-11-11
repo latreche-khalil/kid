@@ -44,7 +44,7 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
             <span>⚡ مختبر الدوائر التفاعلي</span>
             <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
           </div>
-          <h3 className="text-xl font-black text-slate-800 mt-1">مخطط توصيل دارة لعبة سرعة الاستجابة</h3>
+          <h3 className="text-xl font-black text-slate-800 mt-1">مخطط توصيل دارة التحدّي الثنائي (1 ضد 1)</h3>
           <p className="text-sm text-slate-500">انقر على أي سلك أو خطوة لتسليط الضوء عليها والتأكد من صحة التوصيل</p>
         </div>
 
@@ -138,8 +138,8 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
               <text x="202" y="192" fill="#BAE6FD" fontSize="9" textAnchor="end">D6</text>
               <text x="202" y="212" fill="#BAE6FD" fontSize="9" textAnchor="end">D5</text>
               <text x="202" y="232" fill="#BAE6FD" fontSize="9" textAnchor="end">D4</text>
-              <text x="202" y="252" fill="#34D399" fontSize="10" fontWeight="bold" textAnchor="end">D3 (React)</text>
-              <text x="202" y="272" fill="#60A5FA" fontSize="10" fontWeight="bold" textAnchor="end">D2 (Start)</text>
+              <text x="202" y="252" fill="#34D399" fontSize="10" fontWeight="bold" textAnchor="end">D3 (Player 2)</text>
+              <text x="202" y="272" fill="#60A5FA" fontSize="10" fontWeight="bold" textAnchor="end">D2 (Player 1)</text>
 
               {/* Pin holes */}
               {[48, 68, 88, 108, 128, 148, 168, 188, 208, 228, 248, 268].map((y, i) => (
@@ -197,11 +197,11 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
                 </g>
               ))}
 
-              {/* COMPONENT 1: START BUTTON (Left) */}
+              {/* COMPONENT 1: PLAYER 1 BLUE BUTTON (Left) */}
               <g transform="translate(60, 160)">
                 <rect x="0" y="0" width="60" height="60" rx="8" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
                 <circle cx="30" cy="30" r="18" fill="#3B82F6" stroke="#2563EB" strokeWidth="3" />
-                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">زر البدء (Start)</text>
+                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">اللاعب 1 (أزرق)</text>
                 <text x="30" y="93" fill="#64748B" fontSize="9" textAnchor="middle">منفذ D2</text>
                 {/* Legs */}
                 <circle cx="8" cy="12" r="3.5" fill="#F59E0B" />
@@ -210,11 +210,11 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
                 <circle cx="52" cy="48" r="3.5" fill="#F59E0B" />
               </g>
 
-              {/* COMPONENT 2: REACTION BUTTON (Right) */}
+              {/* COMPONENT 2: PLAYER 2 GREEN BUTTON (Right) */}
               <g transform="translate(290, 160)">
                 <rect x="0" y="0" width="60" height="60" rx="8" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
                 <circle cx="30" cy="30" r="18" fill="#10B981" stroke="#059669" strokeWidth="3" />
-                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">زر الاستجابة (React)</text>
+                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">اللاعب 2 (أخضر)</text>
                 <text x="30" y="93" fill="#64748B" fontSize="9" textAnchor="middle">منفذ D3</text>
                 {/* Legs */}
                 <circle cx="8" cy="12" r="3.5" fill="#F59E0B" />

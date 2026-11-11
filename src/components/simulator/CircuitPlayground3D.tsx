@@ -4,18 +4,14 @@ import {
   RotateCcw,
   Zap,
   Play,
-  CheckCircle2,
   ChevronRight,
   ChevronLeft,
   Sparkles,
   Move3d,
-  Layers,
-  Volume2,
-  Award,
-  AlertTriangle,
-  RotateCw,
-  Eye
+  Trophy,
+  Flag,
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { soundFx } from '../../services/sound/webAudio';
 import { CharacterAvatar } from '../characters/CharacterAvatars';
 import { SpeakButton } from '../common/SpeakButton';
@@ -77,23 +73,23 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
   },
   {
     step: 3,
-    titleAr: 'تركيب زر البدء (Start Button - D2)',
-    componentAr: 'زر ضاغط بلون أزرق',
+    titleAr: 'تركيب زر اللاعب الأول الأزرق (D2)',
+    componentAr: 'زر اللاعب 1 (أزرق)',
     wireColor: 'أزرق (Blue) للإشارة + أسود للأرضي',
     fromPin: 'Arduino Pin D2',
-    toLocation: 'طرف زر البدء، والطرف المقابل للأرضي GND',
-    instructionAr: 'ثبّت زر البدء في منتصف لوحة التجارب. وصّل سلكاً أزرق من المنفذ D2 إلى طرف الزر، وسلكاً أسود من الطرف المقابل إلى خط السالب.',
-    sparkyTipAr: 'في الكود سنفعّل INPUT_PULLUP، لذا لن نحتاج إلى مقاومة خارجية إضافية للزر!'
+    toLocation: 'طرف زر اللاعب 1، والطرف المقابل للأرضي GND',
+    instructionAr: 'ثبّت الزر الأزرق الخاص باللاعب الأول في لوحة التجارب. وصّل سلكاً أزرق من المنفذ D2 إلى طرف الزر، وسلكاً أسود إلى خط السالب.',
+    sparkyTipAr: 'هذا الزر يتحكم فيه اللاعب الأول! عند ضغطه يرسل إشارة LOW عبر مقاومة الشد الداخلية INPUT_PULLUP.'
   },
   {
     step: 4,
-    titleAr: 'تركيب زر سرعة الاستجابة (Reaction Button - D3)',
-    componentAr: 'زر ضاغط بلون أخضر',
+    titleAr: 'تركيب زر اللاعب الثاني الأخضر (D3)',
+    componentAr: 'زر اللاعب 2 (أخضر)',
     wireColor: 'أخضر (Green) للإشارة + أسود للأرضي',
     fromPin: 'Arduino Pin D3',
-    toLocation: 'طرف زر الاستجابة، والطرف المقابل للأرضي GND',
-    instructionAr: 'ثبّت زر الاستجابة بجانب زر البدء. وصّل سلكاً أخضر من المنفذ D3 إلى طرف الزر، وسلكاً أسود من الطرف المقابل إلى خط السالب.',
-    sparkyTipAr: 'هذا هو الزر الذي سيتحدى اللاعب سرعته بالضغط عليه فور إضاءة المصباح الأحمر!'
+    toLocation: 'طرف زر اللاعب 2، والطرف المقابل للأرضي GND',
+    instructionAr: 'ثبّت الزر الأخضر الخاص باللاعب الثاني بجانب الزر الأزرق. وصّل سلكاً أخضر من المنفذ D3 إلى طرف الزر، وسلكاً أسود إلى خط السالب.',
+    sparkyTipAr: 'الآن يتحدى لاعبان بعضهما! من يضغط بعد الإشارة أولاً يفوز، والأخير يخسر — ومن يتسرع قبل الإشارة يخسر فوراً!'
   },
   {
     step: 5,
@@ -103,17 +99,17 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     fromPin: 'Arduino Pin D9',
     toLocation: 'الطرف الموجب (+) للجرس، والسالب للأرضي',
     instructionAr: 'ثبّت الجرس على لوحة التجارب. وصّل سلكاً أصفر من المنفذ D9 إلى الطرف الموجب (+) للجرس، وسلكاً أسود من الطرف الآخر إلى خط السالب.',
-    sparkyTipAr: 'الجرس يصدر نغمات عبر دالة tone(pin, frequency) لإعطاء إشارات صوتية مع المؤثرات الضوئية!'
+    sparkyTipAr: 'الجرس يصدر نغمة بداية السباق، وصوت إنذار عند تسرّع أحد اللاعبين، ونغمة الفوز للفائز!'
   },
   {
     step: 6,
-    titleAr: 'الدارة مكتملة وجاهزة للاختبار الحي!',
-    componentAr: 'المنظومة الفيزيائية الكاملة',
+    titleAr: 'الدارة مكتملة وجاهزة للتحدّي الثنائي (1 ضد 1)!',
+    componentAr: 'منظومة التحدّي الثنائي الكاملة',
     wireColor: 'جميع الأسلاك متصلة',
     fromPin: 'D2, D3, D8, D9, GND',
     toLocation: 'جميع المكونات تعمل بانسجام',
-    instructionAr: 'رائع جداً! تم تركيب جميع مكونات لعبة سرعة الاستجابة حسب المخطط الهندسي. يمكنك الآن تجربة اللعبة حياً في الأسفل!',
-    sparkyTipAr: 'اضغط على زر البدء، انتظر إشارة المصباح الأحمر العشوائية، ثم اضغط زر الاستجابة بأقصى سرعة!'
+    instructionAr: 'رائع جداً! تم تركيب جميع مكونات لعبة التحدّي الثنائي. اضغطا زر بدء السباق بالأسفل، وانتظرا الضوء الأحمر ثم تسابقا!',
+    sparkyTipAr: 'الأسرع بعد الضوء يفوز والأبطأ يخسر! انتبها: من يضغط قبل أن تشتعل اللمبة يخسر فوراً بالانطلاق المبكر!'
   }
 ];
 
@@ -129,10 +125,14 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     setActiveProject(getProjectFromWeek(lessonWeek));
   }, [lessonWeek]);
 
-  // Interactive Live Game States (for Reaction Game Circuit)
+  // Interactive Live 2-Player Duel States (Week 1 Reaction Duel)
   const [gameState, setGameState] = useState<'idle' | 'waiting' | 'ready' | 'result' | 'false_start'>('idle');
   const [reactionTimeMs, setReactionTimeMs] = useState<number | null>(null);
-  const [gameMessage, setGameMessage] = useState<string>('اضغط على زر البدء الأزرق لبدء الاختبار');
+  const [winnerPlayer, setWinnerPlayer] = useState<1 | 2 | null>(null);
+  const [loserPlayer, setLoserPlayer] = useState<1 | 2 | null>(null);
+  const [p1Score, setP1Score] = useState<number>(0);
+  const [p2Score, setP2Score] = useState<number>(0);
+  const [gameMessage, setGameMessage] = useState<string>('اضغط "ابدأ السباق" — من يضغط أولاً بعد الإشارة يفوز والأبطأ يخسر!');
   const [isLedLit, setIsLedLit] = useState<boolean>(false);
 
   // Other Projects Interactive States
@@ -156,9 +156,11 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
   const fanPropellerRef = useRef<THREE.Mesh | null>(null);
   const obstacleMeshRef = useRef<THREE.Mesh | null>(null);
 
-  // Timing refs for live game
+  // Timing & Live State Refs (for accurate keyboard & callback handling)
   const waitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const signalStartTimeRef = useRef<number>(0);
+  const gameStateRef = useRef<'idle' | 'waiting' | 'ready' | 'result' | 'false_start'>('idle');
+  gameStateRef.current = gameState;
 
   // Clear timeouts on unmount
   useEffect(() => {
@@ -187,75 +189,142 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
   }, []);
 
   // Animate 3D Button Press
-  const animateButtonDepress = (btnRef: React.MutableRefObject<THREE.Mesh | null>) => {
+  const animateButtonDepress = useCallback((btnRef: React.MutableRefObject<THREE.Mesh | null>) => {
     if (btnRef.current) {
-      btnRef.current.position.y = 0.42; // Pressed down
+      btnRef.current.position.y = 0.42;
       setTimeout(() => {
-        if (btnRef.current) btnRef.current.position.y = 0.58; // Spring back
+        if (btnRef.current) btnRef.current.position.y = 0.58;
       }, 160);
     }
-  };
+  }, []);
 
-  // LIVE HARDWARE GAME: Press Start Button (D2)
-  const handlePressStartButton = () => {
+  // Start 2-Player Duel Round
+  const handleStartDuel = useCallback(() => {
+    if (gameStateRef.current === 'waiting' || gameStateRef.current === 'ready') return;
+
     soundFx.playClick();
-    animateButtonDepress(startBtnCapRef);
-
-    // If currently waiting or result, reset
     if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
     set3DLedState(false);
     setReactionTimeMs(null);
+    setWinnerPlayer(null);
+    setLoserPlayer(null);
 
-    // Enter waiting state
+    gameStateRef.current = 'waiting';
     setGameState('waiting');
-    setGameMessage('انتبه! انتظر إشارة المصباح الأحمر... إياك والتسرع!');
-    soundFx.playTone(440, 80, 'square'); // Start beep
+    setGameMessage('استعدا! انتظروا إشارة المصباح الأحمر... من يضغط قبله يخسر!');
+    soundFx.playTone(440, 80, 'square');
 
-    // Random delay between 1.5s and 3.5s
-    const randomDelay = Math.floor(Math.random() * 2000) + 1500;
+    const randomDelay = Math.floor(Math.random() * 2200) + 1600;
     waitTimeoutRef.current = setTimeout(() => {
-      // Trigger Red LED and Buzzer
       set3DLedState(true);
       signalStartTimeRef.current = performance.now();
+      gameStateRef.current = 'ready';
       setGameState('ready');
-      setGameMessage('الآن! اضغط زر الاستجابة الأخضر بأقصى سرعة! ⚡');
-      soundFx.playTone(880, 150, 'sawtooth'); // High buzzer signal
+      setGameMessage('⚡ انطلاق! اضغط زرّك بأقصى سرعة — الأخير يخسر!');
+      soundFx.playStartSignal();
     }, randomDelay);
-  };
+  }, [set3DLedState]);
 
-  // LIVE HARDWARE GAME: Press Reaction Button (D3)
-  const handlePressReactionButton = () => {
-    soundFx.playClick();
-    animateButtonDepress(reactionBtnCapRef);
+  // Handle Player 1 (Blue D2) or Player 2 (Green D3) Press
+  const handlePlayerPress = useCallback(
+    (player: 1 | 2) => {
+      const btnRef = player === 1 ? startBtnCapRef : reactionBtnCapRef;
+      const otherPlayer: 1 | 2 = player === 1 ? 2 : 1;
+      const playerName = player === 1 ? 'اللاعب 1 (الأزرق)' : 'اللاعب 2 (الأخضر)';
+      const otherName = otherPlayer === 1 ? 'اللاعب 1 (الأزرق)' : 'اللاعب 2 (الأخضر)';
 
-    if (gameState === 'waiting') {
-      // Pressed BEFORE the LED turned on -> False Start!
-      if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
-      set3DLedState(false);
-      setGameState('false_start');
-      setGameMessage('انطلاقة خاطئة مبكرة! لقد ضغطت الزر قبل أن يضيء المصباح.');
-      soundFx.playFalseStartBuzz();
-      return;
-    }
+      soundFx.playClick();
+      animateButtonDepress(btnRef);
 
-    if (gameState === 'ready') {
-      // Valid reaction! Calculate elapsed milliseconds
-      const elapsed = Math.round(performance.now() - signalStartTimeRef.current);
-      set3DLedState(false);
-      setReactionTimeMs(elapsed);
-      setGameState('result');
+      const currentStatus = gameStateRef.current;
 
-      if (elapsed < 200) {
-        setGameMessage(`سرعة استجابة مذهلة (${elapsed} ms)! ردة فعلك أسرع من البرق ⚡`);
-        soundFx.playVictoryFanfare();
-      } else if (elapsed <= 340) {
-        setGameMessage(`ممتاز جداً (${elapsed} ms)! استجابة احترافية ورائعة 🎯`);
-        soundFx.playVictoryFanfare();
-      } else {
-        setGameMessage(`زمن استجابتك: ${elapsed} ms. تدرب أكثر لتتغلب على غليتش! 👍`);
-        soundFx.playTone(600, 180, 'triangle');
+      if (currentStatus === 'waiting') {
+        // Pressed BEFORE signal -> This player loses immediately by False Start!
+        if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
+        set3DLedState(false);
+        gameStateRef.current = 'false_start';
+        setGameState('false_start');
+        setLoserPlayer(player);
+        setWinnerPlayer(otherPlayer);
+        if (otherPlayer === 1) {
+          setP1Score((s) => s + 1);
+        } else {
+          setP2Score((s) => s + 1);
+        }
+        setGameMessage(`❌ تسرّع ${playerName} قبل الإشارة وخسر الجولة! 🏆 الفائز: ${otherName}`);
+        soundFx.playFalseStartBuzz();
+        return;
       }
-    }
+
+      if (currentStatus === 'ready') {
+        // First valid press after LED lit -> Wins! Other player (last) loses!
+        const elapsed = Math.round(performance.now() - signalStartTimeRef.current);
+        set3DLedState(false);
+        gameStateRef.current = 'result';
+        setGameState('result');
+        setReactionTimeMs(elapsed);
+        setWinnerPlayer(player);
+        setLoserPlayer(otherPlayer);
+
+        if (player === 1) {
+          setP1Score((s) => s + 1);
+        } else {
+          setP2Score((s) => s + 1);
+        }
+
+        setGameMessage(`🏆 فاز ${playerName} بسرعة ${elapsed} ms! وخسر ${otherName} (الأبطأ)`);
+        soundFx.playVictoryFanfare();
+        confetti({
+          particleCount: 45,
+          spread: 65,
+          origin: { y: 0.7 },
+        });
+      }
+    },
+    [animateButtonDepress, set3DLedState]
+  );
+
+  // Desktop keyboard shortcuts for 2-player duel: A = Player 1, L = Player 2, Space = Start
+  useEffect(() => {
+    if (activeProject !== 'reaction') return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat) return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      if (e.code === 'KeyA' || e.code === 'KeyQ' || e.code === 'Digit1') {
+        e.preventDefault();
+        handlePlayerPress(1);
+      } else if (e.code === 'KeyL' || e.code === 'KeyP' || e.code === 'Digit2') {
+        e.preventDefault();
+        handlePlayerPress(2);
+      } else if (e.code === 'Space') {
+        if (gameStateRef.current !== 'waiting' && gameStateRef.current !== 'ready') {
+          e.preventDefault();
+          handleStartDuel();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [activeProject, handlePlayerPress, handleStartDuel]);
+
+  const handleResetScores = () => {
+    soundFx.playClick();
+    if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
+    set3DLedState(false);
+    gameStateRef.current = 'idle';
+    setGameState('idle');
+    setP1Score(0);
+    setP2Score(0);
+    setWinnerPlayer(null);
+    setLoserPlayer(null);
+    setReactionTimeMs(null);
+    setGameMessage('تم تصفير النتيجة! اضغطا "ابدأ السباق" لجولة جديدة');
   };
 
   // Reset Camera View
@@ -1047,67 +1116,123 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
           <div className="relative z-10 bg-slate-900/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-slate-800 space-y-2.5 sm:space-y-3">
             {activeProject === 'reaction' ? (
               <div className="space-y-2.5 sm:space-y-3">
+                {/* Duel Scoreboard & LED Status */}
                 <div className="flex flex-wrap items-center justify-between text-xs font-bold gap-2">
-                  <span className="flex items-center gap-1.5 text-amber-400">
-                    <Zap className="w-4 h-4 shrink-0" />
-                    <span>جرّب لعبة سرعة الاستجابة هنا مباشرة:</span>
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-black ${
-                    gameState === 'ready'
-                      ? 'bg-rose-500 text-white animate-pulse'
-                      : gameState === 'waiting'
-                      ? 'bg-amber-400 text-slate-950'
-                      : gameState === 'false_start'
-                      ? 'bg-rose-900 text-rose-100'
-                      : gameState === 'result'
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-800 text-slate-300'
-                  }`}>
-                    {gameState === 'ready'
-                      ? '⚡ الضوء اشتعل! اضغط الأخضر الآن!'
-                      : gameState === 'waiting'
-                      ? '⏳ انتظر الضوء الأحمر...'
-                      : gameState === 'false_start'
-                      ? '⚠️ ضغطت قبل الوقت!'
-                      : gameState === 'result'
-                      ? `🏆 سرعتك: ${reactionTimeMs} مللي ثانية`
-                      : 'جاهز للعب!'}
-                  </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="flex items-center gap-1.5 text-amber-400 font-black">
+                      <Trophy className="w-4 h-4 shrink-0" />
+                      <span>تحدّي الأسرع (1 ضد 1):</span>
+                    </span>
+                    <div className="flex items-center gap-1.5 bg-slate-950/80 px-2.5 py-1 rounded-xl border border-slate-800">
+                      <span className="text-blue-400 font-black">الأزرق: {p1Score}</span>
+                      <span className="text-slate-600">|</span>
+                      <span className="text-emerald-400 font-black">الأخضر: {p2Score}</span>
+                      {(p1Score > 0 || p2Score > 0) && (
+                        <button
+                          onClick={handleResetScores}
+                          className="mr-1 text-slate-400 hover:text-white transition-colors"
+                          title="تصفير النقاط"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold ${
+                      isLedLit
+                        ? 'bg-rose-600 text-white shadow-[0_0_15px_#EF4444]'
+                        : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      <span className={`w-2 h-2 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-600'}`} />
+                      <span>اللمبة: {isLedLit ? 'مشتعلة!' : 'مطفأة'}</span>
+                    </div>
+
+                    <span className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-black ${
+                      gameState === 'ready'
+                        ? 'bg-rose-500 text-white animate-pulse'
+                        : gameState === 'waiting'
+                        ? 'bg-amber-400 text-slate-950'
+                        : gameState === 'false_start'
+                        ? 'bg-rose-900 text-rose-100'
+                        : gameState === 'result'
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-slate-800 text-slate-300'
+                    }`}>
+                      {gameState === 'ready'
+                        ? '⚡ الضوء اشتعل! اضغطوا!'
+                        : gameState === 'waiting'
+                        ? '⏳ ترقبوا اللمبة الحمراء...'
+                        : gameState === 'false_start'
+                        ? `⚠️ خسر اللاعب ${loserPlayer} (تسرّع!)`
+                        : gameState === 'result'
+                        ? `🏆 فاز اللاعب ${winnerPlayer} (${reactionTimeMs} ms)`
+                        : 'جاهز للسباق!'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Status Message */}
-                <p className="text-[11px] sm:text-xs text-slate-200 bg-slate-950/70 p-2 sm:p-2.5 rounded-xl border border-slate-800 font-bold text-center">
+                <p className="text-[11px] sm:text-xs text-slate-100 bg-slate-950/75 p-2 sm:p-2.5 rounded-xl border border-slate-800 font-bold text-center">
                   {gameMessage}
                 </p>
 
-                {/* Hardware Interactive Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2.5 sm:gap-3">
+                {/* Start Round Bar */}
+                <button
+                  onClick={handleStartDuel}
+                  disabled={gameState === 'waiting' || gameState === 'ready'}
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition-all min-h-[42px] ${
+                    gameState === 'waiting' || gameState === 'ready'
+                      ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
+                      : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md active:scale-98'
+                  }`}
+                >
+                  {gameState === 'waiting' ? (
+                    <span>⏳ استعدا... لا يضغط أحد قبل اللمبة الحمراء!</span>
+                  ) : gameState === 'ready' ? (
+                    <span>🚨 السباق جارٍ الآن! أسرع زر يفوز والأخير يخسر!</span>
+                  ) : (
+                    <>
+                      <Flag className="w-4 h-4 shrink-0" />
+                      <span>
+                        {gameState === 'idle' ? '🏁 ابدأ السباق! (1 ضد 1)' : '🔁 ابدأ جولة جديدة (مسافة Space)'}
+                      </span>
+                    </>
+                  )}
+                </button>
+
+                {/* Two Player Hardware Interactive Buttons */}
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                   <button
-                    onClick={handlePressStartButton}
-                    disabled={gameState === 'waiting'}
-                    className="lg:flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[44px]"
+                    onClick={() => handlePlayerPress(1)}
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[50px] ${
+                      winnerPlayer === 1
+                        ? 'bg-blue-500 text-white ring-4 ring-amber-400'
+                        : loserPlayer === 1
+                        ? 'bg-slate-800 text-slate-400 border border-rose-500/40'
+                        : 'bg-blue-600 hover:bg-blue-500 text-white'
+                    }`}
                   >
                     <Play className="w-4 h-4 fill-current shrink-0" />
-                    <span>1. اضغط الزر الأزرق للبدء</span>
+                    <span>اللاعب 1 (الأزرق - D2)</span>
+                    <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/20 font-mono">A</kbd>
                   </button>
 
                   <button
-                    onClick={handlePressReactionButton}
-                    className="lg:flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[44px]"
+                    onClick={() => handlePlayerPress(2)}
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[50px] ${
+                      winnerPlayer === 2
+                        ? 'bg-emerald-500 text-white ring-4 ring-amber-400'
+                        : loserPlayer === 2
+                        ? 'bg-slate-800 text-slate-400 border border-rose-500/40'
+                        : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                    }`}
                   >
                     <Zap className="w-4 h-4 shrink-0" />
-                    <span>2. اضغط الزر الأخضر بسرعة!</span>
+                    <span>اللاعب 2 (الأخضر - D3)</span>
+                    <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/20 font-mono">L</kbd>
                   </button>
-
-                  {/* LED Indicator Badge */}
-                  <div className={`sm:col-span-2 lg:col-span-1 px-3 py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs font-bold ${
-                    isLedLit
-                      ? 'bg-rose-600 text-white shadow-[0_0_15px_#EF4444]'
-                      : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    <span className={`w-2.5 h-2.5 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-600'}`} />
-                    <span>اللمبة: {isLedLit ? 'مضيئة!' : 'مطفأة'}</span>
-                  </div>
                 </div>
               </div>
             ) : activeProject === 'ultrasonic' ? (

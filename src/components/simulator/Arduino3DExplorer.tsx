@@ -65,7 +65,7 @@ export const ARDUINO_PINS_DATA: PinInfo[] = [
     voltage: '5V (PWM & INT)',
     specsAr: 'يدعم المقاطعات العتادية السريعة (Hardware Interrupt 1)',
     descriptionAr: 'منفذ متعدد القدرات، يدعم PWM كما يدعم مقاطعة المعالج فوراً دون انتظار، مما يجعله مثالياً لأزرار الاستجابة السريعة.',
-    lessonConnectionAr: 'متصل بزر الاستجابة السريعة (Reaction Button) في الأسبوع الأول مع خاصية INPUT_PULLUP.',
+    lessonConnectionAr: 'متصل بزر اللاعب الثاني (الأخضر) في تحدّي 1 ضد 1 بالأسبوع الأول مع خاصية INPUT_PULLUP.',
     position3D: [2.5, 0.4, 0.4],
   },
   {
@@ -76,8 +76,8 @@ export const ARDUINO_PINS_DATA: PinInfo[] = [
     color: '#3B82F6',
     voltage: '5V (INT0)',
     specsAr: 'يدعم المقاطعة العتادية 0 (Hardware Interrupt 0)',
-    descriptionAr: 'يستخدم لرصد إشارات الطوارئ والانطلاق الفوري. متصل بآلية كشف التسرع لمنع الغش.',
-    lessonConnectionAr: 'متصل بزر بدء الجولة (Start Button) في مشروع لعبة سرعة الاستجابة.',
+    descriptionAr: 'يستخدم لرصد استجابة اللاعب الأول فوراً وكشف الانطلاق المبكر.',
+    lessonConnectionAr: 'متصل بزر اللاعب الأول (الأزرق) في مشروع تحدّي السرعة الثنائي.',
     position3D: [2.5, 0.4, 0.8],
   },
   {

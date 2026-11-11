@@ -38,11 +38,12 @@ export const MissionChallengeVerifier: React.FC<MissionChallengeVerifierProps> =
   weekNumber = 1,
   onMissionCompleted,
 }) => {
-  const [code, setCode] = useState<string>(`// كود غليتش المعطوب — مهمتك إصلاحه واجتياز الفحص الذكي!
+  const [code, setCode] = useState<string>(`// كود غليتش المعطوب لتحدّي 1 ضد 1 — مهمتك إصلاحه واجتياز الفحص الذكي!
 void setup() {
   Serial.begin(9600);
   pinMode(8, OUTPUT);       // مصباح LED
-  pinMode(3, INPUT);        // ⚠️ ثغرة: زر عائم بدون مقاومة شد!
+  pinMode(2, INPUT);        // ⚠️ ثغرة: زر اللاعب 1 عائم بدون مقاومة شد!
+  pinMode(3, INPUT);        // ⚠️ ثغرة: زر اللاعب 2 عائم بدون مقاومة شد!
   pinMode(9, OUTPUT);       // الطنان الصوتي
 }
 
@@ -51,8 +52,8 @@ void loop() {
   digitalWrite(8, HIGH);
   unsigned long startTime = millis();
   
-  while (digitalRead(3) == HIGH) {
-    // انتظار الضغط...
+  while (digitalRead(2) == HIGH && digitalRead(3) == HIGH) {
+    // انتظار أول من يضغط من اللاعبَين...
   }
   
   unsigned long endTime = millis();
@@ -71,14 +72,15 @@ void loop() {
   const handleLoadRepairedCode = () => {
     soundFx.playClick();
     setCode(`/*
-  ✅ الكود المصحح السليم — تم إصلاح كافة الثغرات بنجاح!
+  ✅ الكود المصحح السليم لتحدّي الأسرع (1 ضد 1)
 */
 void setup() {
   Serial.begin(9600);
   pinMode(8, OUTPUT);           // مصباح LED مخرج سليم
-  pinMode(3, INPUT_PULLUP);     // تم تفعيل مقاومة الشد الداخلية!
+  pinMode(2, INPUT_PULLUP);     // زر اللاعب 1 (الأزرق) بمقاومة شد
+  pinMode(3, INPUT_PULLUP);     // زر اللاعب 2 (الأخضر) بمقاومة شد
   pinMode(9, OUTPUT);           // الطنان الصوتي
-  Serial.println("System Ready!");
+  Serial.println("1v1 Duel Ready!");
 }
 
 void loop() {
@@ -87,8 +89,8 @@ void loop() {
   tone(9, 1200, 150);
   unsigned long startTime = millis();
   
-  while (digitalRead(3) == HIGH) {
-    // مراقبة الضغط...
+  while (digitalRead(2) == HIGH && digitalRead(3) == HIGH) {
+    // مراقبة اللاعبَين لحظياً...
   }
   
   unsigned long endTime = millis();
@@ -96,7 +98,7 @@ void loop() {
   
   // المعادلة الصحيحة: زمن النهاية ناقص زمن البداية
   unsigned long reactionTime = endTime - startTime;
-  Serial.print("Reaction Time: ");
+  Serial.print("Winner Reaction Time: ");
   Serial.print(reactionTime);
   Serial.println(" ms");
   delay(2000);
@@ -111,8 +113,10 @@ void loop() {
     setIsVerifying(true);
 
     setTimeout(() => {
-      // Test 1: Check INPUT_PULLUP on Pin 3
-      const hasInputPullup = /pinMode\(\s*3\s*,\s*INPUT_PULLUP\s*\)/.test(code);
+      // Test 1: Check INPUT_PULLUP on Pin 2 & Pin 3
+      const hasInputPullup =
+        /pinMode\(\s*3\s*,\s*INPUT_PULLUP\s*\)/.test(code) &&
+        /pinMode\(\s*2\s*,\s*INPUT_PULLUP\s*\)/.test(code);
 
       // Test 2: Check Correct Time Difference (endTime - startTime)
       const hasCorrectEquation = /endTime\s*-\s*startTime/.test(code) && !/startTime\s*-\s*endTime/.test(code);
@@ -126,10 +130,10 @@ void loop() {
       const tests: VerificationTestCase[] = [
         {
           id: 't1',
-          titleAr: '1. فحص مقاومة الشد لزر الاستجابة (INPUT_PULLUP)',
-          descriptionAr: 'التأكد من استخدام pinMode(3, INPUT_PULLUP) لمنع القراءات العائمة العشوائية.',
+          titleAr: '1. فحص مقاومة الشد لزرّي اللاعبَين D2 و D3 (INPUT_PULLUP)',
+          descriptionAr: 'التأكد من استخدام pinMode(2, INPUT_PULLUP) و pinMode(3, INPUT_PULLUP) لمنع التذبذب العشوائي.',
           passed: hasInputPullup,
-          hintAr: 'استبدل INPUT بـ INPUT_PULLUP في السطر الخاص برقم المنفذ 3.',
+          hintAr: 'استبدل INPUT بـ INPUT_PULLUP في سطري المنفذين 2 و 3.',
         },
         {
           id: 't2',
