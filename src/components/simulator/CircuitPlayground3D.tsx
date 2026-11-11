@@ -1081,9 +1081,9 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
       )}
 
       {/* Main Grid: 3D Viewport + Assembly Guidance & Hardware Controls */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 items-stretch">
         {/* Left: 3D Viewport Stage + Below-Canvas Interactive Controls */}
-        <div className="lg:col-span-8 rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
+        <div className="xl:col-span-8 rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
           {/* Dedicated 3D Canvas Wrapper (Never covered by bottom buttons!) */}
           <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] w-full rounded-2xl overflow-hidden bg-[#EEF6FF] border border-sky-200/80">
             {/* Top HUD */}
@@ -1306,7 +1306,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         </div>
 
         {/* Right: Assembly Guide & Wiring Inspector */}
-        <div className="lg:col-span-4 bg-slate-50 rounded-3xl p-4 sm:p-6 border border-slate-200 flex flex-col justify-between space-y-5">
+        <div className="xl:col-span-4 bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col justify-between space-y-4">
           <div className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 gap-2">
@@ -1380,7 +1380,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                 </div>
 
                 {/* Matching Arduino Code Line for This Step */}
-                <div className="rounded-2xl bg-white border-2 border-indigo-100 p-3 space-y-1.5 shadow-sm">
+                <div className="rounded-2xl bg-white border border-indigo-200/80 p-3 space-y-1.5 shadow-2xs">
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-700">
                     <Code2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                     <span>السطر المقابل في كود الآردوينو:</span>

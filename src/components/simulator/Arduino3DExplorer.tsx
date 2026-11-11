@@ -781,32 +781,32 @@ export const Arduino3DExplorer: React.FC = () => {
             <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none text-[11px] font-bold">
               <button
                 onClick={() => setFilterType('all')}
-                className={`px-2 py-1 rounded-lg transition-colors ${
-                  filterType === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'
+                className={`px-2.5 py-1 rounded-lg transition-colors ${
+                  filterType === 'all' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200/80'
                 }`}
               >
                 الكل
               </button>
               <button
                 onClick={() => setFilterType('digital')}
-                className={`px-2 py-1 rounded-lg transition-colors ${
-                  filterType === 'digital' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'
+                className={`px-2.5 py-1 rounded-lg transition-colors ${
+                  filterType === 'digital' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200/80'
                 }`}
               >
                 رقمي D
               </button>
               <button
                 onClick={() => setFilterType('analog')}
-                className={`px-2 py-1 rounded-lg transition-colors ${
-                  filterType === 'analog' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'
+                className={`px-2.5 py-1 rounded-lg transition-colors ${
+                  filterType === 'analog' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200/80'
                 }`}
               >
                 تناظري A
               </button>
               <button
                 onClick={() => setFilterType('power')}
-                className={`px-2 py-1 rounded-lg transition-colors ${
-                  filterType === 'power' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'
+                className={`px-2.5 py-1 rounded-lg transition-colors ${
+                  filterType === 'power' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200/80'
                 }`}
               >
                 طاقة

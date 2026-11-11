@@ -23,23 +23,23 @@ export const HomePage: React.FC<HomePageProps> = ({
   const monthLessons = LESSONS_DATA.filter((l) => l.month === selectedMonth);
 
   return (
-    <div className="space-y-7 sm:space-y-10 pb-12 sm:pb-16">
-      {/* 1. Simple Cheerful Welcome Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-white border-2 border-amber-200 shadow-card p-5 sm:p-6 md:p-10">
+    <div className="space-y-8 sm:space-y-10 pb-8 sm:pb-12">
+      {/* 1. Clean Airy Hero Welcome */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-amber-50/35 to-rose-50/30 border border-amber-200/60 shadow-card p-6 sm:p-8 lg:p-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
           <div className="lg:col-span-7 space-y-4 sm:space-y-5 text-right">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-[11px] sm:text-xs font-black">
-              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
-              <span>أهلاً بك يا بطل في مغامرة البرمجة والآردوينو!</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-black">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span>أهلاً بك يا بطل في مغامرة البرمجة والآردوينو</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-[2.75rem] font-black text-slate-900 leading-[1.2]">
               تعلّم، العب، وابنِ <br />
               <span className="text-[#FF5B5A]">مشاريعك الإلكترونية بيديك!</span>
             </h1>
 
-            <p className="text-slate-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
-              اختر أي شهر من الأسفل، واضغط على الدرس الذي تريد تجربته مع أصدقائنا: روبو وسباركي.
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl font-medium">
+              اختر أي شهر من الأسفل، واضغط على الدرس الذي تريد تجربته مع أصدقائنا روبو وسباركي.
             </p>
 
             <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1">
@@ -59,10 +59,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                   soundFx.playClick();
                   onNavigateToMap();
                 }}
-                className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-sm transition-all"
+                className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-bold text-sm transition-all shadow-xs"
               >
                 <Map className="w-4 h-4" />
-                <span>عرض كل الأشهر الـ 6</span>
+                <span>خريطة الأشهر الـ 6</span>
               </button>
 
               <div className="flex justify-center sm:justify-start">
@@ -75,12 +75,10 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           <div className="lg:col-span-5 flex items-center justify-center">
-            <div className="relative w-full max-w-[190px] sm:max-w-[240px] lg:max-w-[280px] aspect-square rounded-3xl bg-gradient-to-tr from-amber-300 via-orange-300 to-rose-300 p-2 shadow-xl flex items-center justify-center">
-              <div className="w-full h-full rounded-2xl bg-white p-4 sm:p-6 flex flex-col items-center justify-center relative">
-                <CharacterAvatar character="robo" size="xl" expression="excited" />
-                <div className="mt-2 px-3 sm:px-4 py-1 rounded-full bg-amber-100 text-amber-900 font-black text-[11px] sm:text-xs whitespace-nowrap">
-                  أهلاً! أنا صديقك روبو 🤖
-                </div>
+            <div className="relative w-full max-w-[210px] sm:max-w-[250px] aspect-square rounded-3xl bg-gradient-to-tr from-amber-100/90 via-rose-50 to-sky-100/90 p-5 border border-white shadow-card flex flex-col items-center justify-center">
+              <CharacterAvatar character="robo" size="xl" expression="excited" />
+              <div className="mt-3 px-4 py-1.5 rounded-full bg-white text-slate-800 border border-amber-200/80 shadow-xs font-black text-xs whitespace-nowrap">
+                أهلاً! أنا صديقك روبو 🤖
               </div>
             </div>
           </div>
@@ -89,16 +87,18 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* 2. Interactive Visual Lesson Shelf (Pick Month -> Pick Lesson) */}
       <section className="space-y-5 sm:space-y-6">
-        <div className="text-center space-y-1">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900">
-            اختر الشهر لتشاهد دروسه 🗓️
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium">
-            رحلة من 6 أشهر، في كل شهر 4 مغامرات ممتعة
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+              اختر الشهر لاستكشاف الدروس 🗓️
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+              6 أشهر تعليمية منظمة — كل شهر يضم 4 دروس تفاعلية
+            </p>
+          </div>
         </div>
 
-        {/* 6 Colorful Month Selector Pills */}
+        {/* 6 Clean Month Selector Tabs */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
           {WORLDS_DATA.map((world) => {
             const isSelected = selectedMonth === world.month;
@@ -109,26 +109,26 @@ export const HomePage: React.FC<HomePageProps> = ({
                   soundFx.playClick();
                   setSelectedMonth(world.month);
                 }}
-                className={`p-2.5 sm:p-3.5 rounded-2xl border-2 text-center transition-all flex flex-col items-center gap-1.5 sm:gap-2 ${
+                className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center gap-2 ${
                   isSelected
-                    ? 'bg-white border-[#FF5B5A] shadow-lg ring-4 ring-[#FF5B5A]/15'
-                    : 'bg-white/80 border-slate-200 hover:border-amber-300 hover:bg-white'
+                    ? 'bg-white border-[#FF5B5A] shadow-card ring-2 ring-[#FF5B5A]/15'
+                    : 'bg-white/75 border-slate-200/80 hover:border-amber-300 hover:bg-white'
                 }`}
               >
                 <div
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-sm"
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-xs"
                   style={{ backgroundColor: world.accentBg }}
                 >
                   <CharacterAvatar character={world.character} size="sm" />
                 </div>
-                <div className="w-full">
+                <div className="w-full space-y-1">
                   <span
-                    className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black text-white"
+                    className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black text-white"
                     style={{ backgroundColor: world.themeColor }}
                   >
                     الشهر {world.month}
                   </span>
-                  <div className="font-black text-xs text-slate-800 mt-1 line-clamp-1">
+                  <div className="font-bold text-xs text-slate-800 line-clamp-1">
                     {world.titleAr.split('و')[0].trim()}
                   </div>
                 </div>
@@ -137,76 +137,74 @@ export const HomePage: React.FC<HomePageProps> = ({
           })}
         </div>
 
-        {/* Selected Month World Intro Strip */}
-        <div
-          className="rounded-3xl p-4 sm:p-5 md:p-6 border-2 bg-white shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right"
-          style={{ borderColor: selectedWorld.themeColor }}
-        >
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-            <div
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0"
-              style={{ backgroundColor: selectedWorld.accentBg }}
-            >
-              <CharacterAvatar character={selectedWorld.character} size="md" />
-            </div>
-            <div>
-              <span
-                className="px-2.5 py-0.5 rounded-full text-[11px] font-black text-white"
-                style={{ backgroundColor: selectedWorld.themeColor }}
+        {/* Unified World Panel + 4 Clean Lesson Cards */}
+        <div className="rounded-3xl bg-white border border-slate-200/80 shadow-card p-4 sm:p-6 space-y-5">
+          {/* Month Header Strip */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100 text-center md:text-right">
+            <div className="flex flex-col sm:flex-row items-center gap-3.5">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                style={{ backgroundColor: selectedWorld.accentBg }}
               >
-                الشهر {selectedWorld.month}
-              </span>
-              <h3 className="text-lg sm:text-xl font-black text-slate-900 mt-1">{selectedWorld.titleAr}</h3>
-              <p className="text-xs sm:text-sm text-slate-600 mt-0.5 leading-relaxed">{selectedWorld.storyAr}</p>
+                <CharacterAvatar character={selectedWorld.character} size="md" />
+              </div>
+              <div>
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  <span
+                    className="px-2.5 py-0.5 rounded-full text-[11px] font-black text-white"
+                    style={{ backgroundColor: selectedWorld.themeColor }}
+                  >
+                    الشهر {selectedWorld.month}
+                  </span>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900">{selectedWorld.titleAr}</h3>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">{selectedWorld.storyAr}</p>
+              </div>
+            </div>
+
+            <div className="shrink-0">
+              <SpeakButton
+                text={`${selectedWorld.titleAr}. ${selectedWorld.storyAr}`}
+                labelAr="اسمع قصة الشهر"
+              />
             </div>
           </div>
 
-          <SpeakButton
-            text={`${selectedWorld.titleAr}. ${selectedWorld.storyAr}`}
-            labelAr="اسمع قصة الشهر"
-          />
-        </div>
-
-        {/* 4 Large, Clean, Kid-Friendly Lesson Cards for the Selected Month */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {monthLessons.map((lesson) => (
-            <div
-              key={lesson.week}
-              onClick={() => {
-                soundFx.playClick();
-                onNavigateToLesson(lesson.week);
-              }}
-              className="rounded-3xl p-4 sm:p-6 bg-white border-2 border-slate-200 hover:border-[#FF5B5A] shadow-card hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 group"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
+          {/* 4 Clean, Light Lesson Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+            {monthLessons.map((lesson) => (
+              <div
+                key={lesson.week}
+                onClick={() => {
+                  soundFx.playClick();
+                  onNavigateToLesson(lesson.week);
+                }}
+                className="rounded-2xl p-4 sm:p-5 bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[#FF5B5A]/60 hover:shadow-card-hover transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-2.5">
                   <span
-                    className="px-3 py-1 rounded-xl text-xs font-black text-white"
+                    className="inline-block px-2.5 py-0.5 rounded-lg text-[11px] font-black text-white"
                     style={{ backgroundColor: selectedWorld.themeColor }}
                   >
                     الدرس {lesson.week}
                   </span>
-                  <span className="text-xl">🚀</span>
+
+                  <h4 className="font-black text-base text-slate-900 group-hover:text-[#FF5B5A] transition-colors leading-snug">
+                    {lesson.missionNameAr}
+                  </h4>
+
+                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                    {lesson.storySnippetAr}
+                  </p>
                 </div>
 
-                <h4 className="font-black text-lg text-slate-900 group-hover:text-[#FF5B5A] transition-colors leading-snug">
-                  {lesson.missionNameAr}
-                </h4>
-
-                <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
-                  {lesson.storySnippetAr}
-                </p>
+                <div className="w-full py-2.5 px-3 rounded-xl bg-white border border-slate-200/80 text-indigo-700 group-hover:bg-[#FF5B5A] group-hover:text-white group-hover:border-[#FF5B5A] font-black text-xs transition-all flex items-center justify-center gap-1.5 shadow-2xs">
+                  <span>ادخل الدرس</span>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                </div>
               </div>
-
-              <button
-                type="button"
-                className="w-full py-3 rounded-2xl bg-slate-900 group-hover:bg-[#FF5B5A] text-white font-black text-sm transition-colors flex items-center justify-center gap-2"
-              >
-                <span>ادخل الدرس</span>
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </div>

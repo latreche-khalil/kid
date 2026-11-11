@@ -24,9 +24,9 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/70 shadow-sm transition-all">
-      <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-5">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/70 shadow-xs transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-[74px] gap-3 sm:gap-5">
           {/* Logo & Brand Identity */}
           <div
             onClick={() => {
@@ -90,10 +90,10 @@ export const Header: React.FC<HeaderProps> = ({
                 soundFx.playClick();
                 onTabChange('instructor');
               }}
-              className={`flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-bold transition-all border ${
+              className={`flex items-center gap-1.5 p-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all border ${
                 currentTab === 'instructor'
-                  ? 'bg-slate-800 text-white border-slate-800'
-                  : 'bg-white text-slate-400 hover:text-slate-700 border-slate-200 hover:border-slate-300'
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  : 'bg-white text-slate-500 hover:text-indigo-700 border-slate-200/80 hover:border-indigo-200 hover:bg-indigo-50/50'
               }`}
               title="أدوات المعلّم وإدارة العرض"
             >

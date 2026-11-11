@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Film,
   BookOpen,
@@ -109,6 +109,19 @@ export const LessonPage: React.FC<LessonPageProps> = ({
   const [advancedLabMode, setAdvancedLabMode] = useState<'verifier' | 'code3d' | 'circuit' | 'board3d'>('verifier');
   const [showAdvancedLab, setShowAdvancedLab] = useState<boolean>(false);
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
+  const [expandedWiringSteps, setExpandedWiringSteps] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    setExpandedWiringSteps({});
+  }, [weekNumber]);
+
+  const toggleWiringStep = (stepNumber: number) => {
+    soundFx.playClick();
+    setExpandedWiringSteps((prev) => ({
+      ...prev,
+      [stepNumber]: !prev[stepNumber],
+    }));
+  };
 
   const lessonDetail = getLessonByWeek(weekNumber);
 
@@ -140,17 +153,17 @@ export const LessonPage: React.FC<LessonPageProps> = ({
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6 pb-12 sm:pb-16 w-full">
-      {/* Top Bar: Big Back Button + Subtle Teacher Mode Button */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-2xl sm:rounded-3xl bg-white border border-slate-100 shadow-sm">
+    <div className="space-y-4 sm:space-y-5 pb-10 sm:pb-12 w-full">
+      {/* Minimal Top Breadcrumb & Teacher Shortcut */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1">
         <button
           onClick={() => {
             soundFx.playClick();
             onBackToMap();
           }}
-          className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-black transition-all"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 shadow-2xs text-xs sm:text-sm font-black transition-all"
         >
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 text-[#FF5B5A]" />
           <span>العودة للدروس</span>
         </button>
 
@@ -159,25 +172,25 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             soundFx.playClick();
             onOpenClassroom();
           }}
-          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200 text-xs font-bold transition-all"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200/80 shadow-2xs text-xs font-bold transition-all"
           title="فتح وضع الشاشة الكاملة للشرح أمام التلاميذ"
         >
           <ScreenShare className="w-3.5 h-3.5" />
-          <span>للمعلّم: عرض الصف</span>
+          <span>عرض الصف (للمعلّم)</span>
         </button>
       </div>
 
       {/* Hero Lesson Header */}
-      <div className="rounded-3xl bg-gradient-to-br from-white via-amber-50/30 to-blue-50/40 p-4 sm:p-6 md:p-7 border border-amber-200/70 shadow-card">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-5">
-          <div className="space-y-2">
-            <span className="inline-block px-3.5 py-1 rounded-full bg-blue-600 text-white text-xs font-black">
+      <div className="rounded-3xl bg-gradient-to-br from-white via-amber-50/35 to-blue-50/35 p-5 sm:p-6 border border-slate-200/80 shadow-card">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <span className="inline-block px-3 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 text-[11px] font-black">
               الأسبوع {lessonDetail.week}
             </span>
-            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-slate-900 leading-snug">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 leading-snug">
               {lessonDetail.missionNameAr}
             </h1>
-            <p className="text-xs sm:text-base text-slate-600 font-bold">
+            <p className="text-xs sm:text-sm text-slate-500 font-bold">
               {lessonDetail.titleAr}
             </p>
           </div>
@@ -188,9 +201,9 @@ export const LessonPage: React.FC<LessonPageProps> = ({
         </div>
       </div>
 
-      {/* Sticky 6-Stage Lesson Stepper (Stays Pinned Below Header While Scrolling) */}
-      <div className="sticky top-[65px] sm:top-[81px] z-30 bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 border border-amber-200/80 shadow-sm">
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2">
+      {/* Mobile / Tablet Top Sticky 6-Stage Strip */}
+      <div className="lg:hidden sticky top-[65px] sm:top-[75px] z-30 bg-white/95 backdrop-blur-md rounded-2xl p-1.5 border border-slate-200/80 shadow-card">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
           {lessonDetail.timeline.map((stage, idx) => {
             const isActive = activeStage === stage.stage;
             const isCompleted = idx < currentStageIdx;
@@ -200,16 +213,16 @@ export const LessonPage: React.FC<LessonPageProps> = ({
               <button
                 key={stage.stage}
                 onClick={() => goToStage(stage.stage)}
-                className={`flex items-center justify-center sm:justify-start gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2.5 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all min-h-[38px] sm:min-h-[44px] ${
+                className={`flex items-center justify-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-bold transition-all min-h-[38px] ${
                   isActive
                     ? 'bg-[#FF5B5A] text-white shadow-coral-glow font-black'
                     : isCompleted
-                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                    : 'bg-slate-50/80 border border-slate-200 text-slate-700 hover:bg-amber-50'
+                    ? 'bg-emerald-50/80 text-emerald-800 border border-emerald-200/70'
+                    : 'bg-slate-50/70 border border-slate-200/70 text-slate-600'
                 }`}
               >
                 <span
-                  className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full text-[10px] sm:text-[11px] font-black flex items-center justify-center shrink-0 ${
+                  className={`w-4 h-4 rounded-full text-[10px] font-black flex items-center justify-center shrink-0 ${
                     isActive
                       ? 'bg-white text-[#FF5B5A]'
                       : isCompleted
@@ -219,7 +232,6 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 >
                   {idx + 1}
                 </span>
-                <span className="hidden sm:inline shrink-0">{stageIcons[stage.stage]}</span>
                 <span className="truncate">{label}</span>
               </button>
             );
@@ -227,8 +239,72 @@ export const LessonPage: React.FC<LessonPageProps> = ({
         </div>
       </div>
 
-      {/* Stage Content Panel (One Step Card at a Time) */}
-      <div className="space-y-6">
+      {/* Desktop Sidebar + Main Stage Content Layout */}
+      <div className="flex flex-col lg:flex-row items-start gap-5 xl:gap-6">
+        {/* Desktop Vertical Lesson Sidebar (Sticky) */}
+        <aside className="hidden lg:block w-56 xl:w-64 shrink-0 sticky top-[92px] z-20">
+          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-card p-4 space-y-4">
+            <div className="space-y-2 pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-slate-800">مراحل الدرس</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70 text-[11px] font-black font-mono">
+                  {currentStageIdx + 1} / {stageOrder.length}
+                </span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-l from-[#FF5B5A] to-amber-400 transition-all duration-300"
+                  style={{ width: `${Math.round(((currentStageIdx + 1) / stageOrder.length) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            <nav className="space-y-1.5" aria-label="مراحل الدرس">
+              {lessonDetail.timeline.map((stage, idx) => {
+                const isActive = activeStage === stage.stage;
+                const isCompleted = idx < currentStageIdx;
+                const label = KID_STAGE_TITLES[stage.stage] || stage.titleAr;
+
+                return (
+                  <button
+                    key={stage.stage}
+                    onClick={() => goToStage(stage.stage)}
+                    className={`w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-2xl text-right text-sm font-bold transition-all ${
+                      isActive
+                        ? 'bg-[#FF5B5A] text-white shadow-coral-glow font-black'
+                        : isCompleted
+                        ? 'bg-emerald-50/75 text-emerald-900 border border-emerald-200/70 hover:bg-emerald-100/70'
+                        : 'bg-slate-50/70 text-slate-700 border border-transparent hover:border-slate-200 hover:bg-slate-100/80'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span
+                        className={`w-6 h-6 rounded-full text-xs font-black flex items-center justify-center shrink-0 transition-colors ${
+                          isActive
+                            ? 'bg-white text-[#FF5B5A]'
+                            : isCompleted
+                            ? 'bg-emerald-500 text-white'
+                            : 'bg-white text-slate-600 border border-slate-200'
+                        }`}
+                      >
+                        {isCompleted && !isActive ? <Check className="w-3.5 h-3.5" /> : idx + 1}
+                      </span>
+                      <span className={`shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`}>
+                        {stageIcons[stage.stage]}
+                      </span>
+                      <span className="truncate">{label}</span>
+                    </div>
+
+                    {isActive && <ChevronLeft className="w-4 h-4 shrink-0 text-white/90" />}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </aside>
+
+        {/* Stage Content Panel (One Step Card at a Time) */}
+        <div className="flex-1 min-w-0 w-full space-y-6">
         {/* 1. CARTOON STORY */}
         {activeStage === 'story' && (
           <div className="space-y-6">
@@ -254,7 +330,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             </div>
 
             {/* Learning Objectives Card */}
-            <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-card space-y-4">
+            <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-7 border border-slate-200/80 shadow-card space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="text-lg sm:text-xl font-black text-slate-800">ماذا سنتعلم اليوم؟ 🎯</h3>
                 <SpeakButton
@@ -266,12 +342,12 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 {lessonDetail.objectivesAr.map((obj, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200"
+                    className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-50/70 border border-slate-200/70"
                   >
-                    <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0 mt-0.5">
                       {i + 1}
                     </div>
-                    <span className="text-sm text-slate-800 font-bold leading-relaxed">
+                    <span className="text-xs sm:text-sm text-slate-800 font-bold leading-relaxed">
                       <FormattedText text={obj} />
                     </span>
                   </div>
@@ -283,11 +359,11 @@ export const LessonPage: React.FC<LessonPageProps> = ({
 
         {/* 2. THEORY & EXPLANATIONS */}
         {activeStage === 'theory' && (
-          <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-card space-y-6">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 border border-slate-200/80 shadow-card space-y-5 sm:space-y-6">
             <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-slate-900">{lessonDetail.theory.titleAr}</h2>
-                <p className="text-sm text-slate-600 mt-1">{lessonDetail.theory.summaryAr}</p>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">{lessonDetail.theory.summaryAr}</p>
               </div>
               <SpeakButton
                 text={`${lessonDetail.theory.titleAr}. ${lessonDetail.theory.summaryAr}`}
@@ -295,9 +371,9 @@ export const LessonPage: React.FC<LessonPageProps> = ({
               />
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {lessonDetail.theory.sections.map((sec, i) => (
-                <div key={i} className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                <div key={i} className="p-4 sm:p-6 rounded-2xl bg-slate-50/70 border border-slate-200/70 space-y-3.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="text-lg sm:text-xl font-black text-slate-800">{sec.headingAr}</h3>
                     <SpeakButton
@@ -365,19 +441,19 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
                 {lessonDetail.components.map((comp) => (
                   <div
                     key={comp.id}
-                    className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-1.5"
+                    className="p-3 rounded-2xl bg-slate-50/70 border border-slate-200/80 flex items-start gap-2.5"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-black text-xs">
-                        {comp.count}x
-                      </span>
+                    <span className="w-7 h-7 rounded-xl bg-blue-100/80 text-blue-700 flex items-center justify-center font-black text-[11px] shrink-0 mt-0.5">
+                      {comp.count}x
+                    </span>
+                    <div className="min-w-0 space-y-0.5">
+                      <div className="font-black text-xs text-slate-900 leading-snug">{comp.nameAr}</div>
+                      <p className="text-[11px] text-slate-500 leading-snug line-clamp-2">{comp.roleAr}</p>
                     </div>
-                    <div className="font-black text-xs sm:text-sm text-slate-900">{comp.nameAr}</div>
-                    <p className="text-[11px] text-slate-600 leading-snug">{comp.roleAr}</p>
                   </div>
                 ))}
               </div>
@@ -395,7 +471,10 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                       مراحل التركيب في الآردوينو حسب الكود 🔌
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed">
-                      {lessonDetail.circuit.descriptionAr}
+                      {lessonDetail.circuit.descriptionAr} —{' '}
+                      <span className="font-bold text-indigo-600">
+                        اضغط على أي نقطة لإظهار الكود المرافق لها.
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -407,69 +486,113 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <ol className="space-y-2.5 sm:space-y-3">
                 {lessonDetail.circuit.wiringSteps.map((step) => {
                   const matchedCode = extractPinCodeLines(step.from, lessonDetail.code.repairedCode);
+                  const isExpanded = Boolean(expandedWiringSteps[step.step]);
+
                   return (
-                    <div
-                      key={step.step}
-                      className="rounded-2xl bg-slate-50 border border-slate-200 p-4 flex flex-col justify-between space-y-3"
-                    >
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 font-black text-xs">
-                              المرحلة {step.step}
-                            </span>
-                            <span
-                              className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0"
-                              style={{ backgroundColor: step.color }}
-                              title={`لون السلك: ${step.color}`}
-                            />
+                    <li key={step.step}>
+                      <div
+                        onClick={() => matchedCode && toggleWiringStep(step.step)}
+                        className={`rounded-2xl border p-3.5 sm:p-4 transition-all ${
+                          matchedCode ? 'cursor-pointer' : ''
+                        } ${
+                          isExpanded
+                            ? 'bg-indigo-50/40 border-indigo-300 shadow-xs'
+                            : 'bg-slate-50 border-slate-200 hover:border-indigo-200 hover:bg-slate-50/80'
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            {/* Numbered bullet + wire color dot */}
+                            <div className="flex flex-col items-center gap-1.5 pt-0.5 shrink-0">
+                              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs">
+                                {step.step}
+                              </span>
+                              <span
+                                className="w-3 h-3 rounded-full border border-slate-300"
+                                style={{ backgroundColor: step.color }}
+                                title={`لون السلك: ${step.color}`}
+                              />
+                            </div>
+
+                            <div className="space-y-1.5">
+                              <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
+                                <span
+                                  className="px-2 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-mono"
+                                  dir="ltr"
+                                >
+                                  {step.from}
+                                </span>
+                                <span className="text-slate-400">←</span>
+                                <span
+                                  className="px-2 py-0.5 rounded-lg bg-white border border-slate-200 text-slate-700"
+                                  dir="ltr"
+                                >
+                                  {step.to}
+                                </span>
+                              </div>
+
+                              <p className="text-xs sm:text-sm text-slate-800 font-bold leading-relaxed">
+                                <FormattedText text={step.instructionAr} />
+                              </p>
+
+                              {step.cautionAr && (
+                                <div className="inline-flex items-start gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-bold">
+                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                                  <FormattedText text={step.cautionAr} />
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <SpeakButton text={step.instructionAr} labelAr="اسمع" />
+
+                          <div className="flex items-center justify-end gap-2 shrink-0 pr-10 sm:pr-0">
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <SpeakButton text={step.instructionAr} labelAr="اسمع" />
+                            </div>
+                            {matchedCode && (
+                              <span
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors ${
+                                  isExpanded
+                                    ? 'bg-indigo-600 text-white border-indigo-600'
+                                    : 'bg-white text-indigo-700 border-indigo-200'
+                                }`}
+                              >
+                                <Code2 className="w-3.5 h-3.5 shrink-0" />
+                                <span>{isExpanded ? 'إخفاء الكود' : 'عرض الكود'}</span>
+                                {isExpanded ? (
+                                  <ChevronUp className="w-3.5 h-3.5 shrink-0" />
+                                ) : (
+                                  <ChevronDown className="w-3.5 h-3.5 shrink-0" />
+                                )}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
-                          <span className="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-mono" dir="ltr">
-                            {step.from}
-                          </span>
-                          <span className="text-slate-400">←</span>
-                          <span className="px-2.5 py-0.5 rounded-lg bg-white border border-slate-200 text-slate-700" dir="ltr">
-                            {step.to}
-                          </span>
-                        </div>
-
-                        <p className="text-xs sm:text-sm text-slate-800 font-bold leading-relaxed">
-                          {step.instructionAr}
-                        </p>
-
-                        {step.cautionAr && (
-                          <div className="flex items-start gap-1.5 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-bold">
-                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                            <span>{step.cautionAr}</span>
+                        {matchedCode && isExpanded && (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="mt-3 mr-0 sm:mr-11 rounded-xl bg-white border border-indigo-200 p-3 space-y-1.5 shadow-xs"
+                          >
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-700">
+                              <Code2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                              <span>الكود الموافق لهذه المرحلة:</span>
+                            </div>
+                            <pre
+                              className="font-mono text-xs text-slate-900 font-semibold leading-relaxed overflow-x-auto whitespace-pre select-text bg-slate-50 p-2.5 rounded-lg border border-slate-100"
+                              dir="ltr"
+                            >
+                              {matchedCode}
+                            </pre>
                           </div>
                         )}
                       </div>
-
-                      {matchedCode && (
-                        <div className="rounded-xl bg-white border border-indigo-200 p-2.5 space-y-1 shadow-xs">
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-indigo-700">
-                            <Code2 className="w-3 h-3 text-indigo-600 shrink-0" />
-                            <span>الكود الموافق لهذه المرحلة:</span>
-                          </div>
-                          <pre
-                            className="font-mono text-[11px] text-slate-900 font-semibold leading-relaxed overflow-x-auto whitespace-pre select-text bg-slate-50 p-2 rounded-lg border border-slate-100"
-                            dir="ltr"
-                          >
-                            {matchedCode}
-                          </pre>
-                        </div>
-                      )}
-                    </div>
+                    </li>
                   );
                 })}
-              </div>
+              </ol>
             </div>
 
             {/* Step 3: Interactive 3D Assembly & Live Test */}
@@ -720,7 +843,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
         )}
 
         {/* Card-by-Card Bottom Next / Previous Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 p-3.5 sm:p-5 rounded-3xl bg-white border border-slate-200 shadow-card">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/80 shadow-card">
           <span className="sm:order-2 text-center text-xs sm:text-sm font-black text-slate-500">
             الخطوة {currentStageIdx + 1} من {stageOrder.length}
           </span>
@@ -729,7 +852,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             <button
               onClick={() => hasPrevStage && goToStage(stageOrder[currentStageIdx - 1])}
               disabled={!hasPrevStage}
-              className="sm:order-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-800 text-xs sm:text-sm font-black transition-all min-h-[46px]"
+              className="sm:order-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-800 text-xs sm:text-sm font-black transition-all min-h-[44px]"
             >
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
               <span>الخطوة السابقة</span>
@@ -738,7 +861,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             {hasNextStage ? (
               <button
                 onClick={() => goToStage(stageOrder[currentStageIdx + 1])}
-                className="sm:order-3 flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-3 rounded-2xl bg-[#FF5B5A] hover:bg-[#ff4645] text-white text-xs sm:text-base font-black shadow-coral-glow transition-all active:scale-95 min-h-[46px]"
+                className="sm:order-3 flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-3 rounded-xl bg-[#FF5B5A] hover:bg-[#ff4645] text-white text-xs sm:text-sm font-black shadow-coral-glow transition-all active:scale-95 min-h-[44px]"
               >
                 <span className="truncate">التالي: {KID_STAGE_TITLES[stageOrder[currentStageIdx + 1]] || 'التالي'}</span>
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
@@ -749,13 +872,14 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                   soundFx.playClick();
                   onBackToMap();
                 }}
-                className="sm:order-3 flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-base font-black shadow-md transition-all active:scale-95 min-h-[46px]"
+                className="sm:order-3 flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-black shadow-md transition-all active:scale-95 min-h-[44px]"
               >
                 <span className="truncate">العودة لكل الدروس</span>
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
               </button>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>

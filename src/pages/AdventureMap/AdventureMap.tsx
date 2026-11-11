@@ -20,54 +20,59 @@ export const AdventureMap: React.FC<AdventureMapProps> = ({ onSelectLesson }) =>
   };
 
   return (
-    <div className="space-y-7 sm:space-y-10 pb-12 sm:pb-16">
-      {/* Top Friendly Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-5 sm:p-6 md:p-8 text-white shadow-xl">
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
-          <div className="space-y-2 max-w-xl text-center md:text-right">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black">🗺️ خريطة الدروس (6 أشهر)</h1>
-            <p className="text-white/95 text-xs sm:text-sm md:text-base leading-relaxed font-medium">
-              اضغط على أي درس تريد أن تبدأ به! كل الدروس مفتوحة لتتعلم وتلعب وتكتشف بحرية.
+    <div className="space-y-6 sm:space-y-8 pb-8 sm:pb-12">
+      {/* Top Friendly Light Banner */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-amber-50/50 to-rose-50/40 p-5 sm:p-7 border border-amber-200/70 shadow-card">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+          <div className="space-y-1.5 max-w-xl text-center md:text-right">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">🗺️ خريطة الدروس (6 أشهر)</h1>
+            <p className="text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed font-medium">
+              اضغط على أي درس لتبدأ التعلم والتجربة فوراً — كل الدروس الـ 24 مفتوحة أمامك.
             </p>
           </div>
 
-          <div className="shrink-0 flex items-center gap-3 bg-white/15 backdrop-blur-md p-3 sm:p-3.5 rounded-3xl border border-white/25">
+          <div className="shrink-0 flex items-center gap-3 bg-white p-3 sm:px-4 sm:py-3 rounded-2xl border border-amber-200/70 shadow-xs">
             <CharacterAvatar character="robo" size="md" expression="excited" />
             <div className="text-right">
-              <div className="text-sm sm:text-base font-black text-white">24 درساً ممتعاً</div>
-              <span className="text-xs text-white/90">اضغط وابدأ فوراً! 🚀</span>
+              <div className="text-sm font-black text-slate-900">24 درساً ممتعاً</div>
+              <span className="text-xs text-slate-500 font-medium">اختر وابدأ المغامرة 🚀</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* The 6 Worlds Journey */}
-      <div className="space-y-8 sm:space-y-12">
+      <div className="space-y-6 sm:space-y-8">
         {WORLDS_DATA.map((world) => {
           const worldLessons = LESSONS_DATA.filter((l) => l.worldId === world.id);
 
           return (
             <div
               key={world.id}
-              className="relative rounded-3xl p-4 sm:p-6 md:p-8 border-2 bg-white border-slate-200 shadow-card space-y-5 sm:space-y-6"
+              className="rounded-3xl p-5 sm:p-6 border border-slate-200/80 bg-white shadow-card space-y-5"
             >
-              {/* World Header Card */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-3 sm:gap-4">
+              {/* World Header Row */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3.5">
                   <div
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl flex items-center justify-center shrink-0 shadow-md"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-xs"
                     style={{ backgroundColor: world.accentBg }}
                   >
                     <CharacterAvatar character={world.character} size="md" />
                   </div>
                   <div>
-                    <span
-                      className="inline-block px-3 py-0.5 rounded-full text-xs font-black text-white"
-                      style={{ backgroundColor: world.themeColor }}
-                    >
-                      الشهر {world.month}
-                    </span>
-                    <h2 className="text-lg sm:text-2xl font-black text-slate-900 mt-1">{world.titleAr}</h2>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black text-white"
+                        style={{ backgroundColor: world.themeColor }}
+                      >
+                        الشهر {world.month}
+                      </span>
+                      <h2 className="text-lg sm:text-xl font-black text-slate-900">{world.titleAr}</h2>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed font-medium">
+                      {world.storyAr}
+                    </p>
                   </div>
                 </div>
 
@@ -77,22 +82,17 @@ export const AdventureMap: React.FC<AdventureMapProps> = ({ onSelectLesson }) =>
                 />
               </div>
 
-              {/* Story Intro of this world */}
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-100 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                {world.storyAr}
-              </div>
-
               {/* Connected 4 Lessons Grid for this Month */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
                 {worldLessons.map((lesson) => (
                   <div
                     key={lesson.week}
                     onClick={() => handleNodeClick(lesson)}
-                    className="rounded-2xl p-4 sm:p-5 border-2 border-slate-200 hover:border-[#FF5B5A] bg-white hover:bg-rose-50/10 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between space-y-3 sm:space-y-4 group"
+                    className="rounded-2xl p-4 sm:p-5 border border-slate-200/80 bg-slate-50/70 hover:bg-white hover:border-[#FF5B5A]/60 hover:shadow-card-hover transition-all cursor-pointer flex flex-col justify-between space-y-3.5 group"
                   >
-                    <div className="space-y-2.5">
+                    <div className="space-y-2">
                       <span
-                        className="inline-block px-3 py-1 rounded-xl text-xs font-black text-white"
+                        className="inline-block px-2.5 py-0.5 rounded-lg text-[11px] font-black text-white"
                         style={{ backgroundColor: world.themeColor }}
                       >
                         الدرس {lesson.week}
@@ -107,12 +107,9 @@ export const AdventureMap: React.FC<AdventureMapProps> = ({ onSelectLesson }) =>
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                      <span className="text-xs font-black text-slate-900 group-hover:text-[#FF5B5A] flex items-center gap-1">
-                        <span>ادخل الدرس</span>
-                        <ChevronLeft className="w-4 h-4" />
-                      </span>
-                      <span className="text-lg">✨</span>
+                    <div className="py-2 px-3 rounded-xl bg-white border border-slate-200/80 text-indigo-700 group-hover:bg-[#FF5B5A] group-hover:text-white group-hover:border-[#FF5B5A] text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-2xs">
+                      <span>ادخل الدرس</span>
+                      <ChevronLeft className="w-3.5 h-3.5" />
                     </div>
                   </div>
                 ))}

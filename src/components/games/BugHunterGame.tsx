@@ -184,7 +184,7 @@ export const BugHunterGame: React.FC = () => {
               <span>بيئة Arduino IDE</span>
             </div>
 
-            <div className="bg-white rounded-2xl p-3 sm:p-4 font-mono text-[11px] sm:text-xs text-slate-800 space-y-1 overflow-x-auto select-none border-2 border-slate-200 shadow-inner" dir="ltr">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 font-mono text-[11px] sm:text-xs text-slate-800 space-y-1 overflow-x-auto select-none border border-slate-200/90 shadow-inner" dir="ltr">
               {level.codeLines.map((line, idx) => {
                 const isSelected = selectedLine === idx;
                 const isTheBug = idx === level.buggyLineIndex;
@@ -263,7 +263,7 @@ export const BugHunterGame: React.FC = () => {
               <div className="pt-2">
                 <button
                   onClick={handleNextLevel}
-                  className="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 shadow-sm transition-all"
                 >
                   {currentLevelIdx < BUG_LEVELS.length - 1 ? 'المستوى التالي ←' : 'عرض النتيجة النهائية 🏆'}
                 </button>

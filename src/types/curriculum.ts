@@ -41,10 +41,13 @@ export interface ComponentItem {
   icon: string;
 }
 
+export type QuizDifficulty = 'easy' | 'medium' | 'hard';
+
 export interface QuizQuestion {
   id: string;
   questionAr: string;
   codeSnippet?: string;
+  difficulty?: QuizDifficulty;
   options: {
     id: string;
     textAr: string;
