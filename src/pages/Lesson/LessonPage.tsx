@@ -32,6 +32,7 @@ import { CodeSimulationEngine } from '../../components/simulator/CodeSimulationE
 import { soundFx } from '../../services/sound/webAudio';
 import { CharacterAvatar } from '../../components/characters/CharacterAvatars';
 import { SpeakButton } from '../../components/common/SpeakButton';
+import { FormattedText } from '../../components/common/FormattedText';
 
 interface LessonPageProps {
   weekNumber: number;
@@ -247,7 +248,9 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 </h4>
                 <SpeakButton text={lessonDetail.story.glitchActionAr} labelAr="اسمع المشكلة" />
               </div>
-              <p className="text-sm sm:text-base leading-relaxed font-medium">{lessonDetail.story.glitchActionAr}</p>
+              <p className="text-sm sm:text-base leading-relaxed font-medium">
+                <FormattedText text={lessonDetail.story.glitchActionAr} />
+              </p>
             </div>
 
             {/* Learning Objectives Card */}
@@ -269,7 +272,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                       {i + 1}
                     </div>
                     <span className="text-sm text-slate-800 font-bold leading-relaxed">
-                      {obj}
+                      <FormattedText text={obj} />
                     </span>
                   </div>
                 ))}
@@ -303,7 +306,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                     />
                   </div>
                   <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
-                    {sec.contentAr}
+                    <FormattedText text={sec.contentAr} />
                   </p>
 
                   {sec.codeExample && (
@@ -315,7 +318,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                   {sec.noteAr && (
                     <div className="p-3.5 bg-amber-50 text-amber-900 rounded-xl border border-amber-200 text-xs sm:text-sm font-bold flex items-center gap-2">
                       <span>💡</span>
-                      <span>{sec.noteAr}</span>
+                      <FormattedText text={sec.noteAr} />
                     </div>
                   )}
                 </div>
@@ -690,13 +693,13 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                               {lvl.tasksAr.map((t, idx) => (
                                 <li key={idx} className="flex items-start gap-2">
                                   <span className="text-emerald-500">✓</span>
-                                  <span>{t}</span>
+                                  <FormattedText text={t} />
                                 </li>
                               ))}
                             </ul>
                           </div>
                           <div className="pt-3 border-t border-slate-200 text-[11px] text-amber-800 font-medium">
-                            💡 تلميح: {lvl.hintAr}
+                            💡 تلميح: <FormattedText text={lvl.hintAr} />
                           </div>
                         </div>
                       ))}

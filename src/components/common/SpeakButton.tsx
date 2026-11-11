@@ -38,7 +38,8 @@ export const SpeakButton: React.FC<SpeakButtonProps> = ({
     }
 
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    const cleanText = text.replace(/`/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'ar-SA';
     utterance.rate = 0.95;
 

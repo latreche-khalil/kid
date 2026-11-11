@@ -8,6 +8,7 @@ import { ReactionGameSimulator } from '../simulator/ReactionGameSimulator';
 import { CircuitPlayground3D } from '../simulator/CircuitPlayground3D';
 import { BugHunterGame } from '../games/BugHunterGame';
 import { soundFx } from '../../services/sound/webAudio';
+import { FormattedText } from '../common/FormattedText';
 
 interface ClassroomModeProps {
   lesson: LessonDetail;
@@ -193,7 +194,9 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
                       <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                         {i + 1}
                       </span>
-                      <span className="text-sm text-slate-800 font-medium leading-relaxed">{obj}</span>
+                      <span className="text-sm text-slate-800 font-medium leading-relaxed">
+                        <FormattedText text={obj} />
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -218,7 +221,9 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
                 {lesson.theory.sections.map((sec, i) => (
                   <div key={i} className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
                     <h3 className="text-xl font-black text-slate-800">{sec.headingAr}</h3>
-                    <p className="text-base text-slate-700 leading-relaxed">{sec.contentAr}</p>
+                    <p className="text-base text-slate-700 leading-relaxed">
+                      <FormattedText text={sec.contentAr} />
+                    </p>
 
                     {sec.codeExample && (
                       <div className="bg-white text-slate-900 font-semibold p-4 rounded-xl font-mono text-sm border border-indigo-200 shadow-xs overflow-x-auto" dir="ltr">
@@ -228,7 +233,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
 
                     {sec.noteAr && (
                       <div className="p-3 bg-amber-50 text-amber-900 rounded-xl border border-amber-200 text-xs font-bold">
-                        💡 ملاحظة هامة: {sec.noteAr}
+                        💡 ملاحظة هامة: <FormattedText text={sec.noteAr} />
                       </div>
                     )}
                   </div>
@@ -363,14 +368,14 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
                         {lvl.tasksAr.map((t, idx) => (
                           <li key={idx} className="flex items-start gap-2">
                             <span className="text-emerald-500">✓</span>
-                            <span>{t}</span>
+                            <FormattedText text={t} />
                           </li>
                         ))}
                       </ul>
                     </div>
 
                     <div className="pt-3 border-t border-slate-200 text-[11px] text-amber-800 font-medium">
-                      💡 تلميح: {lvl.hintAr}
+                      💡 تلميح: <FormattedText text={lvl.hintAr} />
                     </div>
                   </div>
                 ))}

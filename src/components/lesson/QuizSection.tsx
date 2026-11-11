@@ -4,6 +4,7 @@ import { QuizQuestion } from '../../types/curriculum';
 import { soundFx } from '../../services/sound/webAudio';
 import { storageService } from '../../services/storage/localStorage';
 import confetti from 'canvas-confetti';
+import { FormattedText } from '../common/FormattedText';
 
 interface QuizSectionProps {
   questions: QuizQuestion[];
@@ -130,7 +131,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
           {/* Question Text */}
           <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200">
             <h4 className="text-base sm:text-lg md:text-xl font-black text-slate-900 leading-snug">
-              {currentQ.questionAr}
+              <FormattedText text={currentQ.questionAr} />
             </h4>
           </div>
 
@@ -172,7 +173,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                         <div className="w-2 h-2 rounded-full bg-white" />
                       ) : null}
                     </div>
-                    <span className="text-xs sm:text-sm font-medium leading-relaxed">{opt.textAr}</span>
+                    <span className="text-xs sm:text-sm font-medium leading-relaxed">
+                      <FormattedText text={opt.textAr} />
+                    </span>
                   </div>
 
                   {isAnswerSubmitted && opt.isCorrect && (
@@ -190,7 +193,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1 animate-fadeIn">
               <span className="font-black block">💡 التفسير العلمي:</span>
               <p className="leading-relaxed">
-                {selectedOpt.explanationAr || 'أحسنت! فهم المنطق وراء الإجابة هو جوهر التفكير الحاسوبي.'}
+                <FormattedText
+                  text={selectedOpt.explanationAr || 'أحسنت! فهم المنطق وراء الإجابة هو جوهر التفكير الحاسوبي.'}
+                />
               </p>
             </div>
           )}
