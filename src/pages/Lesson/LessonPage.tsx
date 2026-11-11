@@ -339,11 +339,11 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-slate-900">استراحة سريعة! ☕</h3>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
-              حرّك يديك قليلاً، اشرب رشفة ماء، ثم اضغط على الخطوة التالية لنركّب الدارة ثلاثية الأبعاد معاً!
+              أحسنت في التركيب والتجربة! حرّك يديك قليلاً واشرب رشفة ماء، ثم اضغط على الخطوة التالية لخوض اللعبة الذكية!
             </p>
             <div className="flex justify-center">
               <SpeakButton
-                text="استراحة سريعة! حرّك يديك قليلاً واشرب رشفة ماء، ثم اضغط على الخطوة التالية لنركّب الدارة ثلاثية الأبعاد معاً!"
+                text="أحسنت في التركيب والتجربة! حرّك يديك قليلاً واشرب رشفة ماء، ثم اضغط على الخطوة التالية لخوض اللعبة الذكية!"
                 labelAr="اسمع الرسالة"
               />
             </div>
