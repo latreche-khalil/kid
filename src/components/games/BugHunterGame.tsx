@@ -20,8 +20,8 @@ interface BugLevel {
 const BUG_LEVELS: BugLevel[] = [
   {
     id: 1,
-    titleAr: 'المستوى 1: مقاومة الشد المفقودة لزر اللاعب الأول',
-    descriptionAr: 'في سباق 1 ضد 1، عبث غليتش بتعريف زر اللاعب الأول (الأزرق على D2) فجعله INPUT عادياً دون مقاومة شد مما جعل القراءة عائمة وعشوائية!',
+    titleAr: 'المستوى 1: إصلاح زر اللاعب الأول',
+    descriptionAr: 'في سباق 1 ضد 1، غيّر غليتش أمر زر اللاعب الأول (الأزرق على D2) فأصبح يلتقط ضغطات خاطئة!',
     codeLines: [
       'void setup() {',
       '  Serial.begin(9600);',
@@ -31,7 +31,7 @@ const BUG_LEVELS: BugLevel[] = [
       '}',
     ],
     buggyLineIndex: 3,
-    bugExplanationAr: 'السطر 4 يحتوي على INPUT بدلاً من INPUT_PULLUP لزر اللاعب 1 (D2). كلا الزرين يحتاج مقاومة الشد الداخلية حتى لا يخسر اللاعب بضغطة وهمية!',
+    bugExplanationAr: 'نحتاج كتابة INPUT_PULLUP لزر اللاعب 1 (D2) بدل INPUT حتى يعطي قراءة نظيفة ولا يخسر اللاعب بالغلط!',
     options: [
       { textAr: 'استبدال السطر بـ: pinMode(2, INPUT_PULLUP);', isCorrect: true },
       { textAr: 'حذف السطر بالكامل.', isCorrect: false },
@@ -40,17 +40,17 @@ const BUG_LEVELS: BugLevel[] = [
   },
   {
     id: 2,
-    titleAr: 'المستوى 2: معادلة الزمن المقلوبة',
-    descriptionAr: 'معادلة حساب وقت رد الفعل تُخرج أرقاماً غير منطقية!',
+    titleAr: 'المستوى 2: حساب وقت السباق المقلوب',
+    descriptionAr: 'حساب وقت الفوز يخرج رقماً خاطئاً وكبيراً جداً! أين الخطأ؟',
     codeLines: [
       'unsigned long startTime = millis();',
       '// انتظار ضغط الزر...',
       'unsigned long endTime = millis();',
-      'unsigned long reaction = startTime - endTime; // ⚠️ النتيجة سالبة!',
+      'unsigned long reaction = startTime - endTime; // ⚠️ الوقت مقلوب!',
       'Serial.println(reaction);',
     ],
     buggyLineIndex: 3,
-    bugExplanationAr: 'startTime أصغر من endTime. لا يمكن طرح الأكبر من الأصغر في unsigned long!',
+    bugExplanationAr: 'لحساب كم ثانية مرّت، نطرح وقت البداية (الأصغر) من وقت النهاية (الأكبر): endTime - startTime.',
     options: [
       { textAr: 'تصحيح المعادلة: reaction = endTime - startTime;', isCorrect: true },
       { textAr: 'استخدام: reaction = startTime + endTime;', isCorrect: false },
@@ -59,18 +59,18 @@ const BUG_LEVELS: BugLevel[] = [
   },
   {
     id: 3,
-    titleAr: 'المستوى 3: المصباح الخافت المنسي',
-    descriptionAr: 'المصباح لا يضيء نهائياً رغم إرسال أمر digitalWrite(LED, HIGH)! أين الخطأ؟',
+    titleAr: 'المستوى 3: اللمبة لا تشتعل!',
+    descriptionAr: 'المصباح لا يضيء نهائياً رغم أننا كتبنا digitalWrite(LED, HIGH)! ما السطر الناقص؟',
     codeLines: [
       'const int LED = 8;',
       'void setup() {',
       '  Serial.begin(9600);',
-      '  // ⚠️ غليتش نسي أمراً أساسياً هنا!',
+      '  // ⚠️ غليتش حذف سطر تهيئة اللمبة هنا!',
       '}',
       'void loop() { digitalWrite(LED, HIGH); }',
     ],
     buggyLineIndex: 3,
-    bugExplanationAr: 'بدون كتابة pinMode(LED, OUTPUT) في setup، لن يتم تفعيل ترانزستور الإخراج في المنفذ.',
+    bugExplanationAr: 'نسينا إخبار الآردوينو في setup() أن اللمبة مخرج للضوء! يجب كتابة pinMode(LED, OUTPUT); لتشتعل اللمبة.',
     options: [
       { textAr: 'إضافة: pinMode(LED, OUTPUT); داخل setup()', isCorrect: true },
       { textAr: 'استبدال HIGH بـ LOW.', isCorrect: false },

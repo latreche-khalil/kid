@@ -100,18 +100,18 @@ export function getLessonByWeek(weekNumber: number): LessonDetail {
     },
 
     theory: {
-      titleAr: `الأساسيات العلمية لمهمة: ${summary.missionNameAr}`,
-      summaryAr: `يركز هذا الدرس على المفاهيم التالية: ${summary.conceptsAr.join(' • ')}.`,
+      titleAr: `كيف ننجز مهمة: ${summary.missionNameAr} 💡`,
+      summaryAr: `نتعرّف معاً على: ${summary.conceptsAr.slice(0, 3).join(' • ')}.`,
       sections: [
         {
-          headingAr: '1. المفهوم الهندسي والبرمجي الأساسي',
-          contentAr: `في هذا الأسبوع يتعلم الطلاب ${summary.titleAr}. الهدف هو تحويل المفاهيم المجردة إلى مشاريع ملموسة يشاهد الطفل أثرها الفيزيائي بنفسه.`,
-          noteAr: 'التطبيق العملي والتجربة المباشرة هما مفتاح ترسيخ المفاهيم البرمجية.',
+          headingAr: '1. فكرة المشروع ببساطة',
+          contentAr: `في هذا الدرس سنتعلّم ${summary.titleAr}، ونطبّقه عملياً لنشاهد النتيجة بأعيننا على الدارة!`,
+          noteAr: 'جرّب بنفسك في المختبر ثلاثي الأبعاد لتفهم الفكرة بسرعة!',
         },
         {
-          headingAr: '2. دور لوحة Arduino UNO في المشروع',
+          headingAr: '2. كيف تساعدنا لوحة الآردوينو؟',
           contentAr: summary.arduinoRoleAr,
-          noteAr: 'يتم استخدام التوصيل المنظم على لوحة التجارب (Breadboard) لضمان بيئة آمنة للمكونات.',
+          noteAr: 'نوصّل الأسلاك والقطع على لوحة التجارب (Breadboard) خطوة بخطوة بأمان.',
         },
       ],
     },
