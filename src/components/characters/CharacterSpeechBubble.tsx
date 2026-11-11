@@ -61,7 +61,7 @@ export const CharacterSpeechBubble: React.FC<CharacterSpeechBubbleProps> = ({
   }[character];
 
   return (
-    <div className={`relative flex flex-col md:flex-row items-start gap-4 p-5 md:p-6 rounded-3xl border ${themeMap.border} ${themeMap.bg} shadow-card transition-card ${className}`}>
+    <div className={`relative flex flex-col md:flex-row items-center md:items-start gap-4 p-4 sm:p-5 md:p-6 rounded-3xl border ${themeMap.border} ${themeMap.bg} shadow-card transition-card ${className}`}>
       {/* Sparkle badge decoration */}
       <div className="shrink-0 flex flex-col items-center">
         <CharacterAvatar character={character} size="lg" expression={expression} />
@@ -71,7 +71,7 @@ export const CharacterSpeechBubble: React.FC<CharacterSpeechBubbleProps> = ({
       </div>
 
       {/* Bubble Content */}
-      <div className="flex-1 w-full space-y-3">
+      <div className="flex-1 w-full space-y-3 text-right">
         <div className="flex flex-wrap items-center justify-between gap-2">
           {badgeTextAr ? (
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-700 shadow-sm border border-gray-100">
@@ -83,7 +83,7 @@ export const CharacterSpeechBubble: React.FC<CharacterSpeechBubbleProps> = ({
           <SpeakButton text={paragraphs.join(' ')} labelAr="اسمع القصة" />
         </div>
 
-        <div className="space-y-2 text-gray-800 leading-relaxed text-base md:text-lg font-medium">
+        <div className="space-y-2 text-gray-800 leading-relaxed text-sm sm:text-base md:text-lg font-medium">
           {paragraphs.map((para, i) => (
             <p key={i}>{para}</p>
           ))}
@@ -93,7 +93,7 @@ export const CharacterSpeechBubble: React.FC<CharacterSpeechBubbleProps> = ({
           <div className="pt-2">
             <button
               onClick={actionButton.onClick}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-[#FF5B5A] hover:bg-[#E84A5F] active:scale-95 shadow-coral-glow transition-all text-sm"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-[#FF5B5A] hover:bg-[#E84A5F] active:scale-95 shadow-coral-glow transition-all text-sm"
             >
               <span>{actionButton.labelAr}</span>
               <span>←</span>

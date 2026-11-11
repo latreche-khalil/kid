@@ -103,16 +103,16 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
   const selectedOpt = currentQ.options.find((o) => o.id === selectedOptionId);
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-6 md:p-8 space-y-6">
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
       {/* Quiz Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-            <BookOpen className="w-6 h-6" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
+            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-slate-800">اختبار الفهم الذاتي ومراجعة المفاهيم — الأسبوع {weekNumber}</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-base sm:text-xl font-black text-slate-800">اختبار الفهم الذاتي — الأسبوع {weekNumber}</h3>
+            <p className="text-[11px] sm:text-xs text-slate-500">
               أسئلة تفاعلية فورية لمراجعة وتثبيت ما تعلمته في هذه الحصة
             </p>
           </div>
@@ -126,16 +126,16 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
       </div>
 
       {!isFinished ? (
-        <div className="space-y-6 max-w-2xl mx-auto py-2">
+        <div className="space-y-5 sm:space-y-6 max-w-2xl mx-auto py-1 sm:py-2">
           {/* Question Text */}
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-            <h4 className="text-lg md:text-xl font-black text-slate-900 leading-snug">
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200">
+            <h4 className="text-base sm:text-lg md:text-xl font-black text-slate-900 leading-snug">
               {currentQ.questionAr}
             </h4>
           </div>
 
           {/* Options List */}
-          <div className="space-y-3">
+          <div className="space-y-2.5 sm:space-y-3">
             {currentQ.options.map((opt) => {
               const isSelected = selectedOptionId === opt.id;
               let optionStyle = 'border-slate-200 hover:border-slate-300 bg-white text-slate-700';
@@ -156,7 +156,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                 <div
                   key={opt.id}
                   onClick={() => handleSelectOption(opt.id)}
-                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between gap-4 ${optionStyle}`}
+                  className={`p-3.5 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between gap-3 sm:gap-4 min-h-[48px] ${optionStyle}`}
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -172,7 +172,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                         <div className="w-2 h-2 rounded-full bg-white" />
                       ) : null}
                     </div>
-                    <span className="text-sm font-medium">{opt.textAr}</span>
+                    <span className="text-xs sm:text-sm font-medium leading-relaxed">{opt.textAr}</span>
                   </div>
 
                   {isAnswerSubmitted && opt.isCorrect && (
@@ -187,7 +187,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
 
           {/* Explanation Banner after submission */}
           {isAnswerSubmitted && selectedOpt && (
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1 animate-fadeIn">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1 animate-fadeIn">
               <span className="font-black block">💡 التفسير العلمي:</span>
               <p className="leading-relaxed">
                 {selectedOpt.explanationAr || 'أحسنت! فهم المنطق وراء الإجابة هو جوهر التفكير الحاسوبي.'}
@@ -196,8 +196,8 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
           )}
 
           {/* Action Footer */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-            <span className="text-xs text-slate-400">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-slate-100">
+            <span className="text-xs text-slate-400 text-center sm:text-right">
               اختر الإجابة ثم اضغط "تأكيد الإجابة" لمعرفة التفسير
             </span>
 
@@ -205,7 +205,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
               <button
                 onClick={handleSubmitAnswer}
                 disabled={!selectedOptionId}
-                className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md ${
+                className={`px-6 py-3 sm:py-2.5 rounded-xl font-bold text-sm transition-all shadow-md ${
                   selectedOptionId
                     ? 'bg-[#FF5B5A] text-white hover:bg-[#E84A5F] shadow-coral-glow'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
@@ -216,7 +216,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             ) : (
               <button
                 onClick={handleNextQuestion}
-                className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all flex items-center gap-2"
+                className="px-6 py-3 sm:py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
               >
                 <span>{currentIdx < questions.length - 1 ? 'السؤال التالي ←' : 'عرض نتيجة المراجعة 📊'}</span>
               </button>

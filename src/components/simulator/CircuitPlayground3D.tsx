@@ -262,8 +262,10 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
   const resetCamera = () => {
     soundFx.playClick();
     setIsRotatingAuto(false);
+    const container = mountRef.current;
+    const isNarrow = container ? container.clientWidth < 520 : false;
     if (cameraRef.current && circuitGroupRef.current) {
-      cameraRef.current.position.set(0, 13, 11);
+      cameraRef.current.position.set(0, isNarrow ? 16 : 13, isNarrow ? 14 : 11);
       cameraRef.current.lookAt(0, 0, 0);
       circuitGroupRef.current.rotation.set(0, 0, 0);
     }
@@ -295,9 +297,10 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     const container = mountRef.current;
     if (!container) return;
 
-    // Dimensions
-    const width = container.clientWidth;
-    const height = container.clientHeight || 520;
+    // Dimensions (safe fallback + mobile framing)
+    const width = Math.max(container.clientWidth, 260);
+    const height = Math.max(container.clientHeight, 260);
+    const isNarrow = width < 520;
 
     // Initialize Scene
     const scene = new THREE.Scene();
@@ -305,8 +308,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     sceneRef.current = scene;
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 13, 11);
+    const camera = new THREE.PerspectiveCamera(isNarrow ? 44 : 40, width / height, 0.1, 100);
+    camera.position.set(0, isNarrow ? 16 : 13, isNarrow ? 14 : 11);
     camera.lookAt(0, 0, 0);
     cameraRef.current = camera;
 
@@ -316,6 +319,9 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.domElement.style.touchAction = 'none';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
@@ -726,32 +732,53 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
       createCurvedWire([new THREE.Vector3(-3.2, 0.7, -1.2), new THREE.Vector3(0.4, 2.6, -0.6), new THREE.Vector3(3.2, 0.7, 0.0)], 0x10b981);
     }
 
-    // ================= INTERACTIVE ORBIT & DRAG =================
+    // ================= INTERACTIVE ORBIT & DRAG (Mouse + Touch) =================
     let isDragging = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
+    let prevPointerX = 0;
+    let prevPointerY = 0;
+
+    const rotateSceneBy = (deltaX: number, deltaY: number) => {
+      if (!circuitGroupRef.current) return;
+      circuitGroupRef.current.rotation.y += deltaX * 0.007;
+      circuitGroupRef.current.rotation.x += deltaY * 0.007;
+      circuitGroupRef.current.rotation.x = Math.max(-0.6, Math.min(0.8, circuitGroupRef.current.rotation.x));
+    };
 
     const onMouseDown = (e: MouseEvent) => {
       isDragging = true;
       setIsRotatingAuto(false);
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      if (!isDragging || !circuitGroupRef.current) return;
-      const deltaX = e.clientX - prevMouseX;
-      const deltaY = e.clientY - prevMouseY;
-
-      circuitGroupRef.current.rotation.y += deltaX * 0.007;
-      circuitGroupRef.current.rotation.x += deltaY * 0.007;
-      circuitGroupRef.current.rotation.x = Math.max(-0.6, Math.min(0.8, circuitGroupRef.current.rotation.x));
-
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
+      if (!isDragging) return;
+      rotateSceneBy(e.clientX - prevPointerX, e.clientY - prevPointerY);
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
     };
 
     const onMouseUp = () => {
+      isDragging = false;
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      isDragging = true;
+      setIsRotatingAuto(false);
+      prevPointerX = e.touches[0].clientX;
+      prevPointerY = e.touches[0].clientY;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      e.preventDefault();
+      rotateSceneBy(e.touches[0].clientX - prevPointerX, e.touches[0].clientY - prevPointerY);
+      prevPointerX = e.touches[0].clientX;
+      prevPointerY = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = () => {
       isDragging = false;
     };
 
@@ -766,6 +793,9 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     domElement.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    domElement.addEventListener('touchstart', onTouchStart, { passive: true });
+    domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+    domElement.addEventListener('touchend', onTouchEnd);
     domElement.addEventListener('wheel', onWheel, { passive: false });
 
     // Animation Loop
@@ -793,22 +823,33 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
     const onResize = () => {
       if (!container || !cameraRef.current || !rendererRef.current) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight || 520;
+      const w = Math.max(container.clientWidth, 260);
+      const h = Math.max(container.clientHeight, 260);
+      cameraRef.current.fov = w < 520 ? 44 : 40;
       cameraRef.current.aspect = w / h;
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
     };
 
     window.addEventListener('resize', onResize);
+    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(onResize) : null;
+    if (resizeObserver) {
+      resizeObserver.observe(container);
+    }
 
     return () => {
       cancelAnimationFrame(animationId);
       domElement.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
+      domElement.removeEventListener('touchstart', onTouchStart);
+      domElement.removeEventListener('touchmove', onTouchMove);
+      domElement.removeEventListener('touchend', onTouchEnd);
       domElement.removeEventListener('wheel', onWheel);
       window.removeEventListener('resize', onResize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
 
       if (container.contains(domElement)) {
         container.removeChild(domElement);
@@ -842,27 +883,27 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
   const activeStepDetail = REACTION_ASSEMBLY_STEPS[currentStep] || REACTION_ASSEMBLY_STEPS[0];
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-5 md:p-7 space-y-5">
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-3.5 sm:p-5 md:p-7 space-y-4 sm:space-y-5">
       {/* Top Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-            <Move3d className="w-6 h-6" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0">
+            <Move3d className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <h3 className="text-lg md:text-xl font-black text-slate-800">ركّب وجرّب الدارة ثلاثية الأبعاد ⚡</h3>
-            <p className="text-xs text-slate-500">
-              يمكنك تحريك الدارة بإصبعك أو بالفأرة واللعب بالأزرار مباشرة
+            <h3 className="text-base sm:text-lg md:text-xl font-black text-slate-800">ركّب وجرّب الدارة ثلاثية الأبعاد ⚡</h3>
+            <p className="text-[11px] sm:text-xs text-slate-500">
+              حرّك الدارة بإصبعك أو بالفأرة وجرّب الأزرار مباشرة
             </p>
           </div>
         </div>
 
         {/* Simple Assembly Mode Toggle (Step-by-step vs Complete) for Reaction Project */}
         {activeProject === 'reaction' && (
-          <div className="flex items-center gap-2 bg-amber-50 p-1.5 rounded-2xl border border-amber-200">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-amber-50 p-1.5 rounded-2xl border border-amber-200 w-full sm:w-auto">
             <button
               onClick={() => handleSelectStep(0)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+              className={`flex-1 sm:flex-none px-3 sm:px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-black transition-all text-center ${
                 currentStep < 6
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -872,7 +913,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
             </button>
             <button
               onClick={() => handleSelectStep(6)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+              className={`flex-1 sm:flex-none px-3 sm:px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-black transition-all text-center ${
                 currentStep === 6
                   ? 'bg-[#FF5B5A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -885,7 +926,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
         {/* Only show project switcher if NOT inside a specific lesson */}
         {lessonWeek === undefined && (
-          <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold w-full sm:w-auto">
             <button
               onClick={() => {
                 soundFx.playClick();
@@ -945,8 +986,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
       {/* Clean Progress Indicator when in Step-by-Step mode */}
       {activeProject === 'reaction' && currentStep < 6 && (
-        <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+        <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 font-black text-xs shrink-0">
               الخطوة {currentStep} من 6
             </span>
@@ -962,53 +1003,56 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
       )}
 
       {/* Main Grid: 3D Viewport + Assembly Guidance & Hardware Controls */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left: 3D Viewport Stage */}
-        <div className="lg:col-span-8 relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 min-h-[520px] flex flex-col justify-between p-4 shadow-inner">
-          {/* Top HUD */}
-          <div className="flex items-center justify-between z-10">
-            <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-slate-800 text-xs text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              <span>
-                {activeProject === 'reaction'
-                  ? `عرض تركيبي: ${activeStepDetail.titleAr}`
-                  : 'مختبر تفاعلي حي'}
-              </span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+        {/* Left: 3D Viewport Stage + Below-Canvas Interactive Controls */}
+        <div className="lg:col-span-8 rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
+          {/* Dedicated 3D Canvas Wrapper (Never covered by bottom buttons!) */}
+          <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] w-full rounded-2xl overflow-hidden bg-slate-950">
+            {/* Top HUD */}
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 p-2 pointer-events-none">
+              <div className="flex items-center gap-2 bg-slate-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1.5 rounded-2xl border border-slate-800 text-[11px] sm:text-xs text-slate-200 max-w-full">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+                <span className="truncate">
+                  {activeProject === 'reaction'
+                    ? activeStepDetail.titleAr
+                    : 'مختبر تفاعلي حي'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 pointer-events-auto">
+                <button
+                  onClick={() => setIsRotatingAuto(!isRotatingAuto)}
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-colors ${
+                    isRotatingAuto ? 'bg-amber-500 text-slate-950 shadow-md' : 'bg-slate-800/90 text-slate-300 hover:text-white'
+                  }`}
+                >
+                  {isRotatingAuto ? 'إيقاف ⏸' : 'تدوير ▶'}
+                </button>
+
+                <button
+                  onClick={resetCamera}
+                  className="p-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 transition-colors"
+                  title="إعادة ضبط الكاميرا"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsRotatingAuto(!isRotatingAuto)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                  isRotatingAuto ? 'bg-amber-500 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-400 hover:text-white'
-                }`}
-              >
-                {isRotatingAuto ? 'إيقاف الدوران ⏸' : 'دوران سينمائي ▶'}
-              </button>
-
-              <button
-                onClick={resetCamera}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-                title="إعادة ضبط الكاميرا"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
-            </div>
+            {/* Three.js Canvas Container */}
+            <div ref={mountRef} className="absolute inset-0 cursor-grab active:cursor-grabbing touch-none" />
           </div>
 
-          {/* Three.js Canvas Container */}
-          <div ref={mountRef} className="absolute inset-0 cursor-grab active:cursor-grabbing" />
-
           {/* Bottom Live Hardware Playground Bar */}
-          <div className="relative z-10 bg-slate-900/90 backdrop-blur-md p-4 rounded-2xl border border-slate-800 space-y-3">
+          <div className="relative z-10 bg-slate-900/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-slate-800 space-y-2.5 sm:space-y-3">
             {activeProject === 'reaction' ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5 sm:space-y-3">
                 <div className="flex flex-wrap items-center justify-between text-xs font-bold gap-2">
                   <span className="flex items-center gap-1.5 text-amber-400">
-                    <Zap className="w-4 h-4" />
+                    <Zap className="w-4 h-4 shrink-0" />
                     <span>جرّب لعبة سرعة الاستجابة هنا مباشرة:</span>
                   </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-black ${
+                  <span className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-black ${
                     gameState === 'ready'
                       ? 'bg-rose-500 text-white animate-pulse'
                       : gameState === 'waiting'
@@ -1032,31 +1076,31 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                 </div>
 
                 {/* Status Message */}
-                <p className="text-xs text-slate-200 bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 font-bold text-center">
+                <p className="text-[11px] sm:text-xs text-slate-200 bg-slate-950/70 p-2 sm:p-2.5 rounded-xl border border-slate-800 font-bold text-center">
                   {gameMessage}
                 </p>
 
                 {/* Hardware Interactive Buttons */}
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2.5 sm:gap-3">
                   <button
                     onClick={handlePressStartButton}
                     disabled={gameState === 'waiting'}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95"
+                    className="lg:flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[44px]"
                   >
-                    <Play className="w-4 h-4 fill-current" />
+                    <Play className="w-4 h-4 fill-current shrink-0" />
                     <span>1. اضغط الزر الأزرق للبدء</span>
                   </button>
 
                   <button
                     onClick={handlePressReactionButton}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95"
+                    className="lg:flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[44px]"
                   >
-                    <Zap className="w-4 h-4" />
+                    <Zap className="w-4 h-4 shrink-0" />
                     <span>2. اضغط الزر الأخضر بسرعة!</span>
                   </button>
 
                   {/* LED Indicator Badge */}
-                  <div className={`px-3 py-2.5 rounded-xl flex items-center gap-2 text-xs font-bold ${
+                  <div className={`sm:col-span-2 lg:col-span-1 px-3 py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs font-bold ${
                     isLedLit
                       ? 'bg-rose-600 text-white shadow-[0_0_15px_#EF4444]'
                       : 'bg-slate-800 text-slate-400'
@@ -1067,8 +1111,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                 </div>
               </div>
             ) : activeProject === 'ultrasonic' ? (
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-bold text-slate-300 whitespace-nowrap">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
+                <span className="text-xs font-bold text-slate-300">
                   مسافة العائق أمام الحساس: <span className="text-amber-400 font-mono font-black">{distanceCm} سم</span>
                 </span>
                 <input
@@ -1077,12 +1121,12 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   max={150}
                   value={distanceCm}
                   onChange={(e) => handleDistanceChange(Number(e.target.value))}
-                  className="flex-1 accent-amber-500 cursor-pointer"
+                  className="w-full sm:flex-1 accent-amber-500 cursor-pointer h-2"
                 />
               </div>
             ) : activeProject === 'servo' ? (
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-bold text-slate-300 whitespace-nowrap">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
+                <span className="text-xs font-bold text-slate-300">
                   زاوية دوران السيرفو: <span className="text-purple-400 font-mono font-black">{servoAngleDeg}°</span>
                 </span>
                 <input
@@ -1091,12 +1135,12 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   max={180}
                   value={servoAngleDeg}
                   onChange={(e) => handleServoChange(Number(e.target.value))}
-                  className="flex-1 accent-purple-500 cursor-pointer"
+                  className="w-full sm:flex-1 accent-purple-500 cursor-pointer h-2"
                 />
               </div>
             ) : (
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-bold text-slate-300 whitespace-nowrap">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
+                <span className="text-xs font-bold text-slate-300">
                   سرعة مروحة المحرك (PWM): <span className="text-emerald-400 font-mono font-black">{motorSpeedPwm} / 255</span>
                 </span>
                 <input
@@ -1105,7 +1149,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   max={255}
                   value={motorSpeedPwm}
                   onChange={(e) => handleMotorSpeedChange(Number(e.target.value))}
-                  className="flex-1 accent-emerald-500 cursor-pointer"
+                  className="w-full sm:flex-1 accent-emerald-500 cursor-pointer h-2"
                 />
               </div>
             )}
@@ -1113,7 +1157,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         </div>
 
         {/* Right: Assembly Guide & Wiring Inspector */}
-        <div className="lg:col-span-4 bg-slate-50 rounded-3xl p-6 border border-slate-200 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-4 bg-slate-50 rounded-3xl p-4 sm:p-6 border border-slate-200 flex flex-col justify-between space-y-5">
           <div className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 gap-2">
@@ -1181,7 +1225,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
               </div>
             ) : (
               <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3 text-xs">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <h4 className="font-black text-slate-900 text-sm">كيف يعمل هذا المشروع؟</h4>
                   <SpeakButton
                     text={
@@ -1217,23 +1261,23 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
           {/* Bottom Stepper Navigation Controls */}
           {activeProject === 'reaction' && (
-            <div className="flex items-center justify-between gap-3 pt-4 border-t border-slate-200">
+            <div className="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-200">
               <button
                 onClick={handlePrevStep}
                 disabled={currentStep === 0}
-                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 text-slate-700 border border-slate-200 text-xs sm:text-sm font-bold transition-all"
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 text-slate-700 border border-slate-200 text-xs sm:text-sm font-bold transition-all min-h-[44px]"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 shrink-0" />
                 <span>الخطوة السابقة</span>
               </button>
 
               <button
                 onClick={handleNextStep}
                 disabled={currentStep === REACTION_ASSEMBLY_STEPS.length - 1}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FF5B5A] hover:bg-[#ff4645] disabled:opacity-40 text-white text-xs sm:text-sm font-black shadow-coral-glow transition-all"
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#FF5B5A] hover:bg-[#ff4645] disabled:opacity-40 text-white text-xs sm:text-sm font-black shadow-coral-glow transition-all min-h-[44px]"
               >
                 <span>أضف القطعة التالية</span>
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 shrink-0" />
               </button>
             </div>
           )}

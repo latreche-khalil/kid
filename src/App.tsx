@@ -57,7 +57,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Page Canvas Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8">
         {currentTab === 'home' && (
           <HomePage
             activeProfile={activeProfile}

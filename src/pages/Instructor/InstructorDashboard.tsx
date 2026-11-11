@@ -87,13 +87,13 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
   return (
     <div className="space-y-8 pb-16">
       {/* Header Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-8 md:p-10 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-5 sm:p-8 md:p-10 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/30 text-indigo-300 text-xs font-black border border-indigo-500/30">
             <GraduationCap className="w-4 h-4 text-indigo-400" />
             <span>بوابة المعلّم والمدرّب المعتمد</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black">لوحة التحكم الأكاديمية وإدارة الحصص</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black">لوحة التحكم الأكاديمية وإدارة الحصص</h1>
           <p className="text-slate-300 text-sm max-w-xl">
             متابعة إنجاز طلاب قاعة الدرس، إطلاق وضع العرض التفاعلي على جهاز العرض (Projector)، وتصدير النسخ الاحتياطية.
           </p>
@@ -197,8 +197,8 @@ export const InstructorDashboard: React.FC<InstructorDashboardProps> = ({
       </div>
 
       {/* Students Profiles Table / Cards */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-card space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+      <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-100 shadow-card space-y-5 sm:space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
             <h3 className="text-xl font-black text-slate-800">قائمة طلاب الفصل الحالي</h3>
             <p className="text-xs text-slate-500">انقر على أي طالب لجعله الطالب النشط أو مراجعة سجله</p>

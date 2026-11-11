@@ -144,20 +144,20 @@ export const BugHunterGame: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-6 md:p-8 space-y-6">
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
       {/* Game Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
-            <Bug className="w-6 h-6" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold shrink-0">
+            <Bug className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-slate-800">لعبة صائد الأخطاء البرمجية (Bug Hunter)</h3>
-            <p className="text-xs text-slate-500">انقر على السطر المعطوب ثم اختر الحل الهندسي الصحيح لإنقاذ البرنامج!</p>
+            <h3 className="text-base sm:text-xl font-black text-slate-800">لعبة صائد الأخطاء البرمجية</h3>
+            <p className="text-[11px] sm:text-xs text-slate-500">انقر على السطر المعطوب ثم اختر الحل الصحيح!</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-bold text-xs">
             <Sparkles className="w-4 h-4 text-amber-500" />
             <span>النقاط: {score} XP</span>
@@ -170,34 +170,34 @@ export const BugHunterGame: React.FC = () => {
       </div>
 
       {!gameFinished ? (
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
           {/* Level Prompt */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200">
             <h4 className="font-bold text-slate-800 text-sm mb-1">{level.titleAr}</h4>
             <p className="text-xs text-slate-600 leading-relaxed">{level.descriptionAr}</p>
           </div>
 
           {/* Interactive Code Box */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+            <div className="flex flex-wrap items-center justify-between gap-1 text-xs font-bold text-slate-500">
               <span>الخطوة 1: انقر على السطر الذي يحتوي على الخطأ</span>
               <span>بيئة Arduino IDE</span>
             </div>
 
-            <div className="bg-slate-900 rounded-2xl p-4 font-mono text-xs text-slate-300 space-y-1 overflow-x-auto select-none border border-slate-800">
+            <div className="bg-slate-900 rounded-2xl p-3 sm:p-4 font-mono text-[11px] sm:text-xs text-slate-300 space-y-1 overflow-x-auto select-none border border-slate-800" dir="ltr">
               {level.codeLines.map((line, idx) => {
                 const isSelected = selectedLine === idx;
                 const isTheBug = idx === level.buggyLineIndex;
 
                 let rowStyle = 'hover:bg-slate-800/80 cursor-pointer';
                 if (isSelected) {
-                  rowStyle = 'bg-blue-600/30 border-r-4 border-blue-400 text-white font-bold';
+                  rowStyle = 'bg-blue-600/30 border-l-4 border-blue-400 text-white font-bold';
                 }
                 if (isAnswered) {
                   if (isTheBug) {
-                    rowStyle = 'bg-emerald-900/40 border-r-4 border-emerald-400 text-emerald-200 font-bold';
+                    rowStyle = 'bg-emerald-900/40 border-l-4 border-emerald-400 text-emerald-200 font-bold';
                   } else if (isSelected && !isTheBug) {
-                    rowStyle = 'bg-rose-900/40 border-r-4 border-rose-400 text-rose-200';
+                    rowStyle = 'bg-rose-900/40 border-l-4 border-rose-400 text-rose-200';
                   }
                 }
 
@@ -205,9 +205,9 @@ export const BugHunterGame: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => handleLineClick(idx)}
-                    className={`flex items-center gap-3 px-3 py-1.5 rounded-lg transition-colors ${rowStyle}`}
+                    className={`flex items-center gap-3 px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap min-w-fit ${rowStyle}`}
                   >
-                    <span className="w-6 text-slate-600 text-right select-none">{idx + 1}</span>
+                    <span className="w-5 text-slate-500 text-right select-none shrink-0">{idx + 1}</span>
                     <span className="flex-1">{line}</span>
                   </div>
                 );

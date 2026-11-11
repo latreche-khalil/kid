@@ -25,32 +25,32 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/70 shadow-sm transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between min-h-[64px] sm:h-20 py-2 sm:py-0 gap-2 sm:gap-4">
           {/* Logo & Brand Identity */}
           <div
             onClick={() => {
               soundFx.playClick();
               onTabChange('home');
             }}
-            className="flex items-center gap-3 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
           >
-            <div className="relative">
+            <div className="relative scale-90 sm:scale-100">
               <CharacterAvatar character="robo" size="sm" />
               <span className="absolute -top-1 -right-1 text-amber-500 text-xs">✦</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xl font-black text-slate-900 tracking-tight group-hover:text-[#FF5B5A] transition-colors">
+                <span className="text-sm sm:text-xl font-black text-slate-900 tracking-tight group-hover:text-[#FF5B5A] transition-colors whitespace-nowrap">
                   المبتكرون الصغار
                 </span>
               </div>
-              <p className="text-[11px] font-bold text-slate-400">تعلّم • العب • اكتشف • ابنِ</p>
+              <p className="hidden sm:block text-[11px] font-bold text-slate-400">تعلّم • العب • اكتشف • ابنِ</p>
             </div>
           </div>
 
           {/* Super Simple Kid Navigation (Only 2 Clear Choices) */}
-          <nav className="flex items-center gap-2">
+          <nav className="flex items-center gap-1.5 sm:gap-2">
             {kidNavItems.map((item) => {
               const isActive =
                 currentTab === item.id ||
@@ -63,27 +63,34 @@ export const Header: React.FC<HeaderProps> = ({
                     soundFx.playClick();
                     onTabChange(item.id);
                   }}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-black transition-all ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-black transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-[#FF5B5A] text-white shadow-coral-glow scale-102'
+                      ? 'bg-[#FF5B5A] text-white shadow-coral-glow'
                       : 'bg-slate-50 text-slate-700 hover:text-slate-900 hover:bg-amber-50 border border-slate-200'
                   }`}
                 >
                   {item.icon}
-                  <span>{item.labelAr}</span>
+                  {item.id === 'map' ? (
+                    <>
+                      <span className="sm:hidden">الدروس (24)</span>
+                      <span className="hidden sm:inline">{item.labelAr}</span>
+                    </>
+                  ) : (
+                    <span>{item.labelAr}</span>
+                  )}
                 </button>
               );
             })}
           </nav>
 
           {/* Discreet Teacher Access (Tucked away cleanly) */}
-          <div className="flex items-center">
+          <div className="flex items-center shrink-0">
             <button
               onClick={() => {
                 soundFx.playClick();
                 onTabChange('instructor');
               }}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
+              className={`flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-bold transition-all border ${
                 currentTab === 'instructor'
                   ? 'bg-slate-800 text-white border-slate-800'
                   : 'bg-white text-slate-400 hover:text-slate-700 border-slate-200 hover:border-slate-300'
@@ -91,7 +98,7 @@ export const Header: React.FC<HeaderProps> = ({
               title="أدوات المعلّم وإدارة العرض"
             >
               <GraduationCap className="w-4 h-4" />
-              <span className="hidden sm:inline">للمعلّم</span>
+              <span className="hidden md:inline">للمعلّم</span>
             </button>
           </div>
         </div>

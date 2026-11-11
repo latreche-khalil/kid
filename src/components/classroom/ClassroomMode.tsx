@@ -61,35 +61,35 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
   return (
     <div className="fixed inset-0 z-50 bg-[#FDFBF7] overflow-y-auto flex flex-col font-sans">
       {/* Top Classroom Bar */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
+      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2.5 shadow-sm">
         {/* Left: Lesson Title & Week */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
           <button
             onClick={onClose}
-            className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+            className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors shrink-0"
             title="الخروج من وضع قاعة الدرس"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[11px] sm:text-xs font-bold">
                 الأسبوع {lesson.week}
               </span>
-              <span className="text-xs text-slate-500 font-bold">وضع العرض الصفي التفاعلي</span>
+              <span className="hidden sm:inline text-xs text-slate-500 font-bold">وضع العرض الصفي التفاعلي</span>
             </div>
-            <h1 className="text-lg md:text-xl font-black text-slate-900 mt-0.5">
+            <h1 className="text-sm sm:text-lg md:text-xl font-black text-slate-900 mt-0.5 truncate">
               {lesson.missionNameAr} — {lesson.titleAr}
             </h1>
           </div>
         </div>
 
         {/* Right: Controls & Fullscreen */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={toggleFullscreen}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             <span className="hidden sm:inline">{isFullscreen ? 'إنهاء ملء الشاشة' : 'ملء الشاشة'}</span>
@@ -97,7 +97,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
 
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-sm"
+            className="px-3.5 sm:px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-sm"
           >
             إغلاق العرض
           </button>
@@ -105,7 +105,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
       </div>
 
       {/* Main Classroom Body */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8 space-y-8">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 md:p-8 space-y-5 sm:space-y-8">
         {/* Stage Timeline Stepper */}
         <div className="bg-white rounded-3xl p-4 md:p-6 border border-slate-200 shadow-card">
           <div className="flex items-center justify-between overflow-x-auto gap-2 pb-2">
@@ -380,35 +380,35 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
         </div>
 
         {/* Classroom Navigation Footer */}
-        <div className="flex items-center justify-between pt-4">
+        <div className="grid grid-cols-1 sm:flex sm:items-center sm:justify-between gap-2.5 pt-2 sm:pt-4">
           <button
             onClick={handlePrevStage}
             disabled={currentStageIdx === 0}
-            className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all ${
+            className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all ${
               currentStageIdx === 0
                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
                 : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
             }`}
           >
-            <ArrowRight className="w-4 h-4" />
-            <span>المرحلة السابقة ({stages[currentStageIdx - 1]?.titleAr || ''})</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
+            <span className="truncate">المرحلة السابقة ({stages[currentStageIdx - 1]?.titleAr || ''})</span>
           </button>
 
           <button
             onClick={handleNextStage}
             disabled={currentStageIdx === stages.length - 1}
-            className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all shadow-md ${
+            className={`flex items-center justify-center gap-2 px-5 sm:px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-md ${
               currentStageIdx === stages.length - 1
                 ? 'bg-emerald-600 text-white cursor-default'
                 : 'bg-[#FF5B5A] text-white hover:bg-[#E84A5F] shadow-coral-glow'
             }`}
           >
-            <span>
+            <span className="truncate">
               {currentStageIdx === stages.length - 1
                 ? 'تم الانتهاء من الحصة 🎉'
                 : `المرحلة التالية: ${stages[currentStageIdx + 1]?.titleAr}`}
             </span>
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 shrink-0" />
           </button>
         </div>
       </div>
