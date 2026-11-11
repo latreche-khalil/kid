@@ -18,8 +18,20 @@ import {
 } from 'lucide-react';
 import { soundFx } from '../../services/sound/webAudio';
 import { CharacterAvatar } from '../characters/CharacterAvatars';
+import { SpeakButton } from '../common/SpeakButton';
 
 export type CircuitProjectId = 'reaction' | 'ultrasonic' | 'servo' | 'motor';
+
+interface CircuitPlayground3DProps {
+  lessonWeek?: number;
+}
+
+function getProjectFromWeek(week?: number): CircuitProjectId {
+  if (week === 12) return 'ultrasonic';
+  if (week === 13) return 'servo';
+  if (week === 14) return 'motor';
+  return 'reaction';
+}
 
 interface AssemblyStep {
   step: number;
@@ -105,13 +117,17 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
   }
 ];
 
-export const CircuitPlayground3D: React.FC = () => {
+export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lessonWeek }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
 
   // Active Project & Assembly Step
-  const [activeProject, setActiveProject] = useState<CircuitProjectId>('reaction');
+  const [activeProject, setActiveProject] = useState<CircuitProjectId>(() => getProjectFromWeek(lessonWeek));
   const [currentStep, setCurrentStep] = useState<number>(6); // Default: show full assembled circuit
   const [isRotatingAuto, setIsRotatingAuto] = useState<boolean>(false);
+
+  useEffect(() => {
+    setActiveProject(getProjectFromWeek(lessonWeek));
+  }, [lessonWeek]);
 
   // Interactive Live Game States (for Reaction Game Circuit)
   const [gameState, setGameState] = useState<'idle' | 'waiting' | 'ready' | 'result' | 'false_start'>('idle');
@@ -826,134 +842,122 @@ export const CircuitPlayground3D: React.FC = () => {
   const activeStepDetail = REACTION_ASSEMBLY_STEPS[currentStep] || REACTION_ASSEMBLY_STEPS[0];
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-6 md:p-8 space-y-6">
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-5 md:p-7 space-y-5">
       {/* Top Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-            <Move3d className="w-6 h-6 animate-pulse" />
+          <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+            <Move3d className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-black text-slate-800">مختبر الدوائر حسب تركيب المشروع الفيزيائي</h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
-                {activeProject === 'reaction' ? 'مشروع الأسبوع 1: سرعة الاستجابة' : 'مشروع فيزيائي متقدم'}
-              </span>
-            </div>
+            <h3 className="text-lg md:text-xl font-black text-slate-800">ركّب وجرّب الدارة ثلاثية الأبعاد ⚡</h3>
             <p className="text-xs text-slate-500">
-              تجسيد ثلاثي الأبعاد مطابق تماماً لمخطط الدارة الواقعي، مع إمكانية التجميع خطوة بخطوة والتجربة الحية
+              يمكنك تحريك الدارة بإصبعك أو بالفأرة واللعب بالأزرار مباشرة
             </p>
           </div>
         </div>
 
-        {/* Project Preset Selector */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
-          <button
-            onClick={() => {
-              soundFx.playClick();
-              setActiveProject('reaction');
-              setCurrentStep(6);
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeProject === 'reaction'
-                ? 'bg-[#FF5B5A] text-white shadow-coral-glow'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            🏎️ دارة سرعة الاستجابة (W1)
-          </button>
-          <button
-            onClick={() => {
-              soundFx.playClick();
-              setActiveProject('ultrasonic');
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeProject === 'ultrasonic'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            🦇 رادار المسافة (W12)
-          </button>
-          <button
-            onClick={() => {
-              soundFx.playClick();
-              setActiveProject('servo');
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeProject === 'servo'
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            🅿️ حاجز السيرفو (W13)
-          </button>
-          <button
-            onClick={() => {
-              soundFx.playClick();
-              setActiveProject('motor');
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeProject === 'motor'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            🌀 محرك المروحة (W14)
-          </button>
-        </div>
+        {/* Simple Assembly Mode Toggle (Step-by-step vs Complete) for Reaction Project */}
+        {activeProject === 'reaction' && (
+          <div className="flex items-center gap-2 bg-amber-50 p-1.5 rounded-2xl border border-amber-200">
+            <button
+              onClick={() => handleSelectStep(0)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+                currentStep < 6
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🔧 ركّب خطوة بخطوة
+            </button>
+            <button
+              onClick={() => handleSelectStep(6)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+                currentStep === 6
+                  ? 'bg-[#FF5B5A] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              ✨ الدارة جاهزة كاملة
+            </button>
+          </div>
+        )}
+
+        {/* Only show project switcher if NOT inside a specific lesson */}
+        {lessonWeek === undefined && (
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setActiveProject('reaction');
+                setCurrentStep(6);
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeProject === 'reaction'
+                  ? 'bg-[#FF5B5A] text-white shadow-coral-glow'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🏎️ سرعة الاستجابة
+            </button>
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setActiveProject('ultrasonic');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeProject === 'ultrasonic'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🦇 حساس المسافة
+            </button>
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setActiveProject('servo');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeProject === 'servo'
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🅿️ محرك السيرفو
+            </button>
+            <button
+              onClick={() => {
+                soundFx.playClick();
+                setActiveProject('motor');
+              }}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeProject === 'motor'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🌀 محرك المروحة
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Assembly Progress Stepper (Only for Reaction Circuit) */}
-      {activeProject === 'reaction' && (
-        <div className="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-amber-700" />
-              <span className="text-xs font-black text-amber-900">
-                مراحل التركيب الفيزيائي (خطوة بخطوة):
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleSelectStep(6)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-                  currentStep === 6
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'bg-white text-slate-700 hover:bg-amber-100 border border-amber-200'
-                }`}
-              >
-                ✨ عرض الدارة كاملة
-              </button>
+      {/* Clean Progress Indicator when in Step-by-Step mode */}
+      {activeProject === 'reaction' && currentStep < 6 && (
+        <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+            <span className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 font-black text-xs shrink-0">
+              الخطوة {currentStep} من 6
+            </span>
+            <div className="flex-1 h-2.5 bg-white rounded-full overflow-hidden border border-amber-200">
+              <div
+                className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                style={{ width: `${Math.max(10, Math.round((currentStep / 6) * 100))}%` }}
+              />
             </div>
           </div>
-
-          {/* Stepper Dots Bar */}
-          <div className="grid grid-cols-7 gap-1.5">
-            {REACTION_ASSEMBLY_STEPS.map((step) => {
-              const isDone = currentStep >= step.step;
-              const isCurrent = currentStep === step.step;
-              return (
-                <button
-                  key={step.step}
-                  onClick={() => handleSelectStep(step.step)}
-                  className={`py-2 px-1 rounded-xl text-[11px] font-bold text-center transition-all flex flex-col items-center justify-center gap-0.5 border ${
-                    isCurrent
-                      ? 'bg-amber-500 text-slate-950 font-black border-amber-600 shadow-sm'
-                      : isDone
-                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                      : 'bg-white/80 text-slate-400 border-slate-200'
-                  }`}
-                >
-                  <span>{step.step === 0 ? 'البداية' : `خطوة ${step.step}`}</span>
-                  <span className="text-[9px] opacity-80 truncate max-w-full px-1">
-                    {step.step === 0 ? 'اللوحات' : step.componentAr.split(' ')[0]}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          <span className="text-xs font-bold text-amber-900">{activeStepDetail.titleAr}</span>
         </div>
       )}
 
@@ -999,36 +1003,36 @@ export const CircuitPlayground3D: React.FC = () => {
           <div className="relative z-10 bg-slate-900/90 backdrop-blur-md p-4 rounded-2xl border border-slate-800 space-y-3">
             {activeProject === 'reaction' ? (
               <div className="space-y-3">
-                <div className="flex flex-wrap items-center justify-between text-xs font-bold">
+                <div className="flex flex-wrap items-center justify-between text-xs font-bold gap-2">
                   <span className="flex items-center gap-1.5 text-amber-400">
                     <Zap className="w-4 h-4" />
-                    <span>لوحة التشغيل الفيزيائي للعبة سرعة الاستجابة:</span>
+                    <span>جرّب لعبة سرعة الاستجابة هنا مباشرة:</span>
                   </span>
-                  <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black ${
+                  <span className={`px-3 py-1 rounded-full text-xs font-black ${
                     gameState === 'ready'
                       ? 'bg-rose-500 text-white animate-pulse'
                       : gameState === 'waiting'
-                      ? 'bg-amber-500 text-slate-950'
+                      ? 'bg-amber-400 text-slate-950'
                       : gameState === 'false_start'
-                      ? 'bg-rose-900 text-rose-200'
+                      ? 'bg-rose-900 text-rose-100'
                       : gameState === 'result'
                       ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-800 text-slate-400'
+                      : 'bg-slate-800 text-slate-300'
                   }`}>
                     {gameState === 'ready'
-                      ? '⚡ إشارة مضاءة! اضغط الزر الأخضر!'
+                      ? '⚡ الضوء اشتعل! اضغط الأخضر الآن!'
                       : gameState === 'waiting'
-                      ? '⏳ في انتظار الإشارة العشوائية...'
+                      ? '⏳ انتظر الضوء الأحمر...'
                       : gameState === 'false_start'
-                      ? '⚠️ تسرع مبكر!'
+                      ? '⚠️ ضغطت قبل الوقت!'
                       : gameState === 'result'
-                      ? `🎯 تم القياس: ${reactionTimeMs} ms`
-                      : 'جاهز لبدء الجولة'}
+                      ? `🏆 سرعتك: ${reactionTimeMs} مللي ثانية`
+                      : 'جاهز للعب!'}
                   </span>
                 </div>
 
                 {/* Status Message */}
-                <p className="text-xs text-slate-300 bg-slate-950/60 p-2 rounded-xl border border-slate-800 font-mono text-center">
+                <p className="text-xs text-slate-200 bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 font-bold text-center">
                   {gameMessage}
                 </p>
 
@@ -1037,28 +1041,28 @@ export const CircuitPlayground3D: React.FC = () => {
                   <button
                     onClick={handlePressStartButton}
                     disabled={gameState === 'waiting'}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-xs shadow-md transition-all active:scale-95"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95"
                   >
-                    <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>اضغط زر البدء (D2 - الأزرق)</span>
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>1. اضغط الزر الأزرق للبدء</span>
                   </button>
 
                   <button
                     onClick={handlePressReactionButton}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md transition-all active:scale-95"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-95"
                   >
-                    <Zap className="w-3.5 h-3.5" />
-                    <span>اضغط زر الاستجابة (D3 - الأخضر)</span>
+                    <Zap className="w-4 h-4" />
+                    <span>2. اضغط الزر الأخضر بسرعة!</span>
                   </button>
 
                   {/* LED Indicator Badge */}
-                  <div className={`px-3 py-2 rounded-xl flex items-center gap-2 text-xs font-mono font-black ${
+                  <div className={`px-3 py-2.5 rounded-xl flex items-center gap-2 text-xs font-bold ${
                     isLedLit
                       ? 'bg-rose-600 text-white shadow-[0_0_15px_#EF4444]'
                       : 'bg-slate-800 text-slate-400'
                   }`}>
-                    <span className={`w-2 h-2 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-600'}`} />
-                    <span>LED D8: {isLedLit ? 'HIGH (5V)' : 'LOW (0V)'}</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-600'}`} />
+                    <span>اللمبة: {isLedLit ? 'مضيئة!' : 'مطفأة'}</span>
                   </div>
                 </div>
               </div>
@@ -1112,78 +1116,99 @@ export const CircuitPlayground3D: React.FC = () => {
         <div className="lg:col-span-4 bg-slate-50 rounded-3xl p-6 border border-slate-200 flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 gap-2">
               <div className="flex items-center gap-2.5">
                 <CharacterAvatar character="sparky" size="sm" />
                 <div>
-                  <span className="text-xs text-amber-700 font-bold block">المهندس سباركي (Sparky)</span>
-                  <h4 className="font-black text-slate-900 text-base">دليل التركيب والتوصيل</h4>
+                  <span className="text-xs text-amber-700 font-bold block">المهندس سباركي</span>
+                  <h4 className="font-black text-slate-900 text-base">خطوات تركيب مشروعك</h4>
                 </div>
               </div>
-              <span className="text-xs font-bold text-slate-400">
-                {activeProject === 'reaction' ? `خطوة ${currentStep} / 6` : 'نظرة عامة'}
-              </span>
+              {activeProject === 'reaction' && (
+                <SpeakButton
+                  text={`${activeStepDetail.titleAr}. ${activeStepDetail.instructionAr}. ${activeStepDetail.sparkyTipAr}`}
+                  labelAr="اسمع الشرح"
+                />
+              )}
             </div>
 
             {/* Current Step Wiring Details */}
             {activeProject === 'reaction' ? (
               <div className="space-y-3">
-                <div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">
                     {activeStepDetail.componentAr}
                   </span>
-                  <h3 className="text-lg font-black text-slate-900 mt-1.5">{activeStepDetail.titleAr}</h3>
+                  <span className="text-xs font-black text-slate-500">
+                    خطوة {currentStep} / 6
+                  </span>
                 </div>
+                <h3 className="text-lg font-black text-slate-900">{activeStepDetail.titleAr}</h3>
 
-                {/* Wiring Specs Card */}
+                {/* Simple Wiring Summary */}
                 <div className="p-3.5 rounded-2xl bg-white border border-slate-200 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-bold">من منفذ:</span>
-                    <span className="font-mono font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
+                    <span className="text-slate-500 font-bold">نوصلها من:</span>
+                    <span className="font-mono font-black text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-md">
                       {activeStepDetail.fromPin}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-bold">إلى:</span>
-                    <span className="font-mono text-slate-800 text-[11px] text-left">
+                    <span className="text-slate-500 font-bold">إلى مكانها:</span>
+                    <span className="font-bold text-slate-800 text-[11px] text-left">
                       {activeStepDetail.toLocation}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-                    <span className="text-slate-500 font-bold">لون السلك الموصى به:</span>
+                  <div className="flex items-center justify-between pt-1.5 border-t border-slate-100">
+                    <span className="text-slate-500 font-bold">لون السلك:</span>
                     <span className="font-black text-slate-900">{activeStepDetail.wireColor}</span>
                   </div>
                 </div>
 
                 {/* Step Instructions */}
-                <div className="text-xs text-slate-700 leading-relaxed space-y-1">
-                  <span className="font-bold text-slate-900 block">تعليمات التركيب:</span>
-                  <p>{activeStepDetail.instructionAr}</p>
+                <div className="text-sm text-slate-700 leading-relaxed bg-white p-3.5 rounded-2xl border border-slate-200">
+                  {activeStepDetail.instructionAr}
                 </div>
 
                 {/* Sparky Tip */}
                 <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-amber-800">
+                  <div className="flex items-center gap-1.5 font-black text-amber-800">
                     <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>نصيحة المهندس سباركي:</span>
+                    <span>تلميح سباركي:</span>
                   </div>
-                  <p className="text-[11px] leading-relaxed text-amber-900">{activeStepDetail.sparkyTipAr}</p>
+                  <p className="text-xs leading-relaxed text-amber-900">{activeStepDetail.sparkyTipAr}</p>
                 </div>
               </div>
             ) : (
               <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3 text-xs">
-                <h4 className="font-black text-slate-900 text-sm">مواصفات دارة المشروع</h4>
-                <p className="text-slate-600 leading-relaxed">
-                  تتصل مكونات هذا المشروع مباشرة بمنافذ الآردوينو المحددة في منهج الشهر، مع مشاركة خط التأريض GND وتغذية 5V عبر لوحة التجارب.
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="font-black text-slate-900 text-sm">كيف يعمل هذا المشروع؟</h4>
+                  <SpeakButton
+                    text={
+                      activeProject === 'ultrasonic'
+                        ? 'يرسل حساس المسافة موجات صوتية لا نراها ويحسب الوقت حتى ترتد ليعرف المسافة بالسنتيمتر.'
+                        : activeProject === 'servo'
+                        ? 'يتحكم الآردوينو في ذراع المحرك الدوار لتتحرك إلى الزاوية التي نختارها من صفر إلى مئة وثمانين درجة.'
+                        : 'يرسل الآردوينو طاقة متدرجة لتشغيل المروحة أو العجلة بسرعة خفيفة أو سريعة.'
+                    }
+                    labelAr="اسمع الشرح"
+                  />
+                </div>
+                <p className="text-slate-700 leading-relaxed text-xs sm:text-sm">
+                  {activeProject === 'ultrasonic'
+                    ? 'يرسل الحساس موجات صوتية ثم يقيس متى تعود ليعرف المسافة بدقة!'
+                    : activeProject === 'servo'
+                    ? 'نرسل إشارة ذكية لذراع المحرك لتدور بالزاوية التي نحددها لها.'
+                    : 'يتحكم الآردوينو في سرعة دوران المحرك خطوة بخطوة.'}
                 </p>
                 <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900">
-                  <span className="font-bold block">المنافذ المستخدمة:</span>
+                  <span className="font-bold block mb-1">التوصيلات الأساسية:</span>
                   <span className="font-mono text-xs">
                     {activeProject === 'ultrasonic'
-                      ? 'Trig -> D11 | Echo -> D12 | VCC -> 5V | GND -> GND'
+                      ? 'Trig -> D11 | Echo -> D12 | 5V & GND'
                       : activeProject === 'servo'
-                      ? 'Signal -> D9 (PWM) | VCC -> 5V | GND -> GND'
-                      : 'Motor PWM -> D6 | VCC -> 5V | GND -> GND'}
+                      ? 'Signal -> D9 | 5V & GND'
+                      : 'PWM -> D6 | 5V & GND'}
                   </span>
                 </div>
               </div>
@@ -1196,7 +1221,7 @@ export const CircuitPlayground3D: React.FC = () => {
               <button
                 onClick={handlePrevStep}
                 disabled={currentStep === 0}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 text-slate-700 border border-slate-200 text-xs font-bold transition-all"
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 text-slate-700 border border-slate-200 text-xs sm:text-sm font-bold transition-all"
               >
                 <ChevronRight className="w-4 h-4" />
                 <span>الخطوة السابقة</span>
@@ -1205,9 +1230,9 @@ export const CircuitPlayground3D: React.FC = () => {
               <button
                 onClick={handleNextStep}
                 disabled={currentStep === REACTION_ASSEMBLY_STEPS.length - 1}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF5B5A] hover:bg-[#ff4645] disabled:opacity-40 text-white text-xs font-black shadow-coral-glow transition-all"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FF5B5A] hover:bg-[#ff4645] disabled:opacity-40 text-white text-xs sm:text-sm font-black shadow-coral-glow transition-all"
               >
-                <span>الخطوة التالية</span>
+                <span>أضف القطعة التالية</span>
                 <ChevronLeft className="w-4 h-4" />
               </button>
             </div>

@@ -320,7 +320,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
 
               {/* Lab Content View */}
               {classroomLabMode === '3d' ? (
-                <CircuitPlayground3D />
+                <CircuitPlayground3D lessonWeek={lesson.week} />
               ) : classroomLabMode === '2d' ? (
                 <InteractiveBreadboardCircuit wiringSteps={lesson.circuit.wiringSteps} />
               ) : (

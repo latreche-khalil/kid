@@ -1,5 +1,6 @@
 import React from 'react';
 import { CharacterAvatar } from './CharacterAvatars';
+import { SpeakButton } from '../common/SpeakButton';
 
 interface CharacterSpeechBubbleProps {
   character: 'robo' | 'brainy' | 'sparky' | 'buggy' | 'glitch';
@@ -71,12 +72,16 @@ export const CharacterSpeechBubble: React.FC<CharacterSpeechBubbleProps> = ({
 
       {/* Bubble Content */}
       <div className="flex-1 w-full space-y-3">
-        {badgeTextAr && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-700 shadow-sm border border-gray-100">
-            <span className="text-amber-500">✦</span>
-            <span>{badgeTextAr}</span>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          {badgeTextAr ? (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-700 shadow-sm border border-gray-100">
+              <span className="text-amber-500">✦</span>
+              <span>{badgeTextAr}</span>
+            </div>
+          ) : <div />}
+
+          <SpeakButton text={paragraphs.join(' ')} labelAr="اسمع القصة" />
+        </div>
 
         <div className="space-y-2 text-gray-800 leading-relaxed text-base md:text-lg font-medium">
           {paragraphs.map((para, i) => (
