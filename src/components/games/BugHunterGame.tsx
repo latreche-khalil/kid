@@ -184,20 +184,20 @@ export const BugHunterGame: React.FC = () => {
               <span>بيئة Arduino IDE</span>
             </div>
 
-            <div className="bg-slate-900 rounded-2xl p-3 sm:p-4 font-mono text-[11px] sm:text-xs text-slate-300 space-y-1 overflow-x-auto select-none border border-slate-800" dir="ltr">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 font-mono text-[11px] sm:text-xs text-slate-800 space-y-1 overflow-x-auto select-none border-2 border-slate-200 shadow-inner" dir="ltr">
               {level.codeLines.map((line, idx) => {
                 const isSelected = selectedLine === idx;
                 const isTheBug = idx === level.buggyLineIndex;
 
-                let rowStyle = 'hover:bg-slate-800/80 cursor-pointer';
+                let rowStyle = 'hover:bg-slate-100 cursor-pointer';
                 if (isSelected) {
-                  rowStyle = 'bg-blue-600/30 border-l-4 border-blue-400 text-white font-bold';
+                  rowStyle = 'bg-sky-100 border-l-4 border-sky-500 text-slate-950 font-bold';
                 }
                 if (isAnswered) {
                   if (isTheBug) {
-                    rowStyle = 'bg-emerald-900/40 border-l-4 border-emerald-400 text-emerald-200 font-bold';
+                    rowStyle = 'bg-emerald-100 border-l-4 border-emerald-500 text-emerald-950 font-bold';
                   } else if (isSelected && !isTheBug) {
-                    rowStyle = 'bg-rose-900/40 border-l-4 border-rose-400 text-rose-200';
+                    rowStyle = 'bg-rose-100 border-l-4 border-rose-500 text-rose-900';
                   }
                 }
 
@@ -207,8 +207,8 @@ export const BugHunterGame: React.FC = () => {
                     onClick={() => handleLineClick(idx)}
                     className={`flex items-center gap-3 px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap min-w-fit ${rowStyle}`}
                   >
-                    <span className="w-5 text-slate-500 text-right select-none shrink-0">{idx + 1}</span>
-                    <span className="flex-1">{line}</span>
+                    <span className="w-5 text-slate-400 text-right select-none shrink-0">{idx + 1}</span>
+                    <span className="flex-1 font-semibold">{line}</span>
                   </div>
                 );
               })}

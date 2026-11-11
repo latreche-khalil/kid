@@ -266,7 +266,7 @@ export const Arduino3DExplorer: React.FC = () => {
 
     // Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0f172a); // Deep modern dark blue
+    scene.background = new THREE.Color(0xeef6ff); // Bright studio sky backdrop
     sceneRef.current = scene;
 
     // Camera
@@ -656,11 +656,11 @@ export const Arduino3DExplorer: React.FC = () => {
       {/* Main 3D Canvas + Slide-in Pin Inspector Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left: 3D WebGL Canvas Stage */}
-        <div className="lg:col-span-8 relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 min-h-[460px] flex flex-col justify-between p-4 shadow-inner">
+        <div className="lg:col-span-8 relative rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 min-h-[460px] flex flex-col justify-between p-4 shadow-inner">
           {/* Top Canvas Controls Overlay */}
           <div className="flex items-center justify-between z-10">
-            <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-slate-800 text-xs text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-slate-200 text-xs text-slate-800 font-bold shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
               <span>لوحة حية: اسحب للتدوير • عجلة الفأرة للتكبير</span>
             </div>
 
@@ -668,10 +668,10 @@ export const Arduino3DExplorer: React.FC = () => {
               {/* Toggle Auto Rotation */}
               <button
                 onClick={() => setIsRotatingAuto(!isRotatingAuto)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border shadow-sm transition-colors ${
                   isRotatingAuto
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? 'bg-blue-600 border-blue-700 text-white'
+                    : 'bg-white/95 border-slate-200 text-slate-700 hover:bg-sky-50'
                 }`}
                 title="تدوير تلقائي"
               >
@@ -681,7 +681,7 @@ export const Arduino3DExplorer: React.FC = () => {
               {/* Reset Angle Button */}
               <button
                 onClick={() => setCameraPreset('iso')}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="p-2 rounded-xl bg-white/95 hover:bg-sky-50 border border-slate-200 text-slate-700 shadow-sm transition-colors"
                 title="إعادة ضبط زاوية الرؤية"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -693,18 +693,18 @@ export const Arduino3DExplorer: React.FC = () => {
           <div ref={mountRef} className="absolute inset-0 cursor-grab active:cursor-grabbing" />
 
           {/* Bottom Interactive Hardware Quick Toggles */}
-          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800/80 bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-              <span className="text-amber-400">⚡ تجربة مباشرة على اللوحة:</span>
+          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-sm">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+              <span className="text-amber-600">⚡ تجربة مباشرة على اللوحة:</span>
               <span>مصباح D13 المدمج (L LED):</span>
             </div>
 
             <button
               onClick={handleToggleLed13}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-black transition-all ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-black border transition-all ${
                 isLed13On
-                  ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_20px_#F59E0B]'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-amber-400 border-amber-500 hover:bg-amber-300 text-slate-950 shadow-md'
+                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
               }`}
             >
               <Zap className="w-3.5 h-3.5" />

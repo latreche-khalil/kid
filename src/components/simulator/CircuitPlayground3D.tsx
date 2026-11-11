@@ -382,7 +382,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
     // Initialize Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0f172a); // Deep slate
+    scene.background = new THREE.Color(0xeef6ff); // Bright studio sky backdrop
     sceneRef.current = scene;
 
     // Camera
@@ -426,7 +426,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
     // ================= 1. ANTISTATIC WORKBENCH MAT =================
     const matGeo = new THREE.BoxGeometry(22, 0.3, 16);
-    const matMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+    const matMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.85 });
     const workMat = new THREE.Mesh(matGeo, matMat);
     workMat.position.y = -0.16;
     workMat.receiveShadow = true;
@@ -1083,13 +1083,13 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
       {/* Main Grid: 3D Viewport + Assembly Guidance & Hardware Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
         {/* Left: 3D Viewport Stage + Below-Canvas Interactive Controls */}
-        <div className="lg:col-span-8 rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
+        <div className="lg:col-span-8 rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
           {/* Dedicated 3D Canvas Wrapper (Never covered by bottom buttons!) */}
-          <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] w-full rounded-2xl overflow-hidden bg-slate-950">
+          <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] w-full rounded-2xl overflow-hidden bg-[#EEF6FF] border border-sky-200/80">
             {/* Top HUD */}
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 p-2 pointer-events-none">
-              <div className="flex items-center gap-2 bg-slate-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1.5 rounded-2xl border border-slate-800 text-[11px] sm:text-xs text-slate-200 max-w-full">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+              <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1.5 rounded-2xl border border-slate-200 text-[11px] sm:text-xs text-slate-800 font-bold shadow-sm max-w-full">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping shrink-0" />
                 <span className="truncate">
                   {activeProject === 'reaction'
                     ? activeStepDetail.titleAr
@@ -1100,8 +1100,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
               <div className="flex items-center gap-1.5 pointer-events-auto">
                 <button
                   onClick={() => setIsRotatingAuto(!isRotatingAuto)}
-                  className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-colors ${
-                    isRotatingAuto ? 'bg-amber-500 text-slate-950 shadow-md' : 'bg-slate-800/90 text-slate-300 hover:text-white'
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-colors border shadow-sm ${
+                    isRotatingAuto ? 'bg-amber-400 border-amber-500 text-slate-950' : 'bg-white/95 border-slate-200 text-slate-700 hover:bg-sky-50'
                   }`}
                 >
                   {isRotatingAuto ? 'إيقاف ⏸' : 'تدوير ▶'}
@@ -1109,7 +1109,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
                 <button
                   onClick={resetCamera}
-                  className="p-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 transition-colors"
+                  className="p-2 rounded-xl bg-white/95 hover:bg-sky-50 border border-slate-200 text-slate-700 shadow-sm transition-colors"
                   title="إعادة ضبط الكاميرا"
                 >
                   <RotateCcw className="w-4 h-4" />
@@ -1122,24 +1122,24 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
           </div>
 
           {/* Bottom Live Hardware Playground Bar */}
-          <div className="relative z-10 bg-slate-900/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-slate-800 space-y-2.5 sm:space-y-3">
+          <div className="relative z-10 bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 sm:space-y-3">
             {activeProject === 'reaction' ? (
               <div className="space-y-2.5 sm:space-y-3">
                 {/* Duel Scoreboard & LED Status */}
                 <div className="flex flex-wrap items-center justify-between text-xs font-bold gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="flex items-center gap-1.5 text-amber-400 font-black">
-                      <Trophy className="w-4 h-4 shrink-0" />
+                    <span className="flex items-center gap-1.5 text-amber-700 font-black">
+                      <Trophy className="w-4 h-4 shrink-0 text-amber-500" />
                       <span>تحدّي الأسرع (1 ضد 1):</span>
                     </span>
-                    <div className="flex items-center gap-1.5 bg-slate-950/80 px-2.5 py-1 rounded-xl border border-slate-800">
-                      <span className="text-blue-400 font-black">الأزرق: {p1Score}</span>
-                      <span className="text-slate-600">|</span>
-                      <span className="text-emerald-400 font-black">الأخضر: {p2Score}</span>
+                    <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
+                      <span className="text-blue-700 font-black">الأزرق: {p1Score}</span>
+                      <span className="text-slate-300">|</span>
+                      <span className="text-emerald-700 font-black">الأخضر: {p2Score}</span>
                       {(p1Score > 0 || p2Score > 0) && (
                         <button
                           onClick={handleResetScores}
-                          className="mr-1 text-slate-400 hover:text-white transition-colors"
+                          className="mr-1 text-slate-400 hover:text-slate-700 transition-colors"
                           title="تصفير النقاط"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
@@ -1149,25 +1149,25 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold ${
+                    <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold border ${
                       isLedLit
-                        ? 'bg-rose-600 text-white shadow-[0_0_15px_#EF4444]'
-                        : 'bg-slate-800 text-slate-400'
+                        ? 'bg-rose-600 border-rose-700 text-white shadow-[0_0_15px_#EF4444]'
+                        : 'bg-slate-100 border-slate-200 text-slate-600'
                     }`}>
-                      <span className={`w-2 h-2 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-600'}`} />
+                      <span className={`w-2 h-2 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-400'}`} />
                       <span>اللمبة: {isLedLit ? 'مشتعلة!' : 'مطفأة'}</span>
                     </div>
 
-                    <span className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-black ${
+                    <span className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-black border ${
                       gameState === 'ready'
-                        ? 'bg-rose-500 text-white animate-pulse'
+                        ? 'bg-rose-500 border-rose-600 text-white animate-pulse'
                         : gameState === 'waiting'
-                        ? 'bg-amber-400 text-slate-950'
+                        ? 'bg-amber-400 border-amber-500 text-slate-950'
                         : gameState === 'false_start'
-                        ? 'bg-rose-900 text-rose-100'
+                        ? 'bg-rose-100 border-rose-300 text-rose-800'
                         : gameState === 'result'
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-slate-800 text-slate-300'
+                        ? 'bg-emerald-500 border-emerald-600 text-white'
+                        : 'bg-slate-100 border-slate-200 text-slate-700'
                     }`}>
                       {gameState === 'ready'
                         ? '⚡ الضوء اشتعل! اضغطوا!'
@@ -1183,13 +1183,13 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                 </div>
 
                 {/* Status Message */}
-                <p className="text-[11px] sm:text-xs text-slate-100 bg-slate-950/75 p-2 sm:p-2.5 rounded-xl border border-slate-800 font-bold text-center">
+                <p className="text-[11px] sm:text-xs text-slate-800 bg-sky-50/90 p-2 sm:p-2.5 rounded-xl border border-sky-200 font-bold text-center">
                   {gameMessage}
                 </p>
 
                 {/* Helpful shortcut if browsing an intermediate assembly step */}
                 {currentStep < 6 && (
-                  <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-amber-500/15 border border-amber-400/40 text-[11px] text-amber-200">
+                  <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-950">
                     <span className="font-bold">
                       🔧 أنت تستعرض الآن مرحلة التركيب ({currentStep} من 6)
                     </span>
@@ -1208,8 +1208,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   disabled={gameState === 'waiting' || gameState === 'ready'}
                   className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition-all min-h-[42px] ${
                     gameState === 'waiting' || gameState === 'ready'
-                      ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
-                      : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md active:scale-98'
+                      ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                      : 'bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md active:scale-98'
                   }`}
                 >
                   {gameState === 'waiting' ? (
@@ -1234,7 +1234,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                       winnerPlayer === 1
                         ? 'bg-blue-500 text-white ring-4 ring-amber-400'
                         : loserPlayer === 1
-                        ? 'bg-slate-800 text-slate-400 border border-rose-500/40'
+                        ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
                         : 'bg-blue-600 hover:bg-blue-500 text-white'
                     }`}
                   >
@@ -1249,7 +1249,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                       winnerPlayer === 2
                         ? 'bg-emerald-500 text-white ring-4 ring-amber-400'
                         : loserPlayer === 2
-                        ? 'bg-slate-800 text-slate-400 border border-rose-500/40'
+                        ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
                         : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                     }`}
                   >
@@ -1261,8 +1261,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
               </div>
             ) : activeProject === 'ultrasonic' ? (
               <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
-                <span className="text-xs font-bold text-slate-300">
-                  مسافة العائق أمام الحساس: <span className="text-amber-400 font-mono font-black">{distanceCm} سم</span>
+                <span className="text-xs font-bold text-slate-700">
+                  مسافة العائق أمام الحساس: <span className="text-amber-700 font-mono font-black">{distanceCm} سم</span>
                 </span>
                 <input
                   type="range"
@@ -1275,8 +1275,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
               </div>
             ) : activeProject === 'servo' ? (
               <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
-                <span className="text-xs font-bold text-slate-300">
-                  زاوية دوران السيرفو: <span className="text-purple-400 font-mono font-black">{servoAngleDeg}°</span>
+                <span className="text-xs font-bold text-slate-700">
+                  زاوية دوران السيرفو: <span className="text-purple-700 font-mono font-black">{servoAngleDeg}°</span>
                 </span>
                 <input
                   type="range"
@@ -1289,8 +1289,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
-                <span className="text-xs font-bold text-slate-300">
-                  سرعة مروحة المحرك (PWM): <span className="text-emerald-400 font-mono font-black">{motorSpeedPwm} / 255</span>
+                <span className="text-xs font-bold text-slate-700">
+                  سرعة مروحة المحرك (PWM): <span className="text-emerald-700 font-mono font-black">{motorSpeedPwm} / 255</span>
                 </span>
                 <input
                   type="range"
@@ -1380,13 +1380,13 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                 </div>
 
                 {/* Matching Arduino Code Line for This Step */}
-                <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3 space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-300">
-                    <Code2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <div className="rounded-2xl bg-white border-2 border-indigo-100 p-3 space-y-1.5 shadow-sm">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-700">
+                    <Code2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                     <span>السطر المقابل في كود الآردوينو:</span>
                   </div>
                   <pre
-                    className="font-mono text-[11px] sm:text-xs text-emerald-400 leading-relaxed whitespace-pre-wrap select-text"
+                    className="font-mono text-[11px] sm:text-xs text-slate-900 font-semibold leading-relaxed whitespace-pre-wrap select-text bg-slate-50 p-2 rounded-xl border border-slate-200/80"
                     dir="ltr"
                   >
                     {activeStepDetail.codeLine}

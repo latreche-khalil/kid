@@ -221,7 +221,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
                     <p className="text-base text-slate-700 leading-relaxed">{sec.contentAr}</p>
 
                     {sec.codeExample && (
-                      <div className="bg-slate-900 text-emerald-400 p-4 rounded-xl font-mono text-sm border border-slate-800 overflow-x-auto">
+                      <div className="bg-white text-slate-900 font-semibold p-4 rounded-xl font-mono text-sm border border-indigo-200 shadow-xs overflow-x-auto" dir="ltr">
                         <pre className="whitespace-pre-wrap">{sec.codeExample}</pre>
                       </div>
                     )}

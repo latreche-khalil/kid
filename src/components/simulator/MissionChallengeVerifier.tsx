@@ -222,11 +222,11 @@ void loop() {
       {/* Code Editor + Verification Suite Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left Column: Editable Code (7 cols) */}
-        <div className="lg:col-span-7 bg-slate-900 rounded-3xl p-5 border border-slate-800 text-white flex flex-col justify-between space-y-4 shadow-xl">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800 font-sans">
+        <div className="lg:col-span-7 bg-white rounded-3xl p-5 border border-slate-200 text-slate-900 flex flex-col justify-between space-y-4 shadow-card">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200 font-sans">
             <div className="flex items-center gap-2">
-              <Code2 className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-bold text-slate-300">محرر كود التحدي (عدّل الكود وأصلح الثغرات):</span>
+              <Code2 className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold text-slate-800">محرر كود التحدي (عدّل الكود وأصلح الثغرات):</span>
             </div>
 
             <button
@@ -234,7 +234,7 @@ void loop() {
               disabled={isVerifying}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs transition-all shadow-md ${
                 isVerifying
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
                   : 'bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 shadow-emerald-600/30 ring-2 ring-emerald-400/20'
               }`}
             >
@@ -248,13 +248,13 @@ void loop() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             rows={14}
-            className="w-full bg-slate-950 text-emerald-400 p-4 rounded-2xl border border-slate-800 font-mono text-xs focus:ring-2 focus:ring-emerald-500 outline-none leading-relaxed select-text resize-none"
+            className="w-full bg-slate-50 text-slate-900 font-semibold p-4 rounded-2xl border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 outline-none leading-relaxed select-text resize-none"
             spellCheck={false}
           />
 
-          <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800 font-sans">
+          <div className="flex items-center justify-between text-[11px] text-slate-600 pt-2 border-t border-slate-200 font-sans">
             <span>💡 نصيحة: تأكد من إصلاح السطر 5 والسطر 21 لاجتياز الفحص.</span>
-            <span className="text-amber-400 font-bold">+150 XP عند الاجتياز</span>
+            <span className="text-amber-700 font-bold">+150 XP عند الاجتياز</span>
           </div>
         </div>
 

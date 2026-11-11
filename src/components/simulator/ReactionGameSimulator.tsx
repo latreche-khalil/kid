@@ -157,31 +157,31 @@ export const ReactionGameSimulator: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 rounded-3xl p-4 sm:p-6 md:p-8 text-white shadow-2xl border border-slate-800 space-y-5 sm:space-y-6">
+    <div className="bg-gradient-to-br from-sky-50 via-white to-indigo-50/70 rounded-3xl p-4 sm:p-6 md:p-8 text-slate-900 shadow-card border border-sky-200 space-y-5 sm:space-y-6">
       {/* Top Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700 shrink-0">
             <Zap className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-black text-white">محاكي تحدّي السرعة الثنائي (1 ضد 1)</h3>
-            <p className="text-[11px] sm:text-xs text-slate-400">كل لاعب له زر — الأول بعد الإشارة يفوز، والأخير أو المتسرّع يخسر!</p>
+            <h3 className="text-lg sm:text-xl font-black text-slate-900">محاكي تحدّي السرعة الثنائي (1 ضد 1)</h3>
+            <p className="text-[11px] sm:text-xs text-slate-500">كل لاعب له زر — الأول بعد الإشارة يفوز، والأخير أو المتسرّع يخسر!</p>
           </div>
         </div>
 
         {/* Duel Scoreboard */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-black">
-            <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
-            <span className="text-blue-400">الأزرق: {p1Wins}</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-emerald-400">الأخضر: {p2Wins}</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-black shadow-xs">
+            <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="text-blue-700">الأزرق: {p1Wins}</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-emerald-700">الأخضر: {p2Wins}</span>
           </div>
 
           <button
             onClick={handleReset}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
             title="إعادة ضبط النتيجة"
           >
             <RotateCcw className="w-4 h-4" />
@@ -192,10 +192,10 @@ export const ReactionGameSimulator: React.FC = () => {
       {/* Main Interactive Stage Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
         {/* Left: Hardware Duel Panel */}
-        <div className="lg:col-span-7 bg-slate-800/80 rounded-2xl p-4 sm:p-6 border border-slate-700 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
           {/* LED & Status Lamp Area */}
           <div className="flex flex-col items-center justify-center py-2 space-y-3">
-            <span className="text-xs font-bold tracking-wider text-slate-400">
+            <span className="text-xs font-bold tracking-wider text-slate-500">
               مصباح إشارة الانطلاق (D8)
             </span>
 
@@ -205,13 +205,13 @@ export const ReactionGameSimulator: React.FC = () => {
                   gameState === 'ACTIVE_LIGHT'
                     ? 'bg-red-500 border-red-300 shadow-[0_0_60px_#EF4444] scale-105'
                     : gameState === 'FALSE_START'
-                    ? 'bg-amber-600 border-amber-400 shadow-[0_0_30px_#D97706]'
-                    : 'bg-red-950/80 border-slate-700'
+                    ? 'bg-amber-500 border-amber-300 shadow-[0_0_30px_#D97706]'
+                    : 'bg-rose-100 border-slate-300'
                 }`}
               >
                 <div
                   className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-opacity ${
-                    gameState === 'ACTIVE_LIGHT' ? 'bg-red-200 opacity-90' : 'bg-red-900/40 opacity-30'
+                    gameState === 'ACTIVE_LIGHT' ? 'bg-red-200 opacity-90' : 'bg-rose-300/60 opacity-50'
                   }`}
                 />
               </div>
@@ -222,21 +222,21 @@ export const ReactionGameSimulator: React.FC = () => {
 
             <div className="text-center font-bold min-h-[44px] flex items-center justify-center">
               {gameState === 'IDLE' && (
-                <span className="text-slate-300 text-xs sm:text-sm">اضغطا "ابدأ السباق" بالأسفل لتبدأ المواجهة!</span>
+                <span className="text-slate-600 text-xs sm:text-sm">اضغطا "ابدأ السباق" بالأسفل لتبدأ المواجهة!</span>
               )}
               {gameState === 'WAITING_RANDOM' && (
-                <span className="text-amber-400 text-xs sm:text-sm animate-pulse">
+                <span className="text-amber-700 text-xs sm:text-sm animate-pulse">
                   ⏳ انتبها... من يضغط قبل اشتعال اللمبة يخسر فوراً!
                 </span>
               )}
               {gameState === 'ACTIVE_LIGHT' && (
-                <span className="text-red-400 text-sm sm:text-base font-black animate-bounce">
+                <span className="text-red-600 text-sm sm:text-base font-black animate-bounce">
                   ⚡ اضغطا الآن! الأول يفوز والأخير يخسر! ⚡
                 </span>
               )}
               {gameState === 'FALSE_START' && (
-                <span className="text-amber-300 text-xs sm:text-sm flex items-center justify-center gap-1.5 font-black">
-                  <AlertOctagon className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="text-amber-800 text-xs sm:text-sm flex items-center justify-center gap-1.5 font-black">
+                  <AlertOctagon className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>
                     تسرّع اللاعب {loserPlayer} قبل الضوء وخسر! 🏆 فاز اللاعب {winnerPlayer}!
                   </span>
@@ -244,10 +244,10 @@ export const ReactionGameSimulator: React.FC = () => {
               )}
               {gameState === 'RESULT' && reactionTimeMs !== null && (
                 <div className="space-y-1">
-                  <span className="text-emerald-400 text-lg sm:text-2xl font-black block">
+                  <span className="text-emerald-700 text-lg sm:text-2xl font-black block">
                     🏆 فاز اللاعب {winnerPlayer} ({reactionTimeMs} ms)
                   </span>
-                  <span className="text-xs text-rose-300 font-bold">
+                  <span className="text-xs text-rose-600 font-bold">
                     😢 خسر اللاعب {loserPlayer} لأنه ضغط الأخير!
                   </span>
                 </div>
@@ -256,14 +256,14 @@ export const ReactionGameSimulator: React.FC = () => {
           </div>
 
           {/* Start Race Control */}
-          <div className="space-y-3 pt-3 border-t border-slate-700/80">
+          <div className="space-y-3 pt-3 border-t border-slate-200">
             <button
               onClick={handleStartRound}
               disabled={gameState === 'WAITING_RANDOM' || gameState === 'ACTIVE_LIGHT'}
               className={`w-full py-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
                 gameState === 'WAITING_RANDOM' || gameState === 'ACTIVE_LIGHT'
-                  ? 'bg-slate-700/50 text-slate-400 cursor-not-allowed'
-                  : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-lg active:scale-98'
+                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                  : 'bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md active:scale-98'
               }`}
             >
               <Flag className="w-4 h-4 shrink-0" />
@@ -284,17 +284,17 @@ export const ReactionGameSimulator: React.FC = () => {
                   winnerPlayer === 1
                     ? 'bg-blue-500 text-white shadow-xl ring-4 ring-amber-400'
                     : loserPlayer === 1
-                    ? 'bg-slate-900/70 text-slate-400 border border-rose-500/40'
+                    ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
                     : gameState === 'ACTIVE_LIGHT'
                     ? 'bg-blue-600 hover:bg-blue-500 text-white ring-2 ring-blue-300 animate-pulse'
-                    : 'bg-blue-700 hover:bg-blue-600 text-white shadow-md'
+                    : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md'
                 }`}
               >
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 flex items-center justify-center mb-2">
                   <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black">اللاعب 1 (D2)</span>
-                <span className="text-[11px] text-blue-200 mt-0.5">الأزرق • مفتاح A</span>
+                <span className="text-[11px] text-blue-100 mt-0.5">الأزرق • مفتاح A</span>
               </button>
 
               <button
@@ -303,50 +303,50 @@ export const ReactionGameSimulator: React.FC = () => {
                   winnerPlayer === 2
                     ? 'bg-emerald-500 text-white shadow-xl ring-4 ring-amber-400'
                     : loserPlayer === 2
-                    ? 'bg-slate-900/70 text-slate-400 border border-rose-500/40'
+                    ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
                     : gameState === 'ACTIVE_LIGHT'
                     ? 'bg-emerald-600 hover:bg-emerald-500 text-white ring-2 ring-emerald-300 animate-pulse'
-                    : 'bg-emerald-700 hover:bg-emerald-600 text-white shadow-md'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md'
                 }`}
               >
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 flex items-center justify-center mb-2">
                   <Zap className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black">اللاعب 2 (D3)</span>
-                <span className="text-[11px] text-emerald-200 mt-0.5">الأخضر • مفتاح L</span>
+                <span className="text-[11px] text-emerald-100 mt-0.5">الأخضر • مفتاح L</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Right: Serial Monitor Terminal Output */}
-        <div className="lg:col-span-5 bg-slate-950 rounded-2xl border border-slate-800 p-4 flex flex-col justify-between font-mono">
+        <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-4 flex flex-col justify-between font-mono shadow-sm">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs text-slate-400">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs text-slate-600">
               <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-emerald-400" />
-                <span className="font-bold text-slate-300">Serial Monitor</span>
+                <Terminal className="w-4 h-4 text-emerald-600" />
+                <span className="font-bold text-slate-800">Serial Monitor</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-emerald-400 text-[11px]">9600 baud</span>
+                <span className="text-emerald-700 font-bold text-[11px]">9600 baud</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
             </div>
 
-            <div className="mt-3 h-64 overflow-y-auto space-y-1 text-xs text-slate-300 pr-1 select-text scrollbar-thin">
+            <div className="mt-3 h-64 overflow-y-auto space-y-1 text-xs text-slate-800 bg-slate-50 p-2.5 rounded-xl border border-slate-100 select-text scrollbar-thin">
               {serialLogs.map((log, i) => (
                 <div
                   key={i}
                   className={`${
                     log.includes('❌')
-                      ? 'text-amber-400 font-bold bg-amber-950/30 px-1 rounded'
+                      ? 'text-amber-800 font-bold bg-amber-50 px-1 rounded'
                       : log.includes('😢')
-                      ? 'text-rose-300 font-bold'
+                      ? 'text-rose-700 font-bold'
                       : log.includes('🏆')
-                      ? 'text-yellow-300 font-bold'
+                      ? 'text-emerald-700 font-bold'
                       : log.includes('🚨')
-                      ? 'text-rose-400 font-bold'
-                      : 'text-slate-300'
+                      ? 'text-rose-700 font-bold'
+                      : 'text-slate-700'
                   }`}
                 >
                   {log}
@@ -356,8 +356,8 @@ export const ReactionGameSimulator: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-slate-800 flex items-center gap-2 text-[11px] text-slate-400">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-2 text-[11px] text-slate-600">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>مراقبة الزرّين (D2 و D3) لحظياً بالـ millis() لكشف المتسرّع وتحديد الأسرع!</span>
           </div>
         </div>
