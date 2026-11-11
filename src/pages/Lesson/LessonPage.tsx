@@ -87,7 +87,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6 pb-12 sm:pb-16 max-w-5xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 pb-12 sm:pb-16 w-full">
       {/* Top Bar: Big Back Button + Subtle Teacher Mode Button */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-2xl sm:rounded-3xl bg-white border border-slate-100 shadow-sm">
         <button

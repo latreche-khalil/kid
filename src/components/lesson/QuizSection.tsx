@@ -126,7 +126,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
       </div>
 
       {!isFinished ? (
-        <div className="space-y-5 sm:space-y-6 max-w-2xl mx-auto py-1 sm:py-2">
+        <div className="space-y-5 sm:space-y-6 max-w-4xl mx-auto py-1 sm:py-2">
           {/* Question Text */}
           <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200">
             <h4 className="text-base sm:text-lg md:text-xl font-black text-slate-900 leading-snug">

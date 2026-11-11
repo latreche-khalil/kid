@@ -61,7 +61,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
   return (
     <div className="fixed inset-0 z-50 bg-[#FDFBF7] overflow-y-auto flex flex-col font-sans">
       {/* Top Classroom Bar */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2.5 shadow-sm">
+      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-4 lg:px-5 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2.5 shadow-sm">
         {/* Left: Lesson Title & Week */}
         <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
           <button
@@ -105,7 +105,7 @@ export const ClassroomMode: React.FC<ClassroomModeProps> = ({ lesson, onClose })
       </div>
 
       {/* Main Classroom Body */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 md:p-8 space-y-5 sm:space-y-8">
+      <div className="flex-1 max-w-[1600px] w-full mx-auto px-3 sm:px-4 lg:px-5 py-4 sm:py-6 space-y-5 sm:space-y-7">
         {/* Stage Timeline Stepper */}
         <div className="bg-white rounded-3xl p-4 md:p-6 border border-slate-200 shadow-card">
           <div className="flex items-center justify-between overflow-x-auto gap-2 pb-2">
