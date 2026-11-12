@@ -653,10 +653,10 @@ export const Arduino3DExplorer: React.FC = () => {
         </div>
       </div>
 
-      {/* Main 3D Canvas + Slide-in Pin Inspector Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left: 3D WebGL Canvas Stage */}
-        <div className="lg:col-span-8 relative rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 min-h-[460px] flex flex-col justify-between p-4 shadow-inner">
+      {/* Balanced 2-Column Split: 3D Board (50%) | Pin Inspector (50%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        {/* Half 1: 3D WebGL Canvas Stage */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 min-h-[420px] flex flex-col justify-between p-4 shadow-inner">
           {/* Top Canvas Controls Overlay */}
           <div className="flex items-center justify-between z-10">
             <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-slate-200 text-xs text-slate-800 font-bold shadow-sm">
@@ -713,8 +713,8 @@ export const Arduino3DExplorer: React.FC = () => {
           </div>
         </div>
 
-        {/* Right: Pin & Component Inspector Educational Panel */}
-        <div className="lg:col-span-4 bg-slate-50 rounded-3xl p-6 border border-slate-200 flex flex-col justify-between space-y-6">
+        {/* Bottom: Pin & Component Inspector Educational Panel */}
+        <div className="bg-slate-50 rounded-3xl p-5 sm:p-6 border border-slate-200 flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             {/* Inspector Title */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -814,7 +814,7 @@ export const Arduino3DExplorer: React.FC = () => {
             </div>
 
             {/* Pin Selection Buttons Grid */}
-            <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-40 overflow-y-auto pr-1">
               {filteredPins.map((pin) => {
                 const isSelected = selectedPin.id === pin.id;
                 return (

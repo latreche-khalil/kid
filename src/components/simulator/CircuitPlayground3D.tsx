@@ -50,7 +50,7 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
     wireColor: 'بدون أسلاك',
     fromPin: '-',
     toLocation: 'قاعدة التجارب',
-    codeLine: '// تجهيز اللوحة قبل كتابة المنافذ:\nvoid setup() { Serial.begin(9600); }',
+    codeLine: '// تجهيز اللوحة ومعدل النقل السريع:\nvoid setup() { Serial.begin(9600); }',
     instructionAr: 'ضع لوحة الآردوينو إلى اليسار ولوحة التجارب (Breadboard) إلى اليمين لتسهيل التوصيل المنظم.',
     sparkyTipAr: 'احرص دائماً على فصل كابل USB قبل البدء في تركيب أو تعديل الأسلاك لمنع أي تلامس كهربائي خاطئ!'
   },
@@ -67,58 +67,58 @@ const REACTION_ASSEMBLY_STEPS: AssemblyStep[] = [
   },
   {
     step: 2,
-    titleAr: 'تركيب اللمبة الحمراء ومقاومة 220Ω',
-    componentAr: 'مصباح LED أحمر + مقاومة 220 أوم',
-    wireColor: 'أحمر (+) للمنفذ + مقاومة للسالب',
-    fromPin: 'Arduino Pin D8',
-    toLocation: 'الرجل الطويلة (+) للمبة، والقصيرة (-) عبر المقاومة للسالب',
-    codeLine: 'const int LED_PIN = 8;\npinMode(LED_PIN, OUTPUT);',
-    instructionAr: 'وصّل السلك الأحمر من D8 إلى الرجل الطويلة للمبة (+)، وضع المقاومة بين الرجل القصيرة (-) والخط السالب.',
-    sparkyTipAr: 'المقاومة تحمي اللمبة من الاحتراق! دائماً نضعها مع الـ LED.'
+    titleAr: 'تركيب زر اللاعب 1 الأصفر (D2)',
+    componentAr: 'زر أصفر (Player 1)',
+    wireColor: 'أصفر للإشارة + أسود للسالب',
+    fromPin: 'Arduino Pin D2',
+    toLocation: 'طرف زر اللاعب 1، والطرف الثاني للخط السالب (-)',
+    codeLine: 'const int BTN_YELLOW = 2; // زر اللاعب 1\npinMode(BTN_YELLOW, INPUT_PULLUP);',
+    instructionAr: 'ثبّت الزر الأصفر على لوحة التجارب، ثم وصّل سلكاً من D2 إلى طرف الزر، وسلكاً أسود من الطرف الآخر إلى الخط السالب.',
+    sparkyTipAr: 'هذا زر اللاعب الأول (الأصفر)! عند ضغطه يرسل إشارة للآردوينو فوراً.'
   },
   {
     step: 3,
-    titleAr: 'تركيب زر اللاعب الأول الأزرق (D2)',
-    componentAr: 'زر اللاعب 1 (أزرق)',
-    wireColor: 'أزرق للإشارة + أسود للسالب',
-    fromPin: 'Arduino Pin D2',
-    toLocation: 'طرف زر اللاعب 1، والطرف الثاني للخط السالب (-)',
-    codeLine: 'const int P1_BTN = 2; // اللاعب الأول\npinMode(P1_BTN, INPUT_PULLUP);',
-    instructionAr: 'ثبّت الزر الأزرق، ثم وصّل سلكاً أزرق من D2 إلى طرف الزر، وسلكاً أسود من الطرف الآخر إلى الخط السالب.',
-    sparkyTipAr: 'هذا زر اللاعب الأول! عند ضغطه يخبر الآردوينو فوراً أن اللاعب 1 ضغط.'
+    titleAr: 'تركيب لمبة اللاعب 1 الصفراء ومقاومة 220Ω (D4)',
+    componentAr: 'مصباح LED أصفر + مقاومة 220 أوم',
+    wireColor: 'أصفر (+) للمنفذ + مقاومة للسالب',
+    fromPin: 'Arduino Pin D4',
+    toLocation: 'بجانب الزر الأصفر: (+) إلى D4 و (-) عبر المقاومة للخط السالب',
+    codeLine: 'const int LED_YELLOW = 4;\npinMode(LED_YELLOW, OUTPUT);',
+    instructionAr: 'ثبّت اللمبة الصفراء مباشرة بجانب الزر الأصفر. وصّل سلكاً من D4 إلى طرفها الطويل (+)، ومقاومة 220Ω من الطرف القصير (-) إلى السالب.',
+    sparkyTipAr: 'اللمبة الصفراء موجودة بجانب الزر الأصفر حتى تشتعل فوراً عندما يفوز اللاعب الأول!'
   },
   {
     step: 4,
-    titleAr: 'تركيب زر اللاعب الثاني الأخضر (D3)',
-    componentAr: 'زر اللاعب 2 (أخضر)',
-    wireColor: 'أخضر للإشارة + أسود للسالب',
+    titleAr: 'تركيب زر اللاعب 2 الأحمر (D3)',
+    componentAr: 'زر أحمر (Player 2)',
+    wireColor: 'أحمر للإشارة + أسود للسالب',
     fromPin: 'Arduino Pin D3',
     toLocation: 'طرف زر اللاعب 2، والطرف الثاني للخط السالب (-)',
-    codeLine: 'const int P2_BTN = 3; // اللاعب الثاني\npinMode(P2_BTN, INPUT_PULLUP);',
-    instructionAr: 'ثبّت الزر الأخضر بجانب الأزرق، ووصّل سلكاً أخضر من D3 إلى طرف الزر، وسلكاً أسود إلى الخط السالب.',
-    sparkyTipAr: 'الآن يتسابق لاعبان معاً: الأسرع بعد الضوء يفوز والأبطأ يخسر!'
+    codeLine: 'const int BTN_RED = 3; // زر اللاعب 2\npinMode(BTN_RED, INPUT_PULLUP);',
+    instructionAr: 'ثبّت الزر الأحمر على مسافة مناسبة، ووصّل سلكاً من D3 إلى طرف الزر، وسلكاً أسود إلى الخط السالب.',
+    sparkyTipAr: 'هذا زر اللاعب الثاني (الأحمر)! عند ضغطه يسجل الآردوينو لحظة الاستجابة بدقة.'
   },
   {
     step: 5,
-    titleAr: 'تركيب الجرس الصوتي (Buzzer - D9)',
-    componentAr: 'جرس صوتي',
-    wireColor: 'أصفر للإشارة + أسود للسالب',
-    fromPin: 'Arduino Pin D9',
-    toLocation: 'الطرف الموجب (+) للجرس، والطرف الثاني للسالب (-)',
-    codeLine: 'const int BUZZER_PIN = 9;\npinMode(BUZZER_PIN, OUTPUT);',
-    instructionAr: 'ثبّت الجرس على اللوحة، ووصّل سلكاً أصفر من D9 إلى الطرف الموجب (+) وسلكاً أسود إلى الخط السالب.',
-    sparkyTipAr: 'الجرس يعزف صوت البداية، وإنذاراً لمن يتسرّع، وموسيقى الفوز!'
+    titleAr: 'تركيب لمبة اللاعب 2 الحمراء ومقاومة 220Ω (D5)',
+    componentAr: 'مصباح LED أحمر + مقاومة 220 أوم',
+    wireColor: 'أحمر (+) للمنفذ + مقاومة للسالب',
+    fromPin: 'Arduino Pin D5',
+    toLocation: 'بجانب الزر الأحمر: (+) إلى D5 و (-) عبر المقاومة للخط السالب',
+    codeLine: 'const int LED_RED = 5;\npinMode(LED_RED, OUTPUT);',
+    instructionAr: 'ثبّت اللمبة الحمراء مباشرة بجانب الزر الأحمر. وصّل سلكاً من D5 إلى طرفها الطويل (+)، ومقاومة 220Ω من الطرف القصير (-) إلى السالب.',
+    sparkyTipAr: 'اللمبة الحمراء موجودة بجانب الزر الأحمر حتى تشتعل فوراً إذا فاز اللاعب الثاني!'
   },
   {
     step: 6,
-    titleAr: 'الدارة مكتملة وجاهزة للتحدّي الثنائي (1 ضد 1)!',
-    componentAr: 'منظومة التحدّي الثنائي الكاملة',
-    wireColor: 'جميع الأسلاك متصلة',
-    fromPin: 'D2, D3, D8, D9, GND',
-    toLocation: 'جميع المكونات تعمل بانسجام',
-    codeLine: '// ملخص منافذ الكود الكامل:\n// D2=P1_BTN | D3=P2_BTN | D8=LED | D9=BUZZER',
-    instructionAr: 'رائع جداً! تم تركيب جميع مكونات لعبة التحدّي الثنائي. اضغطا زر بدء السباق بالأسفل، وانتظرا الضوء الأحمر ثم تسابقا!',
-    sparkyTipAr: 'الأسرع بعد الضوء يفوز والأبطأ يخسر! انتبها: من يضغط قبل أن تشتعل اللمبة يخسر فوراً بالانطلاق المبكر!'
+    titleAr: 'تركيب الجرس الصوتي (Buzzer - D9) واكتمال المنظومة!',
+    componentAr: 'جرس صوتي (Buzzer) + الدارة كاملة',
+    wireColor: 'أزرق لـ D9 + أسود للسالب',
+    fromPin: 'Arduino Pin D9',
+    toLocation: 'الطرف الموجب (+) للجرس، والطرف الثاني للسالب (-)',
+    codeLine: 'const int BUZZER_PIN = 9;\npinMode(BUZZER_PIN, OUTPUT);\n// إطلاق صافرة البداية: tone(9, 1200, 200);',
+    instructionAr: 'ثبّت الجرس على اللوحة، ووصّل سلكاً من D9 للطرف الموجب وسلكاً للسالب. اكتملت الدارة: زر ولمبة صفراء للأول، وزر ولمبة حمراء للثاني، وجرس لإشارة الانطلاق والفوز!',
+    sparkyTipAr: 'الآن اكتملت دارة التحدي الثنائي! اضغط "ابدأ السباق" بالأسفل، انتظر صافرة الجرس، ثم تسابقا بالضغط: من يضغط أولاً تشتعل لمبته فوراً!'
   }
 ];
 
@@ -134,15 +134,16 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     setActiveProject(getProjectFromWeek(lessonWeek));
   }, [lessonWeek]);
 
-  // Interactive Live 2-Player Duel States (Week 1 Reaction Duel)
+  // Interactive Live 2-Player Duel States (Yellow vs Red Duel)
   const [gameState, setGameState] = useState<'idle' | 'waiting' | 'ready' | 'result' | 'false_start'>('idle');
   const [reactionTimeMs, setReactionTimeMs] = useState<number | null>(null);
   const [winnerPlayer, setWinnerPlayer] = useState<1 | 2 | null>(null);
   const [loserPlayer, setLoserPlayer] = useState<1 | 2 | null>(null);
   const [p1Score, setP1Score] = useState<number>(0);
   const [p2Score, setP2Score] = useState<number>(0);
-  const [gameMessage, setGameMessage] = useState<string>('اضغط "ابدأ السباق" — من يضغط أولاً بعد الإشارة يفوز والأبطأ يخسر!');
-  const [isLedLit, setIsLedLit] = useState<boolean>(false);
+  const [gameMessage, setGameMessage] = useState<string>('اضغط "ابدأ السباق" — من يضغط أولاً بعد الصافرة تشتعل لمبته فوراً ويفوز!');
+  const [yellowLedLit, setYellowLedLit] = useState<boolean>(false);
+  const [redLedLit, setRedLedLit] = useState<boolean>(false);
 
   // Other Projects Interactive States
   const [distanceCm, setDistanceCm] = useState<number>(45);
@@ -156,10 +157,12 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
   const circuitGroupRef = useRef<THREE.Group | null>(null);
 
   // Interactive 3D Mesh Refs
-  const ledBulbMeshRef = useRef<THREE.Mesh | null>(null);
-  const ledPointLightRef = useRef<THREE.PointLight | null>(null);
-  const startBtnCapRef = useRef<THREE.Mesh | null>(null);
-  const reactionBtnCapRef = useRef<THREE.Mesh | null>(null);
+  const yellowLedBulbRef = useRef<THREE.Mesh | null>(null);
+  const yellowPointLightRef = useRef<THREE.PointLight | null>(null);
+  const redLedBulbRef = useRef<THREE.Mesh | null>(null);
+  const redPointLightRef = useRef<THREE.PointLight | null>(null);
+  const yellowBtnCapRef = useRef<THREE.Mesh | null>(null);
+  const redBtnCapRef = useRef<THREE.Mesh | null>(null);
   const buzzerMeshRef = useRef<THREE.Mesh | null>(null);
   const servoArmRef = useRef<THREE.Group | null>(null);
   const fanPropellerRef = useRef<THREE.Mesh | null>(null);
@@ -178,21 +181,40 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
     };
   }, []);
 
-  // Update 3D LED Glow Visuals
-  const set3DLedState = useCallback((isOn: boolean) => {
-    setIsLedLit(isOn);
-    if (ledBulbMeshRef.current && ledPointLightRef.current) {
-      const mat = ledBulbMeshRef.current.material as THREE.MeshStandardMaterial;
+  // Update 3D Yellow LED Visuals
+  const set3DYellowLed = useCallback((isOn: boolean) => {
+    setYellowLedLit(isOn);
+    if (yellowLedBulbRef.current && yellowPointLightRef.current) {
+      const mat = yellowLedBulbRef.current.material as THREE.MeshStandardMaterial;
+      if (isOn) {
+        mat.color.setHex(0xfacc15);
+        mat.emissive.setHex(0xffe033);
+        mat.emissiveIntensity = 2.5;
+        yellowPointLightRef.current.intensity = 3.0;
+      } else {
+        mat.color.setHex(0x554400);
+        mat.emissive.setHex(0x000000);
+        mat.emissiveIntensity = 0;
+        yellowPointLightRef.current.intensity = 0;
+      }
+    }
+  }, []);
+
+  // Update 3D Red LED Visuals
+  const set3DRedLed = useCallback((isOn: boolean) => {
+    setRedLedLit(isOn);
+    if (redLedBulbRef.current && redPointLightRef.current) {
+      const mat = redLedBulbRef.current.material as THREE.MeshStandardMaterial;
       if (isOn) {
         mat.color.setHex(0xef4444);
         mat.emissive.setHex(0xff2222);
         mat.emissiveIntensity = 2.5;
-        ledPointLightRef.current.intensity = 3.0;
+        redPointLightRef.current.intensity = 3.0;
       } else {
         mat.color.setHex(0x551111);
         mat.emissive.setHex(0x000000);
         mat.emissiveIntensity = 0;
-        ledPointLightRef.current.intensity = 0;
+        redPointLightRef.current.intensity = 0;
       }
     }
   }, []);
@@ -213,34 +235,34 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
 
     soundFx.playClick();
     if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
-    set3DLedState(false);
+    set3DYellowLed(false);
+    set3DRedLed(false);
     setReactionTimeMs(null);
     setWinnerPlayer(null);
     setLoserPlayer(null);
 
     gameStateRef.current = 'waiting';
     setGameState('waiting');
-    setGameMessage('استعدا! انتظروا إشارة المصباح الأحمر... من يضغط قبله يخسر!');
+    setGameMessage('استعدا! ترقبوا صافرة الانطلاق من الجرس... من يضغط قبل الصافرة يخسر!');
     soundFx.playTone(440, 80, 'square');
 
     const randomDelay = Math.floor(Math.random() * 2200) + 1600;
     waitTimeoutRef.current = setTimeout(() => {
-      set3DLedState(true);
       signalStartTimeRef.current = performance.now();
       gameStateRef.current = 'ready';
       setGameState('ready');
-      setGameMessage('⚡ انطلاق! اضغط زرّك بأقصى سرعة — الأخير يخسر!');
+      setGameMessage('⚡ انطلقت الصافرة! اضغط زرّك فوراً — الأسرع تشتعل لمبته ويفوز!');
       soundFx.playStartSignal();
     }, randomDelay);
-  }, [set3DLedState]);
+  }, [set3DYellowLed, set3DRedLed]);
 
-  // Handle Player 1 (Blue D2) or Player 2 (Green D3) Press
+  // Handle Player 1 (Yellow D2) or Player 2 (Red D3) Press
   const handlePlayerPress = useCallback(
     (player: 1 | 2) => {
-      const btnRef = player === 1 ? startBtnCapRef : reactionBtnCapRef;
+      const btnRef = player === 1 ? yellowBtnCapRef : redBtnCapRef;
       const otherPlayer: 1 | 2 = player === 1 ? 2 : 1;
-      const playerName = player === 1 ? 'اللاعب 1 (الأزرق)' : 'اللاعب 2 (الأخضر)';
-      const otherName = otherPlayer === 1 ? 'اللاعب 1 (الأزرق)' : 'اللاعب 2 (الأخضر)';
+      const playerName = player === 1 ? 'اللاعب 1 (الأصفر)' : 'اللاعب 2 (الأحمر)';
+      const otherName = otherPlayer === 1 ? 'اللاعب 1 (الأصفر)' : 'اللاعب 2 (الأحمر)';
 
       soundFx.playClick();
       animateButtonDepress(btnRef);
@@ -250,25 +272,30 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
       if (currentStatus === 'waiting') {
         // Pressed BEFORE signal -> This player loses immediately by False Start!
         if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
-        set3DLedState(false);
         gameStateRef.current = 'false_start';
         setGameState('false_start');
         setLoserPlayer(player);
         setWinnerPlayer(otherPlayer);
+
+        // Turn on winner's lamp
         if (otherPlayer === 1) {
+          set3DYellowLed(true);
+          set3DRedLed(false);
           setP1Score((s) => s + 1);
+          setGameMessage(`❌ تسرّع ${playerName} قبل الصافرة! 🏆 فاز ${otherName} واشتعلت لمبته الصفراء!`);
         } else {
+          set3DRedLed(true);
+          set3DYellowLed(false);
           setP2Score((s) => s + 1);
+          setGameMessage(`❌ تسرّع ${playerName} قبل الصافرة! 🏆 فاز ${otherName} واشتعلت لمبته الحمراء!`);
         }
-        setGameMessage(`❌ تسرّع ${playerName} قبل الإشارة وخسر الجولة! 🏆 الفائز: ${otherName}`);
         soundFx.playFalseStartBuzz();
         return;
       }
 
       if (currentStatus === 'ready') {
-        // First valid press after LED lit -> Wins! Other player (last) loses!
+        // First valid press after start signal -> Wins! Their LED turns ON!
         const elapsed = Math.round(performance.now() - signalStartTimeRef.current);
-        set3DLedState(false);
         gameStateRef.current = 'result';
         setGameState('result');
         setReactionTimeMs(elapsed);
@@ -276,12 +303,17 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         setLoserPlayer(otherPlayer);
 
         if (player === 1) {
+          set3DYellowLed(true);
+          set3DRedLed(false);
           setP1Score((s) => s + 1);
+          setGameMessage(`🏆 فاز ${playerName} بسرعة ${elapsed} ms واشتعلت لمبته الصفراء! 💡`);
         } else {
+          set3DRedLed(true);
+          set3DYellowLed(false);
           setP2Score((s) => s + 1);
+          setGameMessage(`🏆 فاز ${playerName} بسرعة ${elapsed} ms واشتعلت لمبته الحمراء! 💡`);
         }
 
-        setGameMessage(`🏆 فاز ${playerName} بسرعة ${elapsed} ms! وخسر ${otherName} (الأبطأ)`);
         soundFx.playVictoryFanfare();
         confetti({
           particleCount: 45,
@@ -290,10 +322,10 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         });
       }
     },
-    [animateButtonDepress, set3DLedState]
+    [animateButtonDepress, set3DYellowLed, set3DRedLed]
   );
 
-  // Desktop keyboard shortcuts for 2-player duel: A = Player 1, L = Player 2, Space = Start
+  // Desktop keyboard shortcuts for 2-player duel: A = Player 1 (Yellow), L = Player 2 (Red), Space = Start
   useEffect(() => {
     if (activeProject !== 'reaction') return;
 
@@ -325,7 +357,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
   const handleResetScores = () => {
     soundFx.playClick();
     if (waitTimeoutRef.current) clearTimeout(waitTimeoutRef.current);
-    set3DLedState(false);
+    set3DYellowLed(false);
+    set3DRedLed(false);
     gameStateRef.current = 'idle';
     setGameState('idle');
     setP1Score(0);
@@ -562,91 +595,31 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         ], 0x1e293b);
       }
 
-      // STEP 2: Red LED + 220Ω Resistor + D8 Wire
+      // STEP 2: Yellow Button (D2) + Yellow Wire + GND Wire
       if (currentStep >= 2) {
-        // LED Group on Breadboard
-        const ledGroup = new THREE.Group();
-        ledGroup.position.set(2.4, 0.52, -2.5);
-        circuitGroup.add(ledGroup);
-
-        // LED Legs
-        const legGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.6, 8);
-        const leg1 = new THREE.Mesh(legGeo, metalMat);
-        leg1.position.set(-0.15, 0.3, 0);
-        ledGroup.add(leg1);
-
-        const leg2 = new THREE.Mesh(legGeo, metalMat);
-        leg2.position.set(0.15, 0.3, 0);
-        ledGroup.add(leg2);
-
-        // Bulb Capsule
-        const bulbGeo = new THREE.SphereGeometry(0.45, 24, 24);
-        const bulbMat = new THREE.MeshStandardMaterial({
-          color: isLedLit ? 0xef4444 : 0x551111,
-          emissive: isLedLit ? 0xff2222 : 0x000000,
-          emissiveIntensity: isLedLit ? 2.5 : 0,
-          roughness: 0.2,
-          transparent: true,
-          opacity: 0.95
-        });
-        const bulb = new THREE.Mesh(bulbGeo, bulbMat);
-        bulb.position.set(0, 0.85, 0);
-        bulb.scale.set(1, 1.4, 1);
-        ledGroup.add(bulb);
-        ledBulbMeshRef.current = bulb;
-
-        // PointLight
-        const light = new THREE.PointLight(0xef4444, isLedLit ? 3.0 : 0, 6);
-        light.position.set(0, 1.2, 0);
-        ledGroup.add(light);
-        ledPointLightRef.current = light;
-
-        // 220Ω Resistor (Cylinder with color stripes)
-        const resistor = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.5 }));
-        resistor.rotation.x = Math.PI / 2;
-        resistor.position.set(1.4, 0.65, -2.5);
-        circuitGroup.add(resistor);
-
-        // Resistor lead wire to GND rail
-        createCurvedWire([
-          new THREE.Vector3(1.4, 0.6, -3.1),
-          new THREE.Vector3(0.9, 0.9, -3.1),
-          new THREE.Vector3(0.3, 0.6, -3.1)
-        ], 0x1e293b);
-
-        // Red Wire: Arduino D8 -> LED Anode (+)
-        createCurvedWire([
-          new THREE.Vector3(-3.2, 0.7, -2.4), // Arduino Pin D8
-          new THREE.Vector3(-0.6, 2.6, -2.5),
-          new THREE.Vector3(2.4, 0.7, -2.5)   // LED Anode
-        ], 0xef4444);
-      }
-
-      // STEP 3: Start Button (D2) + Blue Wire + GND Wire
-      if (currentStep >= 3) {
-        const startBtnGroup = new THREE.Group();
-        startBtnGroup.position.set(4.8, 0.52, 1.2);
-        circuitGroup.add(startBtnGroup);
+        const yellowBtnGroup = new THREE.Group();
+        yellowBtnGroup.position.set(4.8, 0.52, 1.2);
+        circuitGroup.add(yellowBtnGroup);
 
         // Tactile switch base
         const body = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.4, 1.2), plasticBlackMat);
         body.position.y = 0.2;
-        startBtnGroup.add(body);
+        yellowBtnGroup.add(body);
 
-        // Blue Button Cap
-        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.4, 20), new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.3 }));
+        // Yellow Button Cap
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.4, 20), new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3 }));
         cap.position.y = 0.58;
-        startBtnGroup.add(cap);
-        startBtnCapRef.current = cap;
+        yellowBtnGroup.add(cap);
+        yellowBtnCapRef.current = cap;
 
-        // Wire: Arduino Pin D2 -> Start Button Leg (Blue Wire)
+        // Wire: Arduino Pin D2 -> Yellow Button Leg (Yellow Wire)
         createCurvedWire([
           new THREE.Vector3(-3.2, 0.7, 0.4),  // Arduino Pin D2
           new THREE.Vector3(0.5, 2.5, 1.0),
           new THREE.Vector3(4.8, 0.7, 0.6)   // Button Leg 1
-        ], 0x2563eb);
+        ], 0xfacc15);
 
-        // Wire: Start Button Leg 2 -> GND Rail (Black Wire)
+        // Wire: Button Leg 2 -> GND Rail (Black Wire)
         createCurvedWire([
           new THREE.Vector3(4.8, 0.6, 1.8),
           new THREE.Vector3(2.5, 1.0, 1.8),
@@ -654,40 +627,158 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         ], 0x1e293b);
       }
 
-      // STEP 4: Reaction Button (D3) + Green Wire + GND Wire
+      // STEP 3: Yellow LED + 220Ω Resistor (D4) - Beside Yellow Button!
+      if (currentStep >= 3) {
+        const yellowLedGroup = new THREE.Group();
+        yellowLedGroup.position.set(2.2, 0.52, 1.2); // Positioned directly beside the yellow button
+        circuitGroup.add(yellowLedGroup);
+
+        // LED Legs
+        const legGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.6, 8);
+        const leg1 = new THREE.Mesh(legGeo, metalMat);
+        leg1.position.set(-0.15, 0.3, 0);
+        yellowLedGroup.add(leg1);
+
+        const leg2 = new THREE.Mesh(legGeo, metalMat);
+        leg2.position.set(0.15, 0.3, 0);
+        yellowLedGroup.add(leg2);
+
+        // Bulb Capsule
+        const bulbGeo = new THREE.SphereGeometry(0.45, 24, 24);
+        const bulbMat = new THREE.MeshStandardMaterial({
+          color: yellowLedLit ? 0xfacc15 : 0x554400,
+          emissive: yellowLedLit ? 0xffe033 : 0x000000,
+          emissiveIntensity: yellowLedLit ? 2.5 : 0,
+          roughness: 0.2,
+          transparent: true,
+          opacity: 0.95
+        });
+        const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+        bulb.position.set(0, 0.85, 0);
+        bulb.scale.set(1, 1.4, 1);
+        yellowLedGroup.add(bulb);
+        yellowLedBulbRef.current = bulb;
+
+        // PointLight
+        const light = new THREE.PointLight(0xfacc15, yellowLedLit ? 3.0 : 0, 6);
+        light.position.set(0, 1.2, 0);
+        yellowLedGroup.add(light);
+        yellowPointLightRef.current = light;
+
+        // 220Ω Resistor
+        const resistor = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.5 }));
+        resistor.rotation.x = Math.PI / 2;
+        resistor.position.set(1.2, 0.65, 1.2);
+        circuitGroup.add(resistor);
+
+        // Resistor lead wire to GND rail
+        createCurvedWire([
+          new THREE.Vector3(1.2, 0.6, 0.6),
+          new THREE.Vector3(0.8, 0.9, 0.6),
+          new THREE.Vector3(0.3, 0.6, 0.6)
+        ], 0x1e293b);
+
+        // Wire: Arduino D4 -> Yellow LED Anode (+)
+        createCurvedWire([
+          new THREE.Vector3(-3.2, 0.7, -0.2), // Arduino Pin D4
+          new THREE.Vector3(-0.4, 2.4, 0.5),
+          new THREE.Vector3(2.2, 0.7, 1.2)   // Yellow LED Anode
+        ], 0xfacc15);
+      }
+
+      // STEP 4: Red Button (D3) + Red Wire + GND Wire
       if (currentStep >= 4) {
-        const reactBtnGroup = new THREE.Group();
-        reactBtnGroup.position.set(4.8, 0.52, 3.6);
-        circuitGroup.add(reactBtnGroup);
+        const redBtnGroup = new THREE.Group();
+        redBtnGroup.position.set(4.8, 0.52, 3.8);
+        circuitGroup.add(redBtnGroup);
 
         // Base
         const body = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.4, 1.2), plasticBlackMat);
         body.position.y = 0.2;
-        reactBtnGroup.add(body);
+        redBtnGroup.add(body);
 
-        // Green Button Cap
-        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.4, 20), new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.3 }));
+        // Red Button Cap
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.4, 20), new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 }));
         cap.position.y = 0.58;
-        reactBtnGroup.add(cap);
-        reactionBtnCapRef.current = cap;
+        redBtnGroup.add(cap);
+        redBtnCapRef.current = cap;
 
-        // Wire: Arduino Pin D3 -> Reaction Button Leg (Green Wire)
+        // Wire: Arduino Pin D3 -> Red Button Leg (Red Wire)
         createCurvedWire([
           new THREE.Vector3(-3.2, 0.7, 0.1),  // Arduino Pin D3
           new THREE.Vector3(0.8, 2.6, 2.4),
-          new THREE.Vector3(4.8, 0.7, 3.0)   // Button Leg 1
-        ], 0x16a34a);
+          new THREE.Vector3(4.8, 0.7, 3.2)   // Button Leg 1
+        ], 0xef4444);
 
-        // Wire: Reaction Button Leg 2 -> GND Rail (Black Wire)
+        // Wire: Red Button Leg 2 -> GND Rail (Black Wire)
         createCurvedWire([
-          new THREE.Vector3(4.8, 0.6, 4.2),
-          new THREE.Vector3(2.5, 1.1, 4.2),
-          new THREE.Vector3(0.3, 0.6, 4.2)
+          new THREE.Vector3(4.8, 0.6, 4.4),
+          new THREE.Vector3(2.5, 1.1, 4.4),
+          new THREE.Vector3(0.3, 0.6, 4.4)
         ], 0x1e293b);
       }
 
-      // STEP 5: Piezo Buzzer (D9) + Yellow Wire + GND Wire
+      // STEP 5: Red LED + 220Ω Resistor (D5) - Beside Red Button!
       if (currentStep >= 5) {
+        const redLedGroup = new THREE.Group();
+        redLedGroup.position.set(2.2, 0.52, 3.8); // Positioned directly beside the red button
+        circuitGroup.add(redLedGroup);
+
+        // LED Legs
+        const legGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.6, 8);
+        const leg1 = new THREE.Mesh(legGeo, metalMat);
+        leg1.position.set(-0.15, 0.3, 0);
+        redLedGroup.add(leg1);
+
+        const leg2 = new THREE.Mesh(legGeo, metalMat);
+        leg2.position.set(0.15, 0.3, 0);
+        redLedGroup.add(leg2);
+
+        // Bulb Capsule
+        const bulbGeo = new THREE.SphereGeometry(0.45, 24, 24);
+        const bulbMat = new THREE.MeshStandardMaterial({
+          color: redLedLit ? 0xef4444 : 0x551111,
+          emissive: redLedLit ? 0xff2222 : 0x000000,
+          emissiveIntensity: redLedLit ? 2.5 : 0,
+          roughness: 0.2,
+          transparent: true,
+          opacity: 0.95
+        });
+        const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+        bulb.position.set(0, 0.85, 0);
+        bulb.scale.set(1, 1.4, 1);
+        redLedGroup.add(bulb);
+        redLedBulbRef.current = bulb;
+
+        // PointLight
+        const light = new THREE.PointLight(0xef4444, redLedLit ? 3.0 : 0, 6);
+        light.position.set(0, 1.2, 0);
+        redLedGroup.add(light);
+        redPointLightRef.current = light;
+
+        // 220Ω Resistor
+        const resistor = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.5 }));
+        resistor.rotation.x = Math.PI / 2;
+        resistor.position.set(1.2, 0.65, 3.8);
+        circuitGroup.add(resistor);
+
+        // Resistor lead wire to GND rail
+        createCurvedWire([
+          new THREE.Vector3(1.2, 0.6, 3.2),
+          new THREE.Vector3(0.8, 0.9, 3.2),
+          new THREE.Vector3(0.3, 0.6, 3.2)
+        ], 0x1e293b);
+
+        // Wire: Arduino D5 -> Red LED Anode (+)
+        createCurvedWire([
+          new THREE.Vector3(-3.2, 0.7, -0.6), // Arduino Pin D5
+          new THREE.Vector3(-0.2, 2.5, 2.0),
+          new THREE.Vector3(2.2, 0.7, 3.8)   // Red LED Anode
+        ], 0xef4444);
+      }
+
+      // STEP 6: Piezo Buzzer (D9) + Wire + GND Wire
+      if (currentStep >= 6) {
         const buzzerGroup = new THREE.Group();
         buzzerGroup.position.set(4.8, 0.52, -2.5);
         circuitGroup.add(buzzerGroup);
@@ -704,12 +795,12 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         hole.position.y = 0.92;
         buzzerGroup.add(hole);
 
-        // Yellow Wire: Arduino Pin D9 -> Buzzer Positive Leg (+)
+        // Wire: Arduino Pin D9 -> Buzzer Positive Leg (+)
         createCurvedWire([
           new THREE.Vector3(-3.2, 0.7, -2.1), // Arduino Pin D9
           new THREE.Vector3(0.6, 2.8, -2.5),
           new THREE.Vector3(4.4, 0.7, -2.5)   // Buzzer (+)
-        ], 0xeab308);
+        ], 0x3b82f6);
 
         // Black Wire: Buzzer Negative Leg (-) -> GND Rail
         createCurvedWire([
@@ -934,7 +1025,7 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
       }
       renderer.dispose();
     };
-  }, [activeProject, currentStep, isLedLit, motorSpeedPwm, isRotatingAuto]);
+  }, [activeProject, currentStep, yellowLedLit, redLedLit, motorSpeedPwm, isRotatingAuto]);
 
   // Update Servo or Distance in other presets
   const handleDistanceChange = (val: number) => {
@@ -1080,12 +1171,12 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
         </div>
       )}
 
-      {/* Main Grid: 3D Viewport + Assembly Guidance & Hardware Controls */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 items-stretch">
-        {/* Left: 3D Viewport Stage + Below-Canvas Interactive Controls */}
-        <div className="xl:col-span-8 rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
+      {/* Balanced 2-Column Split (50% 3D Stage / 50% Assembly Guide) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        {/* Half 1: 3D Viewport Stage + Below-Canvas Interactive Controls */}
+        <div className="rounded-3xl overflow-hidden bg-gradient-to-b from-sky-50 to-indigo-50/70 border border-sky-200 flex flex-col justify-between p-2.5 sm:p-4 gap-2.5 sm:gap-3 shadow-inner">
           {/* Dedicated 3D Canvas Wrapper (Never covered by bottom buttons!) */}
-          <div className="relative h-[280px] sm:h-[360px] lg:h-[420px] w-full rounded-2xl overflow-hidden bg-[#EEF6FF] border border-sky-200/80">
+          <div className="relative h-[300px] sm:h-[380px] lg:h-[430px] w-full rounded-2xl overflow-hidden bg-[#EEF6FF] border border-sky-200/80">
             {/* Top HUD */}
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 p-2 pointer-events-none">
               <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1.5 rounded-2xl border border-slate-200 text-[11px] sm:text-xs text-slate-800 font-bold shadow-sm max-w-full">
@@ -1125,17 +1216,17 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
           <div className="relative z-10 bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 sm:space-y-3">
             {activeProject === 'reaction' ? (
               <div className="space-y-2.5 sm:space-y-3">
-                {/* Duel Scoreboard & LED Status */}
+                {/* Duel Scoreboard & Both LEDs Status */}
                 <div className="flex flex-wrap items-center justify-between text-xs font-bold gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="flex items-center gap-1.5 text-amber-700 font-black">
                       <Trophy className="w-4 h-4 shrink-0 text-amber-500" />
-                      <span>تحدّي الأسرع (1 ضد 1):</span>
+                      <span>تحدّي الأسرع (أصفر ضد أحمر):</span>
                     </span>
                     <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
-                      <span className="text-blue-700 font-black">الأزرق: {p1Score}</span>
+                      <span className="text-amber-600 font-black">الأصفر: {p1Score}</span>
                       <span className="text-slate-300">|</span>
-                      <span className="text-emerald-700 font-black">الأخضر: {p2Score}</span>
+                      <span className="text-rose-600 font-black">الأحمر: {p2Score}</span>
                       {(p1Score > 0 || p2Score > 0) && (
                         <button
                           onClick={handleResetScores}
@@ -1148,35 +1239,47 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold border ${
-                      isLedLit
-                        ? 'bg-rose-600 border-rose-700 text-white shadow-[0_0_15px_#EF4444]'
-                        : 'bg-slate-100 border-slate-200 text-slate-600'
+                  {/* Individual LED Indicators + Game State Pill */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Yellow LED State */}
+                    <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold border transition-all ${
+                      yellowLedLit
+                        ? 'bg-amber-400 border-amber-500 text-slate-950 shadow-[0_0_12px_#FACC15]'
+                        : 'bg-slate-100 border-slate-200 text-slate-500'
                     }`}>
-                      <span className={`w-2 h-2 rounded-full ${isLedLit ? 'bg-white animate-ping' : 'bg-slate-400'}`} />
-                      <span>اللمبة: {isLedLit ? 'مشتعلة!' : 'مطفأة'}</span>
+                      <span className={`w-2 h-2 rounded-full ${yellowLedLit ? 'bg-amber-800 animate-ping' : 'bg-slate-300'}`} />
+                      <span>لمبة الأصفر: {yellowLedLit ? 'مشتعلة! 💡' : 'مطفأة'}</span>
+                    </div>
+
+                    {/* Red LED State */}
+                    <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold border transition-all ${
+                      redLedLit
+                        ? 'bg-rose-600 border-rose-700 text-white shadow-[0_0_12px_#EF4444]'
+                        : 'bg-slate-100 border-slate-200 text-slate-500'
+                    }`}>
+                      <span className={`w-2 h-2 rounded-full ${redLedLit ? 'bg-white animate-ping' : 'bg-slate-300'}`} />
+                      <span>لمبة الأحمر: {redLedLit ? 'مشتعلة! 💡' : 'مطفأة'}</span>
                     </div>
 
                     <span className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-black border ${
                       gameState === 'ready'
-                        ? 'bg-rose-500 border-rose-600 text-white animate-pulse'
+                        ? 'bg-emerald-500 border-emerald-600 text-white animate-pulse'
                         : gameState === 'waiting'
                         ? 'bg-amber-400 border-amber-500 text-slate-950'
                         : gameState === 'false_start'
                         ? 'bg-rose-100 border-rose-300 text-rose-800'
                         : gameState === 'result'
-                        ? 'bg-emerald-500 border-emerald-600 text-white'
+                        ? 'bg-sky-500 border-sky-600 text-white'
                         : 'bg-slate-100 border-slate-200 text-slate-700'
                     }`}>
                       {gameState === 'ready'
-                        ? '⚡ الضوء اشتعل! اضغطوا!'
+                        ? '⚡ انطلقت الصافرة! اضغطوا!'
                         : gameState === 'waiting'
-                        ? '⏳ ترقبوا اللمبة الحمراء...'
+                        ? '⏳ ترقبوا صافرة الجرس...'
                         : gameState === 'false_start'
-                        ? `⚠️ خسر اللاعب ${loserPlayer} (تسرّع!)`
+                        ? `⚠️ خسر اللاعب ${loserPlayer === 1 ? 'الأصفر' : 'الأحمر'} (تسرّع!)`
                         : gameState === 'result'
-                        ? `🏆 فاز اللاعب ${winnerPlayer} (${reactionTimeMs} ms)`
+                        ? `🏆 فاز اللاعب ${winnerPlayer === 1 ? 'الأصفر' : 'الأحمر'} (${reactionTimeMs} ms)`
                         : 'جاهز للسباق!'}
                     </span>
                   </div>
@@ -1213,14 +1316,14 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                   }`}
                 >
                   {gameState === 'waiting' ? (
-                    <span>⏳ استعدا... لا يضغط أحد قبل اللمبة الحمراء!</span>
+                    <span>⏳ استعدا... لا يضغط أحد قبل صافرة الجرس!</span>
                   ) : gameState === 'ready' ? (
-                    <span>🚨 السباق جارٍ الآن! أسرع زر يفوز والأخير يخسر!</span>
+                    <span>🚨 الصافرة انطلقت! من يسبق بالضغط تشتعل لمبته ويفوز!</span>
                   ) : (
                     <>
                       <Flag className="w-4 h-4 shrink-0" />
                       <span>
-                        {gameState === 'idle' ? '🏁 ابدأ السباق! (1 ضد 1)' : '🔁 ابدأ جولة جديدة (مسافة Space)'}
+                        {gameState === 'idle' ? '🏁 ابدأ السباق! (أصفر ضد أحمر)' : '🔁 ابدأ جولة جديدة (مسافة Space)'}
                       </span>
                     </>
                   )}
@@ -1232,29 +1335,29 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
                     onClick={() => handlePlayerPress(1)}
                     className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[50px] ${
                       winnerPlayer === 1
-                        ? 'bg-blue-500 text-white ring-4 ring-amber-400'
+                        ? 'bg-amber-400 text-slate-950 ring-4 ring-yellow-300 shadow-amber-200'
                         : loserPlayer === 1
-                        ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
-                        : 'bg-blue-600 hover:bg-blue-500 text-white'
+                        ? 'bg-slate-100 text-slate-400 border-2 border-slate-300'
+                        : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
                     }`}
                   >
                     <Play className="w-4 h-4 fill-current shrink-0" />
-                    <span>اللاعب 1 (الأزرق - D2)</span>
-                    <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/20 font-mono">A</kbd>
+                    <span>اللاعب 1 (الأصفر - D2)</span>
+                    <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/40 font-mono">A</kbd>
                   </button>
 
                   <button
                     onClick={() => handlePlayerPress(2)}
                     className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 min-h-[50px] ${
                       winnerPlayer === 2
-                        ? 'bg-emerald-500 text-white ring-4 ring-amber-400'
+                        ? 'bg-rose-500 text-white ring-4 ring-rose-300 shadow-rose-200'
                         : loserPlayer === 2
-                        ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
-                        : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                        ? 'bg-slate-100 text-slate-400 border-2 border-slate-300'
+                        : 'bg-rose-600 hover:bg-rose-500 text-white'
                     }`}
                   >
                     <Zap className="w-4 h-4 shrink-0" />
-                    <span>اللاعب 2 (الأخضر - D3)</span>
+                    <span>اللاعب 2 (الأحمر - D3)</span>
                     <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/20 font-mono">L</kbd>
                   </button>
                 </div>
@@ -1305,8 +1408,8 @@ export const CircuitPlayground3D: React.FC<CircuitPlayground3DProps> = ({ lesson
           </div>
         </div>
 
-        {/* Right: Assembly Guide & Wiring Inspector */}
-        <div className="xl:col-span-4 bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col justify-between space-y-4">
+        {/* Bottom: Assembly Guide & Wiring Inspector */}
+        <div className="bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col justify-between space-y-4">
           <div className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 gap-2">

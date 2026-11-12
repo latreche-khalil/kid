@@ -1,0 +1,33 @@
+{
+  "name": "المبتكرون الصغار",
+  "short_name": "Young Innovators",
+  "description": "منصة تعليمية تفاعلية للأطفال لتعلّم البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية عبر 24 مهمة على 6 أشهر.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "theme_color": "#30A89A",
+  "background_color": "#FAFAF6",
+  "categories": ["education", "kids"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
+

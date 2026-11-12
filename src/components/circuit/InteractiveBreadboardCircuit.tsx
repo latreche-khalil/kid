@@ -133,13 +133,13 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
               <text x="202" y="92" fill="#BAE6FD" fontSize="9" textAnchor="end">D11</text>
               <text x="202" y="112" fill="#BAE6FD" fontSize="9" textAnchor="end">D10</text>
               <text x="202" y="132" fill="#FBBF24" fontSize="10" fontWeight="bold" textAnchor="end">D9 (Buzzer)</text>
-              <text x="202" y="152" fill="#F87171" fontSize="10" fontWeight="bold" textAnchor="end">D8 (LED)</text>
+              <text x="202" y="152" fill="#BAE6FD" fontSize="9" textAnchor="end">D8</text>
               <text x="202" y="172" fill="#BAE6FD" fontSize="9" textAnchor="end">D7</text>
               <text x="202" y="192" fill="#BAE6FD" fontSize="9" textAnchor="end">D6</text>
-              <text x="202" y="212" fill="#BAE6FD" fontSize="9" textAnchor="end">D5</text>
-              <text x="202" y="232" fill="#BAE6FD" fontSize="9" textAnchor="end">D4</text>
-              <text x="202" y="252" fill="#34D399" fontSize="10" fontWeight="bold" textAnchor="end">D3 (Player 2)</text>
-              <text x="202" y="272" fill="#60A5FA" fontSize="10" fontWeight="bold" textAnchor="end">D2 (Player 1)</text>
+              <text x="202" y="212" fill="#EF4444" fontSize="10" fontWeight="bold" textAnchor="end">D5 (LED أحمر)</text>
+              <text x="202" y="232" fill="#EAB308" fontSize="10" fontWeight="bold" textAnchor="end">D4 (LED أصفر)</text>
+              <text x="202" y="252" fill="#EF4444" fontSize="10" fontWeight="bold" textAnchor="end">D3 (زر أحمر)</text>
+              <text x="202" y="272" fill="#EAB308" fontSize="10" fontWeight="bold" textAnchor="end">D2 (زر أصفر)</text>
 
               {/* Pin holes */}
               {[48, 68, 88, 108, 128, 148, 168, 188, 208, 228, 248, 268].map((y, i) => (
@@ -197,11 +197,11 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
                 </g>
               ))}
 
-              {/* COMPONENT 1: PLAYER 1 BLUE BUTTON (Left) */}
+              {/* COMPONENT 1: PLAYER 1 YELLOW BUTTON (Left) */}
               <g transform="translate(60, 160)">
                 <rect x="0" y="0" width="60" height="60" rx="8" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
-                <circle cx="30" cy="30" r="18" fill="#3B82F6" stroke="#2563EB" strokeWidth="3" />
-                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">اللاعب 1 (أزرق)</text>
+                <circle cx="30" cy="30" r="18" fill="#EAB308" stroke="#CA8A04" strokeWidth="3" />
+                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">اللاعب الأصفر</text>
                 <text x="30" y="93" fill="#64748B" fontSize="9" textAnchor="middle">منفذ D2</text>
                 {/* Legs */}
                 <circle cx="8" cy="12" r="3.5" fill="#F59E0B" />
@@ -210,11 +210,31 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
                 <circle cx="52" cy="48" r="3.5" fill="#F59E0B" />
               </g>
 
-              {/* COMPONENT 2: PLAYER 2 GREEN BUTTON (Right) */}
+              {/* COMPONENT 2: YELLOW LED (Beside Yellow Button) */}
+              <g transform="translate(140, 160)">
+                <rect x="-10" y="5" width="20" height="8" rx="2" fill="#F59E0B" stroke="#B45309" strokeWidth="1" />
+                <text x="0" y="24" fill="#B45309" fontSize="8" textAnchor="middle">220Ω</text>
+                <circle cx="0" cy="38" r="14" fill="#FACC15" stroke="#CA8A04" strokeWidth="2" className="animate-pulse" />
+                <circle cx="-3" cy="34" r="3" fill="#FEF08A" />
+                <text x="0" y="64" fill="#CA8A04" fontSize="10" fontWeight="bold" textAnchor="middle">LED أصفر</text>
+                <text x="0" y="75" fill="#64748B" fontSize="8" textAnchor="middle">منفذ D4</text>
+              </g>
+
+              {/* COMPONENT 3: RED LED (Beside Red Button) */}
+              <g transform="translate(230, 160)">
+                <rect x="-10" y="5" width="20" height="8" rx="2" fill="#F59E0B" stroke="#B45309" strokeWidth="1" />
+                <text x="0" y="24" fill="#B45309" fontSize="8" textAnchor="middle">220Ω</text>
+                <circle cx="0" cy="38" r="14" fill="#EF4444" stroke="#DC2626" strokeWidth="2" className="animate-pulse" />
+                <circle cx="-3" cy="34" r="3" fill="#FCA5A5" />
+                <text x="0" y="64" fill="#DC2626" fontSize="10" fontWeight="bold" textAnchor="middle">LED أحمر</text>
+                <text x="0" y="75" fill="#64748B" fontSize="8" textAnchor="middle">منفذ D5</text>
+              </g>
+
+              {/* COMPONENT 4: PLAYER 2 RED BUTTON (Right) */}
               <g transform="translate(290, 160)">
                 <rect x="0" y="0" width="60" height="60" rx="8" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
-                <circle cx="30" cy="30" r="18" fill="#10B981" stroke="#059669" strokeWidth="3" />
-                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">اللاعب 2 (أخضر)</text>
+                <circle cx="30" cy="30" r="18" fill="#EF4444" stroke="#DC2626" strokeWidth="3" />
+                <text x="30" y="80" fill="#1E293B" fontSize="11" fontWeight="bold" textAnchor="middle">اللاعب الأحمر</text>
                 <text x="30" y="93" fill="#64748B" fontSize="9" textAnchor="middle">منفذ D3</text>
                 {/* Legs */}
                 <circle cx="8" cy="12" r="3.5" fill="#F59E0B" />
@@ -223,24 +243,8 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
                 <circle cx="52" cy="48" r="3.5" fill="#F59E0B" />
               </g>
 
-              {/* COMPONENT 3: RED LED (Center) */}
-              <g transform="translate(170, 90)">
-                {/* 220 Ohm Resistor */}
-                <rect x="-30" y="22" width="24" height="8" rx="3" fill="#F59E0B" stroke="#B45309" strokeWidth="1" />
-                <line x1="-24" y1="22" x2="-24" y2="30" stroke="#EF4444" strokeWidth="2" />
-                <line x1="-20" y1="22" x2="-20" y2="30" stroke="#EF4444" strokeWidth="2" />
-                <line x1="-14" y1="22" x2="-14" y2="30" stroke="#92400E" strokeWidth="2" />
-                <text x="-18" y="42" fill="#B45309" fontSize="9" textAnchor="middle">220Ω</text>
-
-                {/* LED Bulb */}
-                <circle cx="15" cy="25" r="16" fill="#EF4444" stroke="#DC2626" strokeWidth="2" className="animate-pulse" />
-                <circle cx="12" cy="20" r="4" fill="#FCA5A5" />
-                <text x="15" y="58" fill="#DC2626" fontSize="11" fontWeight="bold" textAnchor="middle">LED أحمر</text>
-                <text x="15" y="70" fill="#64748B" fontSize="9" textAnchor="middle">منفذ D8</text>
-              </g>
-
-              {/* COMPONENT 4: BUZZER (Bottom Center) */}
-              <g transform="translate(170, 260)">
+              {/* COMPONENT 5: BUZZER (Bottom Center) */}
+              <g transform="translate(185, 260)">
                 <circle cx="20" cy="30" r="24" fill="#0F172A" stroke="#334155" strokeWidth="3" />
                 <circle cx="20" cy="30" r="6" fill="#475569" />
                 <text x="20" y="70" fill="#0F172A" fontSize="11" fontWeight="bold" textAnchor="middle">طنان صوتي Buzzer</text>
@@ -262,11 +266,11 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
               onClick={() => handleStepClick(1)}
             />
 
-            {/* Step 2: LED Wire (Red D8) */}
+            {/* Step 2: Yellow Button Wire (Yellow D2) */}
             <path
-              d="M 283 228 C 340 180, 460 140, 560 115"
+              d="M 283 348 C 340 370, 420 320, 488 208"
               fill="none"
-              stroke={selectedStep === 2 ? '#FF5B5A' : '#EF4444'}
+              stroke={selectedStep === 2 ? '#FBBF24' : '#EAB308'}
               strokeWidth={selectedStep === 2 ? 6 : 4}
               strokeLinecap="round"
               filter={selectedStep === 2 ? 'url(#glow-selected)' : undefined}
@@ -274,11 +278,11 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
               onClick={() => handleStepClick(2)}
             />
 
-            {/* Step 3: Start Button Wire (Blue D2) */}
+            {/* Step 3: Yellow LED Wire (Yellow D4) */}
             <path
-              d="M 283 348 C 340 370, 420 320, 488 208"
+              d="M 283 308 C 360 260, 480 220, 560 200"
               fill="none"
-              stroke={selectedStep === 3 ? '#60A5FA' : '#3B82F6'}
+              stroke={selectedStep === 3 ? '#FEF08A' : '#FACC15'}
               strokeWidth={selectedStep === 3 ? 6 : 4}
               strokeLinecap="round"
               filter={selectedStep === 3 ? 'url(#glow-selected)' : undefined}
@@ -286,11 +290,11 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
               onClick={() => handleStepClick(3)}
             />
 
-            {/* Step 4: Reaction Button Wire (Green D3) */}
+            {/* Step 4: Red Button Wire (Red D3) */}
             <path
               d="M 283 328 C 420 390, 640 380, 718 208"
               fill="none"
-              stroke={selectedStep === 4 ? '#34D399' : '#10B981'}
+              stroke={selectedStep === 4 ? '#F87171' : '#EF4444'}
               strokeWidth={selectedStep === 4 ? 6 : 4}
               strokeLinecap="round"
               filter={selectedStep === 4 ? 'url(#glow-selected)' : undefined}
@@ -298,16 +302,28 @@ export const InteractiveBreadboardCircuit: React.FC<CircuitProps> = ({ wiringSte
               onClick={() => handleStepClick(4)}
             />
 
-            {/* Step 5: Buzzer Wire (Amber D9) */}
+            {/* Step 5: Red LED Wire (Red D5) */}
             <path
-              d="M 283 208 C 330 220, 490 280, 590 310"
+              d="M 283 288 C 400 240, 580 230, 650 200"
               fill="none"
-              stroke={selectedStep === 5 ? '#FBBF24' : '#F59E0B'}
+              stroke={selectedStep === 5 ? '#FCA5A5' : '#DC2626'}
               strokeWidth={selectedStep === 5 ? 6 : 4}
               strokeLinecap="round"
               filter={selectedStep === 5 ? 'url(#glow-selected)' : undefined}
               className="cursor-pointer transition-all"
               onClick={() => handleStepClick(5)}
+            />
+
+            {/* Step 6: Buzzer Wire (Amber D9) */}
+            <path
+              d="M 283 208 C 330 220, 490 280, 605 310"
+              fill="none"
+              stroke={selectedStep === 6 ? '#FBBF24' : '#F59E0B'}
+              strokeWidth={selectedStep === 6 ? 6 : 4}
+              strokeLinecap="round"
+              filter={selectedStep === 6 ? 'url(#glow-selected)' : undefined}
+              className="cursor-pointer transition-all"
+              onClick={() => handleStepClick(6)}
             />
           </svg>
         </div>

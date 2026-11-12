@@ -2,15 +2,91 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>المبتكرون الصغار | Young Innovators - مغامرة البرمجة والآردوينو</title>
-    <!-- Google Fonts: Cairo, Tajawal, JetBrains Mono -->
+
+    <!-- ===== Primary SEO Meta ===== -->
+    <title>المبتكرون الصغار | Young Innovators — تعلّم البرمجة والآردوينو للأطفال</title>
+    <meta name="description" content="منصة تعليمية تفاعلية للأطفال من 8 إلى 14 سنة لتعلّم البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية عبر 24 مهمة مقسمة على 6 أشهر من المغامرات." />
+    <meta name="keywords" content="تعليم برمجة أطفال, آردوينو للأطفال, Arduino kids, تعلم الإلكترونيات, STEM عربي, المبتكرون الصغار, Young Innovators, برمجة تفاعلية, كود أطفال, مشاريع إلكترونية" />
+    <meta name="author" content="المبتكرون الصغار — Young Innovators" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#30A89A" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://young-innovators.app/" />
+
+    <!-- ===== Open Graph (Facebook / LinkedIn / WhatsApp) ===== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:site_name" content="المبتكرون الصغار | Young Innovators" />
+    <meta property="og:title" content="المبتكرون الصغار — تعلّم البرمجة والآردوينو للأطفال" />
+    <meta property="og:description" content="24 مهمة تفاعلية على مدار 6 أشهر لتعليم الأطفال البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية مع شخصية Robo والمهندس سباركي." />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="المبتكرون الصغار — منصة تعليم البرمجة والآردوينو للأطفال" />
+    <meta property="og:url" content="https://young-innovators.app/" />
+
+    <!-- ===== Twitter Card ===== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="المبتكرون الصغار — تعلّم البرمجة والآردوينو للأطفال" />
+    <meta name="twitter:description" content="24 مهمة تفاعلية لتعليم الأطفال البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية." />
+    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image:alt" content="المبتكرون الصغار — منصة تعليم البرمجة والآردوينو للأطفال" />
+
+    <!-- ===== Favicon & App Icons ===== -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ===== Structured Data (JSON-LD) ===== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalApplication",
+      "name": "المبتكرون الصغار | Young Innovators",
+      "description": "منصة تعليمية تفاعلية للأطفال لتعلّم البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية عبر 24 مهمة على 6 أشهر.",
+      "url": "https://young-innovators.app/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "audience": {
+        "@type": "EducationalAudience",
+        "educationalRole": "student",
+        "suggestedMinAge": 8,
+        "suggestedMaxAge": 14
+      },
+      "inLanguage": ["ar", "en"],
+      "educationalLevel": "beginner",
+      "learningResourceType": ["interactive", "hands-on", "game-based"],
+      "teaches": ["Programming", "Arduino", "Electronics", "STEM", "Computational Thinking"],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Young Innovators",
+        "url": "https://young-innovators.app/"
+      }
+    }
+    </script>
+
+    <!-- ===== Google Fonts (Preconnect + Load) ===== -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#FDFBF7] text-[#1E1B4B] antialiased selection:bg-[#FF5B5A]/20 selection:text-[#FF5B5A]">
+  <body class="bg-[#FAFAF6] text-[#1E1B4B] antialiased selection:bg-[#30A89A]/20 selection:text-[#30A89A]">
+    <!-- Noscript fallback for crawlers -->
+    <noscript>
+      <div style="text-align:center;padding:2rem;font-family:Cairo,sans-serif;direction:rtl">
+        <h1>المبتكرون الصغار | Young Innovators</h1>
+        <p>منصة تعليمية تفاعلية للأطفال من 8 إلى 14 سنة لتعلّم البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية.</p>
+        <p>يرجى تفعيل الجافاسكريبت لتشغيل التطبيق.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

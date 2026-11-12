@@ -5,21 +5,39 @@ import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { HomePage } from './pages/Home/HomePage';
 import { AdventureMap } from './pages/AdventureMap/AdventureMap';
-import { MissionsPage } from './pages/Missions/MissionsPage';
 import { LessonPage } from './pages/Lesson/LessonPage';
-import { InstructorDashboard } from './pages/Instructor/InstructorDashboard';
-import { ClassroomMode } from './components/classroom/ClassroomMode';
 import { CreateProfileModal } from './components/common/CreateProfileModal';
-import { getLessonByWeek } from './data/lessons';
 import { soundFx } from './services/sound/webAudio';
+
+const BASE_TITLE = 'المبتكرون الصغار | Young Innovators';
 
 export const App: React.FC = () => {
   const [profiles, setProfiles] = useState<StudentProfile[]>(() => storageService.getProfiles());
   const [activeProfile, setActiveProfile] = useState<StudentProfile>(() => storageService.getActiveProfile());
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [selectedLessonWeek, setSelectedLessonWeek] = useState<number>(1);
-  const [isClassroomModeOpen, setIsClassroomModeOpen] = useState<boolean>(false);
   const [isCreateProfileOpen, setIsCreateProfileOpen] = useState<boolean>(false);
+
+  // Dynamic page title for SEO & tab clarity
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      home: BASE_TITLE,
+      map: `خريطة التعلّم — ${BASE_TITLE}`,
+      lesson: `الحصة ${selectedLessonWeek} — ${BASE_TITLE}`,
+    };
+    document.title = titles[currentTab] || BASE_TITLE;
+
+    // Update meta description dynamically
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      const descriptions: Record<string, string> = {
+        home: 'منصة تعليمية تفاعلية للأطفال من 8 إلى 14 سنة لتعلّم البرمجة والإلكترونيات وبناء مشاريع آردوينو حقيقية عبر 24 مهمة مقسمة على 6 أشهر من المغامرات.',
+        map: 'استكشف 6 عوالم و24 مهمة تعليمية في رحلة المبتكرون الصغار لتعلّم البرمجة والآردوينو.',
+        lesson: `الحصة ${selectedLessonWeek}: تعلّم البرمجة والإلكترونيات مع أنشطة تفاعلية ومشاريع آردوينو حقيقية في منصة المبتكرون الصغار.`,
+      };
+      metaDesc.setAttribute('content', descriptions[currentTab] || descriptions.home);
+    }
+  }, [currentTab, selectedLessonWeek]);
 
   // Refresh active profile from storage
   const refreshProfiles = () => {
@@ -35,10 +53,8 @@ export const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const activeLessonDetail = getLessonByWeek(selectedLessonWeek) || getLessonByWeek(1)!;
-
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#1E1B4B] flex flex-col font-sans selection:bg-[#FF5B5A]/20 selection:text-[#FF5B5A]">
+    <div className="min-h-screen bg-[#FAFAF6] text-[#203447] flex flex-col font-sans selection:bg-[#30A89A]/20 selection:text-[#203447]">
       {/* Platform Header */}
       <Header
         currentTab={currentTab}
@@ -52,7 +68,6 @@ export const App: React.FC = () => {
           setActiveProfile(newP);
           refreshProfiles();
         }}
-        onOpenClassroom={() => setIsClassroomModeOpen(true)}
         onOpenCreateProfile={() => setIsCreateProfileOpen(true)}
       />
 
@@ -76,47 +91,16 @@ export const App: React.FC = () => {
           />
         )}
 
-        {currentTab === 'missions' && (
-          <MissionsPage
-            activeProfile={activeProfile}
-            onSelectLesson={handleOpenLesson}
-          />
-        )}
-
         {currentTab === 'lesson' && (
           <LessonPage
             weekNumber={selectedLessonWeek}
             onBackToMap={() => setCurrentTab('map')}
-            onOpenClassroom={() => setIsClassroomModeOpen(true)}
-          />
-        )}
-
-        {currentTab === 'instructor' && (
-          <InstructorDashboard
-            profiles={profiles}
-            activeProfile={activeProfile}
-            onProfileChange={(p) => {
-              setActiveProfile(p);
-              refreshProfiles();
-            }}
-            onRefreshProfiles={refreshProfiles}
-            onOpenClassroom={() => setIsClassroomModeOpen(true)}
-            onOpenLesson={handleOpenLesson}
-            onOpenCreateProfile={() => setIsCreateProfileOpen(true)}
           />
         )}
       </main>
 
       {/* Platform Footer */}
       <Footer />
-
-      {/* Fullscreen Classroom Mode Overlay */}
-      {isClassroomModeOpen && (
-        <ClassroomMode
-          lesson={activeLessonDetail}
-          onClose={() => setIsClassroomModeOpen(false)}
-        />
-      )}
 
       {/* Create Profile Modal */}
       <CreateProfileModal

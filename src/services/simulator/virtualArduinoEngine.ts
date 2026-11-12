@@ -35,63 +35,60 @@ export interface ArduinoProgramPreset {
 export const ARDUINO_CODE_PRESETS: ArduinoProgramPreset[] = [
   {
     id: 'reaction_game',
-    titleAr: 'لعبة سرعة الاستجابة الرسمية (الأسبوع 1)',
-    titleEn: 'Reaction Time Game Official Code',
+    titleAr: 'تحدّي الأسرع: أصفر ضد أحمر (الأسبوع 1)',
+    titleEn: 'Speed Duel: Yellow vs Red (Week 1)',
     weekRef: 1,
-    descriptionAr: 'ينتظر زمناً عشوائياً، يضيء المصباح ويطلق صفارة، ثم يحسب زمن ضغط زر D3 بالملي ثانية.',
-    code: `void setup() {
+    descriptionAr: 'زر أصفر مع لمبة صفراء (D2/D4) وزر أحمر مع لمبة حمراء (D3/D5): من يضغط أولاً تشتعل لمبته فوراً!',
+    code: `const int BTN_YELLOW = 2; // زر اللاعب الأصفر
+const int BTN_RED    = 3; // زر اللاعب الأحمر
+const int LED_YELLOW = 4; // لمبة اللاعب الأصفر
+const int LED_RED    = 5; // لمبة اللاعب الأحمر
+const int BUZZER_PIN = 9; // الطنان الصوتي
+
+void setup() {
   Serial.begin(9600);
-  pinMode(8, OUTPUT);       // مصباح LED
-  pinMode(3, INPUT_PULLUP); // زر الاستجابة
-  pinMode(9, OUTPUT);       // الطنان الصوتي
-  Serial.println("System Ready! Press Start...");
+  pinMode(BTN_YELLOW, INPUT_PULLUP);
+  pinMode(BTN_RED,    INPUT_PULLUP);
+  pinMode(LED_YELLOW, OUTPUT);
+  pinMode(LED_RED,    OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  Serial.println("1v1 Duel Ready! Press Yellow (D2) or Red (D3)");
 }
 
 void loop() {
-  // انتظار عشوائي بين ثانيتين و 4 ثوانٍ
-  delay(2500);
+  digitalWrite(LED_YELLOW, LOW);
+  digitalWrite(LED_RED,    LOW);
+  delay(2000);
   
-  // تشغيل المصباح وصفارة الانطلاق
-  digitalWrite(8, HIGH);
-  tone(9, 1200, 150);
+  // صفارة البداية
+  tone(BUZZER_PIN, 1200, 200);
   unsigned long startT = millis();
   
-  // انتظار ضغط اللاعب لزر الاستجابة D3
-  while (digitalRead(3) == HIGH) {
-    // ترقب الضغط...
+  int winner = 0;
+  while (winner == 0) {
+    if (digitalRead(BTN_YELLOW) == LOW) {
+      winner = 1;
+    } else if (digitalRead(BTN_RED) == LOW) {
+      winner = 2;
+    }
   }
   
   unsigned long endT = millis();
-  digitalWrite(8, LOW);
-  
   unsigned long reaction = endT - startT;
-  Serial.print("Reaction Time: ");
-  Serial.print(reaction);
-  Serial.println(" ms");
   
-  delay(2000);
-}`,
-  },
-  {
-    id: 'blink_led',
-    titleAr: 'وميض المصباح الكلاسيكي (Blink LED)',
-    titleEn: 'Classic Blink LED',
-    weekRef: 1,
-    descriptionAr: 'أول برنامج يكتبه كل مهندس! يضيء المصباح D8 لمدة ثانية ثم يطفئه لمدة ثانية باستمرار.',
-    code: `void setup() {
-  pinMode(8, OUTPUT); // ضبط منفذ المصباح كمخرج
-  Serial.begin(9600);
-  Serial.println("Blink Program Started!");
-}
-
-void loop() {
-  digitalWrite(8, HIGH); // إشعال المصباح
-  Serial.println("LED: HIGH (ON)");
-  delay(1000);           // انتظر 1000 ملي ثانية
+  if (winner == 1) {
+    digitalWrite(LED_YELLOW, HIGH); // اشتعال اللمبة الصفراء
+    Serial.print("🏆 فاز اللاعب الأصفر! الزمن: ");
+    Serial.print(reaction);
+    Serial.println(" ms");
+  } else {
+    digitalWrite(LED_RED, HIGH); // اشتعال اللمبة الحمراء
+    Serial.print("🏆 فاز اللاعب الأحمر! الزمن: ");
+    Serial.print(reaction);
+    Serial.println(" ms");
+  }
   
-  digitalWrite(8, LOW);  // إطفاء المصباح
-  Serial.println("LED: LOW (OFF)");
-  delay(1000);           // انتظر 1000 ملي ثانية
+  delay(3000);
 }`,
   },
   {
@@ -307,9 +304,9 @@ export class VirtualArduinoRuntime {
       const state = digitalWriteMatch[2] as PinState;
       if (this.state.pins[pin]) {
         this.state.pins[pin].state = state;
-        if (pin === 8) {
+        if (pin === 4 || pin === 5 || pin === 8) {
           if (state === 'HIGH') {
-            soundFx.playTone(880, 80, 'sine');
+            soundFx.playTone(pin === 4 ? 880 : pin === 5 ? 660 : 770, 80, 'sine');
           }
         }
       }

@@ -15,8 +15,8 @@ export const ReactionGameSimulator: React.FC = () => {
   const [serialLogs, setSerialLogs] = useState<string[]>([
     '======================================',
     '🏁 تحدّي الأسرع (1 ضد 1) جاهز للسباق!',
-    'الأول بعد الإشارة يفوز — والأخير (أو المتسرّع) يخسر!',
-    'اللاعب 1: D2 (الأزرق) | اللاعب 2: D3 (الأخضر)',
+    'الأول بعد الصافرة تشتعل لمبته ويفوز!',
+    'اللاعب 1: D2 (الأصفر) + لمبة D4 | اللاعب 2: D3 (الأحمر) + لمبة D5',
     '======================================',
   ]);
 
@@ -52,7 +52,7 @@ export const ReactionGameSimulator: React.FC = () => {
 
     appendLog('');
     appendLog('🎯 بدأت جولة 1 ضد 1! ضعا أيديكما على الأزرار...');
-    appendLog('⚠️ إياكما أن يضغط أحد قبل اشتعال اللمبة الحمراء!');
+    appendLog('⚠️ إياكما أن يضغط أحد قبل صافرة الجرس!');
 
     const randomDelay = Math.floor(Math.random() * 2500) + 1800;
 
@@ -61,7 +61,7 @@ export const ReactionGameSimulator: React.FC = () => {
       setGameState('ACTIVE_LIGHT');
       startTimeRef.current = performance.now();
       soundFx.playStartSignal();
-      appendLog('🚨 اشتعلت اللمبة (D8)! اضغطا الآن — الأسرع يفوز والأبطأ يخسر!');
+      appendLog('🚨 انطلقت الصافرة! اضغطا الآن — من يسبق تشتعل لمبته ويفوز!');
     }, randomDelay);
   }, [appendLog]);
 
@@ -69,8 +69,10 @@ export const ReactionGameSimulator: React.FC = () => {
     (player: 1 | 2) => {
       const current = gameStateRef.current;
       const otherPlayer: 1 | 2 = player === 1 ? 2 : 1;
-      const playerName = player === 1 ? 'اللاعب 1 (الأزرق - D2)' : 'اللاعب 2 (الأخضر - D3)';
-      const otherName = otherPlayer === 1 ? 'اللاعب 1 (الأزرق)' : 'اللاعب 2 (الأخضر)';
+      const playerName = player === 1 ? 'اللاعب 1 (الأصفر - D2)' : 'اللاعب 2 (الأحمر - D3)';
+      const otherName = otherPlayer === 1 ? 'اللاعب 1 (الأصفر)' : 'اللاعب 2 (الأحمر)';
+      const winLamp = otherPlayer === 1 ? 'الصفراء (D4)' : 'الحمراء (D5)';
+      const winnerLamp = player === 1 ? 'الصفراء (D4)' : 'الحمراء (D5)';
 
       if (current === 'WAITING_RANDOM') {
         if (timerRef.current) clearTimeout(timerRef.current);
@@ -82,8 +84,8 @@ export const ReactionGameSimulator: React.FC = () => {
         else setP2Wins((w) => w + 1);
 
         soundFx.playFalseStartBuzz();
-        appendLog(`❌ انطلاق مبكر! ضغط ${playerName} قبل الإشارة!`);
-        appendLog(`😢 الخاسر: ${playerName} | 🏆 الفائز: ${otherName}`);
+        appendLog(`❌ انطلاق مبكر! ضغط ${playerName} قبل الصافرة!`);
+        appendLog(`😢 الخاسر: ${playerName} | 🏆 الفائز: ${otherName} (اشتعلت لمبته ${winLamp})`);
         return;
       }
 
@@ -99,7 +101,7 @@ export const ReactionGameSimulator: React.FC = () => {
         else setP2Wins((w) => w + 1);
 
         appendLog('--------------------------------------');
-        appendLog(`🏆 الفائز: ${playerName} بزمن ${elapsed} ms!`);
+        appendLog(`🏆 الفائز: ${playerName} بزمن ${elapsed} ms! اشتعلت لمبته ${winnerLamp}! 💡`);
         appendLog(`🐢 الخاسر (الأبطأ): ${otherName}`);
         appendLog('--------------------------------------');
 
@@ -174,9 +176,9 @@ export const ReactionGameSimulator: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-black shadow-xs">
             <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
-            <span className="text-blue-700">الأزرق: {p1Wins}</span>
+            <span className="text-amber-600">الأصفر: {p1Wins}</span>
             <span className="text-slate-300">|</span>
-            <span className="text-emerald-700">الأخضر: {p2Wins}</span>
+            <span className="text-rose-600">الأحمر: {p2Wins}</span>
           </div>
 
           <button
@@ -189,35 +191,44 @@ export const ReactionGameSimulator: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Interactive Stage Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
-        {/* Left: Hardware Duel Panel */}
-        <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-          {/* LED & Status Lamp Area */}
-          <div className="flex flex-col items-center justify-center py-2 space-y-3">
+      {/* Balanced 2-Column Split: Duel Arena (50%) | Serial Monitor (50%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        {/* Half 1: Hardware Duel Panel */}
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+          {/* Dual LED Indicators (Yellow D4 & Red D5) */}
+          <div className="flex flex-col items-center justify-center py-2 space-y-4">
             <span className="text-xs font-bold tracking-wider text-slate-500">
-              مصباح إشارة الانطلاق (D8)
+              لمبات الفائزين (صفراء D4 للأول • حمراء D5 للثاني)
             </span>
 
-            <div className="relative">
-              <div
-                className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full transition-all duration-150 flex items-center justify-center border-4 ${
-                  gameState === 'ACTIVE_LIGHT'
-                    ? 'bg-red-500 border-red-300 shadow-[0_0_60px_#EF4444] scale-105'
-                    : gameState === 'FALSE_START'
-                    ? 'bg-amber-500 border-amber-300 shadow-[0_0_30px_#D97706]'
-                    : 'bg-rose-100 border-slate-300'
-                }`}
-              >
+            <div className="flex items-center justify-center gap-8">
+              {/* Yellow LED */}
+              <div className="flex flex-col items-center gap-1.5">
                 <div
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-opacity ${
-                    gameState === 'ACTIVE_LIGHT' ? 'bg-red-200 opacity-90' : 'bg-rose-300/60 opacity-50'
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full transition-all duration-150 flex items-center justify-center border-4 ${
+                    winnerPlayer === 1
+                      ? 'bg-amber-400 border-amber-300 shadow-[0_0_40px_#FACC15] scale-110'
+                      : 'bg-amber-100/60 border-slate-200'
                   }`}
-                />
+                >
+                  <div className={`w-6 h-6 rounded-full ${winnerPlayer === 1 ? 'bg-white animate-ping' : 'bg-amber-300/40'}`} />
+                </div>
+                <span className="text-[11px] font-black text-amber-700">لمبة الأصفر (D4)</span>
               </div>
-              {gameState === 'ACTIVE_LIGHT' && (
-                <div className="absolute inset-0 rounded-full border-4 border-red-400 animate-ping opacity-60" />
-              )}
+
+              {/* Red LED */}
+              <div className="flex flex-col items-center gap-1.5">
+                <div
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full transition-all duration-150 flex items-center justify-center border-4 ${
+                    winnerPlayer === 2
+                      ? 'bg-rose-500 border-rose-300 shadow-[0_0_40px_#EF4444] scale-110'
+                      : 'bg-rose-100/60 border-slate-200'
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full ${winnerPlayer === 2 ? 'bg-white animate-ping' : 'bg-rose-300/40'}`} />
+                </div>
+                <span className="text-[11px] font-black text-rose-700">لمبة الأحمر (D5)</span>
+              </div>
             </div>
 
             <div className="text-center font-bold min-h-[44px] flex items-center justify-center">
@@ -226,29 +237,29 @@ export const ReactionGameSimulator: React.FC = () => {
               )}
               {gameState === 'WAITING_RANDOM' && (
                 <span className="text-amber-700 text-xs sm:text-sm animate-pulse">
-                  ⏳ انتبها... من يضغط قبل اشتعال اللمبة يخسر فوراً!
+                  ⏳ ترقبوا صافرة الجرس... من يضغط قبل الصافرة يخسر فوراً!
                 </span>
               )}
               {gameState === 'ACTIVE_LIGHT' && (
-                <span className="text-red-600 text-sm sm:text-base font-black animate-bounce">
-                  ⚡ اضغطا الآن! الأول يفوز والأخير يخسر! ⚡
+                <span className="text-emerald-700 text-sm sm:text-base font-black animate-bounce">
+                  ⚡ انطلقت الصافرة! اضغطا الآن — من يسبق تشتعل لمبته! ⚡
                 </span>
               )}
               {gameState === 'FALSE_START' && (
                 <span className="text-amber-800 text-xs sm:text-sm flex items-center justify-center gap-1.5 font-black">
                   <AlertOctagon className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>
-                    تسرّع اللاعب {loserPlayer} قبل الضوء وخسر! 🏆 فاز اللاعب {winnerPlayer}!
+                    تسرّع اللاعب {loserPlayer === 1 ? 'الأصفر' : 'الأحمر'} قبل الصافرة وخسر! 🏆 فاز اللاعب {winnerPlayer === 1 ? 'الأصفر' : 'الأحمر'}!
                   </span>
                 </span>
               )}
               {gameState === 'RESULT' && reactionTimeMs !== null && (
                 <div className="space-y-1">
                   <span className="text-emerald-700 text-lg sm:text-2xl font-black block">
-                    🏆 فاز اللاعب {winnerPlayer} ({reactionTimeMs} ms)
+                    🏆 فاز اللاعب {winnerPlayer === 1 ? 'الأصفر' : 'الأحمر'} ({reactionTimeMs} ms) واشتعلت لمبته! 💡
                   </span>
                   <span className="text-xs text-rose-600 font-bold">
-                    😢 خسر اللاعب {loserPlayer} لأنه ضغط الأخير!
+                    😢 خسر اللاعب {loserPlayer === 1 ? 'الأصفر' : 'الأحمر'} لأنه ضغط الأخير!
                   </span>
                 </div>
               )}
@@ -269,7 +280,7 @@ export const ReactionGameSimulator: React.FC = () => {
               <Flag className="w-4 h-4 shrink-0" />
               <span>
                 {gameState === 'WAITING_RANDOM'
-                  ? 'جاري انتظار الإشارة العشوائية...'
+                  ? 'جاري انتظار صافرة الجرس...'
                   : gameState === 'ACTIVE_LIGHT'
                   ? 'السباق جارٍ الآن!'
                   : '🏁 ابدأ جولة السباق (1 ضد 1)'}
@@ -282,45 +293,45 @@ export const ReactionGameSimulator: React.FC = () => {
                 onClick={() => handlePlayerPress(1)}
                 className={`flex flex-col items-center justify-center p-4 sm:p-5 rounded-2xl font-bold transition-all active:scale-95 ${
                   winnerPlayer === 1
-                    ? 'bg-blue-500 text-white shadow-xl ring-4 ring-amber-400'
+                    ? 'bg-amber-400 text-slate-950 shadow-xl ring-4 ring-yellow-300'
                     : loserPlayer === 1
-                    ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
+                    ? 'bg-slate-100 text-slate-400 border-2 border-slate-300'
                     : gameState === 'ACTIVE_LIGHT'
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white ring-2 ring-blue-300 animate-pulse'
-                    : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md'
+                    ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 ring-2 ring-amber-300 animate-pulse'
+                    : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md'
                 }`}
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 flex items-center justify-center mb-2">
-                  <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/40 flex items-center justify-center mb-2">
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-slate-950" />
                 </div>
                 <span className="text-sm sm:text-base font-black">اللاعب 1 (D2)</span>
-                <span className="text-[11px] text-blue-100 mt-0.5">الأزرق • مفتاح A</span>
+                <span className="text-[11px] text-amber-950 font-bold mt-0.5">الأصفر • مفتاح A</span>
               </button>
 
               <button
                 onClick={() => handlePlayerPress(2)}
                 className={`flex flex-col items-center justify-center p-4 sm:p-5 rounded-2xl font-bold transition-all active:scale-95 ${
                   winnerPlayer === 2
-                    ? 'bg-emerald-500 text-white shadow-xl ring-4 ring-amber-400'
+                    ? 'bg-rose-500 text-white shadow-xl ring-4 ring-rose-300'
                     : loserPlayer === 2
-                    ? 'bg-slate-100 text-slate-500 border-2 border-rose-300'
+                    ? 'bg-slate-100 text-slate-400 border-2 border-slate-300'
                     : gameState === 'ACTIVE_LIGHT'
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white ring-2 ring-emerald-300 animate-pulse'
-                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md'
+                    ? 'bg-rose-600 hover:bg-rose-500 text-white ring-2 ring-rose-300 animate-pulse'
+                    : 'bg-rose-600 hover:bg-rose-500 text-white shadow-md'
                 }`}
               >
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 flex items-center justify-center mb-2">
                   <Zap className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black">اللاعب 2 (D3)</span>
-                <span className="text-[11px] text-emerald-100 mt-0.5">الأخضر • مفتاح L</span>
+                <span className="text-[11px] text-rose-100 mt-0.5">الأحمر • مفتاح L</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Right: Serial Monitor Terminal Output */}
-        <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-4 flex flex-col justify-between font-mono shadow-sm">
+        {/* Bottom: Serial Monitor Terminal Output */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col justify-between font-mono shadow-sm">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs text-slate-600">
               <div className="flex items-center gap-2">

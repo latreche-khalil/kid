@@ -41,15 +41,16 @@ export const MissionChallengeVerifier: React.FC<MissionChallengeVerifierProps> =
   const [code, setCode] = useState<string>(`// كود غليتش المعطوب لتحدّي 1 ضد 1 — مهمتك إصلاحه واجتياز الفحص الذكي!
 void setup() {
   Serial.begin(9600);
-  pinMode(8, OUTPUT);       // مصباح LED
-  pinMode(2, INPUT);        // ⚠️ ثغرة: زر اللاعب 1 عائم بدون مقاومة شد!
-  pinMode(3, INPUT);        // ⚠️ ثغرة: زر اللاعب 2 عائم بدون مقاومة شد!
+  pinMode(4, OUTPUT);       // مصباح اللاعب الأصفر
+  pinMode(5, OUTPUT);       // مصباح اللاعب الأحمر
+  pinMode(2, INPUT);        // ⚠️ ثغرة: زر اللاعب الأصفر عائم بدون مقاومة شد!
+  pinMode(3, INPUT);        // ⚠️ ثغرة: زر اللاعب الأحمر عائم بدون مقاومة شد!
   pinMode(9, OUTPUT);       // الطنان الصوتي
 }
 
 void loop() {
   delay(2500);
-  digitalWrite(8, HIGH);
+  tone(9, 1200, 200);       // صافرة البداية
   unsigned long startTime = millis();
   
   while (digitalRead(2) == HIGH && digitalRead(3) == HIGH) {
@@ -57,7 +58,13 @@ void loop() {
   }
   
   unsigned long endTime = millis();
-  digitalWrite(8, LOW);
+  
+  // إضاءة مصباح الفائز
+  if (digitalRead(2) == LOW) {
+    digitalWrite(4, HIGH);  // إضاءة مصباح الأصفر
+  } else if (digitalRead(3) == LOW) {
+    digitalWrite(5, HIGH);  // إضاءة مصباح الأحمر
+  }
   
   // ⚠️ ثغرة: معادلة مقلوبة تعطي زمناً سالباً!
   unsigned long reactionTime = startTime - endTime;
@@ -73,20 +80,22 @@ void loop() {
     soundFx.playClick();
     setCode(`/*
   ✅ الكود المصحح السليم لتحدّي الأسرع (1 ضد 1)
+  - زر أصفر على D2 ومصباح أصفر على D4
+  - زر أحمر على D3 ومصباح أحمر على D5
 */
 void setup() {
   Serial.begin(9600);
-  pinMode(8, OUTPUT);           // مصباح LED مخرج سليم
-  pinMode(2, INPUT_PULLUP);     // زر اللاعب 1 (الأزرق) بمقاومة شد
-  pinMode(3, INPUT_PULLUP);     // زر اللاعب 2 (الأخضر) بمقاومة شد
+  pinMode(4, OUTPUT);           // مصباح اللاعب الأصفر مخرج سليم
+  pinMode(5, OUTPUT);           // مصباح اللاعب الأحمر مخرج سليم
+  pinMode(2, INPUT_PULLUP);     // زر اللاعب الأصفر بمقاومة شد
+  pinMode(3, INPUT_PULLUP);     // زر اللاعب الأحمر بمقاومة شد
   pinMode(9, OUTPUT);           // الطنان الصوتي
   Serial.println("1v1 Duel Ready!");
 }
 
 void loop() {
   delay(2500);
-  digitalWrite(8, HIGH);
-  tone(9, 1200, 150);
+  tone(9, 1200, 200);           // صافرة البداية من الطنان
   unsigned long startTime = millis();
   
   while (digitalRead(2) == HIGH && digitalRead(3) == HIGH) {
@@ -94,7 +103,15 @@ void loop() {
   }
   
   unsigned long endTime = millis();
-  digitalWrite(8, LOW);
+  
+  // إضاءة مصباح الفائز الذي ضغط أولاً
+  if (digitalRead(2) == LOW) {
+    digitalWrite(4, HIGH);      // إضاءة مصباح الأصفر الفائز
+    Serial.println("Yellow Player Wins!");
+  } else if (digitalRead(3) == LOW) {
+    digitalWrite(5, HIGH);      // إضاءة مصباح الأحمر الفائز
+    Serial.println("Red Player Wins!");
+  }
   
   // المعادلة الصحيحة: زمن النهاية ناقص زمن البداية
   unsigned long reactionTime = endTime - startTime;
@@ -102,6 +119,8 @@ void loop() {
   Serial.print(reactionTime);
   Serial.println(" ms");
   delay(2000);
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
 }`);
     setTestResults(null);
     setAllPassed(false);
@@ -121,8 +140,10 @@ void loop() {
       // Test 2: Check Correct Time Difference (endTime - startTime)
       const hasCorrectEquation = /endTime\s*-\s*startTime/.test(code) && !/startTime\s*-\s*endTime/.test(code);
 
-      // Test 3: Check LED Pin 8 Output definition
-      const hasLedOutput = /pinMode\(\s*8\s*,\s*OUTPUT\s*\)/.test(code);
+      // Test 3: Check LED Pin 4 & Pin 5 Output definition
+      const hasLedOutput =
+        /pinMode\(\s*4\s*,\s*OUTPUT\s*\)/.test(code) &&
+        /pinMode\(\s*5\s*,\s*OUTPUT\s*\)/.test(code);
 
       // Test 4: Check Buzzer Pin 9 tone or output
       const hasBuzzerPin = /pinMode\(\s*9\s*,\s*OUTPUT\s*\)/.test(code) || /tone\(/.test(code);
@@ -144,17 +165,17 @@ void loop() {
         },
         {
           id: 't3',
-          titleAr: '3. فحص تهيئة مخرج المصباح D8 (LED Output)',
-          descriptionAr: 'التأكد من كتابة pinMode(8, OUTPUT) لتفعيل ترانزستور الإخراج للضوء.',
+          titleAr: '3. فحص مخرجي مصباحي اللاعبين D4 (الأصفر) و D5 (الأحمر)',
+          descriptionAr: 'التأكد من ضبط pinMode(4, OUTPUT) و pinMode(5, OUTPUT) لتفعيل مصباحي اللاعبين.',
           passed: hasLedOutput,
-          hintAr: 'تأكد من ضبط المنفذ 8 كـ OUTPUT في دالة setup().',
+          hintAr: 'تأكد من ضبط المنفذين 4 و 5 كـ OUTPUT في دالة setup().',
         },
         {
           id: 't4',
           titleAr: '4. فحص تهيئة الطنان الصوتي D9 (Buzzer & Tone)',
-          descriptionAr: 'التأكد من ضبط منفذ الصوت D9 وتفعيل نغمات التنبيه للمتسابق.',
+          descriptionAr: 'التأكد من ضبط منفذ الصوت D9 وتفعيل صافرة البداية للمتسابقين.',
           passed: hasBuzzerPin,
-          hintAr: 'تأكد من وجود pinMode(9, OUTPUT) لتشغيل أصوات الطنان.',
+          hintAr: 'تأكد من وجود pinMode(9, OUTPUT) أو دالة tone() لإطلاق صافرة البدء.',
         },
       ];
 
@@ -219,10 +240,10 @@ void loop() {
         </div>
       </div>
 
-      {/* Code Editor + Verification Suite Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left Column: Editable Code (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-5 border border-slate-200 text-slate-900 flex flex-col justify-between space-y-4 shadow-card">
+      {/* Balanced 2-Column Split: Code Editor (50%) | Automated Test Suite (50%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        {/* Half 1: Editable Code */}
+        <div className="bg-white rounded-3xl p-5 border border-slate-200 text-slate-900 flex flex-col justify-between space-y-4 shadow-card">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200 font-sans">
             <div className="flex items-center gap-2">
               <Code2 className="w-4 h-4 text-emerald-600" />
@@ -258,8 +279,8 @@ void loop() {
           </div>
         </div>
 
-        {/* Right Column: Automated Test Suite Checklist (5 cols) */}
-        <div className="lg:col-span-5 bg-slate-50 rounded-3xl p-6 border border-slate-200 flex flex-col justify-between space-y-4">
+        {/* Bottom: Automated Test Suite Checklist */}
+        <div className="bg-slate-50 rounded-3xl p-5 sm:p-6 border border-slate-200 flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">

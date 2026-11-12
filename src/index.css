@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
 @layer base {
-  * {
-    border-color: #E2E8F0;
+  :root {
+    --lab-navy: #203447;
+    --lab-bg: #FAFAF6;
+    --lab-teal: #30A89A;
+    --lab-yellow: #FFC857;
+    --lab-orange: #F47C62;
+    --lab-blue: #6388D8;
   }
-  
+
+  * {
+    border-color: #E5E7EB;
+  }
+
   body {
     font-family: 'Tajawal', 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #FDFBF7;
-    color: #1E1B4B;
+    background-color: #FAFAF6;
+    color: #203447;
     overflow-x: clip;
   }
 
@@ -19,37 +28,53 @@
   }
 }
 
-/* Custom Utilities matching the Reference Visual Style */
+/* Playful Science Lab Shadows & Elevation */
 .shadow-coral-glow {
-  box-shadow: 0 10px 25px -3px rgba(255, 91, 90, 0.38);
+  box-shadow: 0 10px 24px -4px rgba(244, 124, 98, 0.36);
 }
 
 .shadow-indigo-glow {
-  box-shadow: 0 10px 25px -3px rgba(88, 80, 236, 0.32);
+  box-shadow: 0 10px 24px -4px rgba(99, 136, 216, 0.32);
 }
 
 .shadow-teal-glow {
-  box-shadow: 0 10px 25px -3px rgba(16, 185, 129, 0.32);
+  box-shadow: 0 10px 24px -4px rgba(48, 168, 154, 0.34);
 }
 
 .shadow-card {
-  box-shadow: 0 4px 20px -2px rgba(30, 27, 75, 0.05), 0 1px 4px rgba(30, 27, 75, 0.03);
+  box-shadow: 0 4px 20px -2px rgba(32, 52, 71, 0.06), 0 1px 4px rgba(32, 52, 71, 0.04);
 }
 
 .shadow-card-hover {
-  box-shadow: 0 16px 36px -6px rgba(30, 27, 75, 0.09), 0 4px 12px rgba(30, 27, 75, 0.04);
+  box-shadow: 0 16px 36px -6px rgba(32, 52, 71, 0.1), 0 4px 12px rgba(32, 52, 71, 0.05);
 }
 
 .bg-sunny-pattern {
-  background-color: #FDFBF7;
-  background-image: radial-gradient(#FDE68A 0.85px, transparent 0.85px), radial-gradient(#FDE68A 0.85px, #FDFBF7 0.85px);
-  background-size: 34px 34px;
-  background-position: 0 0, 17px 17px;
+  background-color: #FAFAF6;
+  background-image: radial-gradient(rgba(48, 168, 154, 0.11) 1px, transparent 1px),
+    radial-gradient(rgba(255, 200, 87, 0.14) 1px, #FAFAF6 1px);
+  background-size: 36px 36px;
+  background-position: 0 0, 18px 18px;
 }
 
-/* Smooth transitions */
+/* Smooth stage & card transitions */
 .transition-card {
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes labFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-lab-enter {
+  animation: labFadeUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom scrollbar */
@@ -59,7 +84,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: #F3F4F0;
   border-radius: 9999px;
 }
 
@@ -71,4 +96,3 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
-

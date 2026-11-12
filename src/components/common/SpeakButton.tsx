@@ -5,16 +5,18 @@ import { soundFx } from '../../services/sound/webAudio';
 interface SpeakButtonProps {
   text: string;
   labelAr?: string;
+  compact?: boolean;
   className?: string;
 }
 
 /**
  * Kid-friendly Arabic text-to-speech button using browser SpeechSynthesis API.
- * Lets younger students (ages 7-10) listen to stories and explanations.
+ * Supports compact icon-only mode for clean uncluttered UI.
  */
 export const SpeakButton: React.FC<SpeakButtonProps> = ({
   text,
   labelAr = 'اسمع الشرح',
+  compact = false,
   className = '',
 }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -64,21 +66,25 @@ export const SpeakButton: React.FC<SpeakButtonProps> = ({
     <button
       type="button"
       onClick={handleToggleSpeak}
-      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+      title={isSpeaking ? 'إيقاف الصوت' : labelAr}
+      aria-label={isSpeaking ? 'إيقاف الصوت' : labelAr}
+      className={`inline-flex items-center justify-center gap-1.5 ${
+        compact ? 'w-8 h-8 rounded-full' : 'px-3 py-1.5 rounded-xl text-xs font-bold'
+      } transition-all border shrink-0 ${
         isSpeaking
-          ? 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
-          : 'bg-white hover:bg-amber-50 text-slate-700 border-slate-200 hover:border-amber-300 shadow-sm'
+          ? 'bg-[#F47C62]/15 text-[#F47C62] border-[#F47C62]/40 animate-pulse'
+          : 'bg-white hover:bg-[#30A89A]/10 text-[#203447] border-slate-200 hover:border-[#30A89A]/40 shadow-2xs'
       } ${className}`}
     >
       {isSpeaking ? (
         <>
           <Square className="w-3.5 h-3.5 fill-current" />
-          <span>إيقاف الصوت</span>
+          {!compact && <span>إيقاف</span>}
         </>
       ) : (
         <>
-          <Volume2 className="w-3.5 h-3.5 text-amber-600" />
-          <span>{labelAr}</span>
+          <Volume2 className="w-3.5 h-3.5 text-[#30A89A]" />
+          {!compact && <span>{labelAr}</span>}
         </>
       )}
     </button>

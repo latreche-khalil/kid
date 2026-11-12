@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Award, BookOpen, Check, Code2, RotateCcw, Sparkles, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Award, BookOpen, Check, ChevronLeft, ChevronRight, Code2, RotateCcw, Sparkles, X } from 'lucide-react';
 import { QuizDifficulty, QuizQuestion } from '../../types/curriculum';
 import { soundFx } from '../../services/sound/webAudio';
 import { storageService } from '../../services/storage/localStorage';
@@ -21,18 +21,18 @@ const DIFFICULTY_BADGE: Record<
 > = {
   easy: {
     labelAr: 'مستوى سهل',
-    badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    dotClass: 'bg-emerald-500',
+    badgeClass: 'bg-[#30A89A]/12 text-[#203447] border-[#30A89A]/40',
+    dotClass: 'bg-[#30A89A]',
   },
   medium: {
     labelAr: 'مستوى متوسط',
-    badgeClass: 'bg-amber-50 text-amber-800 border-amber-200',
-    dotClass: 'bg-amber-500',
+    badgeClass: 'bg-[#FFC857]/20 text-[#203447] border-[#FFC857]',
+    dotClass: 'bg-[#FFC857]',
   },
   hard: {
     labelAr: 'تحدّي الأبطال',
-    badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
-    dotClass: 'bg-purple-500',
+    badgeClass: 'bg-[#F47C62]/15 text-[#203447] border-[#F47C62]/45',
+    dotClass: 'bg-[#F47C62]',
   },
 };
 
@@ -41,22 +41,17 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
   weekNumber,
   onCompleted,
 }) => {
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [viewMode, setViewMode] = useState<'single' | 'all'>('single');
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [checkedQuestions, setCheckedQuestions] = useState<Record<string, boolean>>({});
   const [isFinished, setIsFinished] = useState(false);
-  const [missingWarning, setMissingWarning] = useState<string | null>(null);
-  const [highlightedQuestionId, setHighlightedQuestionId] = useState<string | null>(null);
-
-  const topRef = useRef<HTMLDivElement | null>(null);
-  const resultRef = useRef<HTMLDivElement | null>(null);
-  const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
+    setCurrentIdx(0);
     setSelectedOptions({});
     setCheckedQuestions({});
     setIsFinished(false);
-    setMissingWarning(null);
-    setHighlightedQuestionId(null);
   }, [weekNumber, questions]);
 
   const computeScore = (selections: Record<string, string>) => {
@@ -75,11 +70,8 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
       allChecked[q.id] = true;
     });
     setCheckedQuestions(allChecked);
-    setMissingWarning(null);
-    setHighlightedQuestionId(null);
 
     const { percent } = computeScore(selections);
-
     const active = storageService.getActiveProfile();
     if (active) {
       storageService.recordQuizScore(active.id, weekNumber, percent);
@@ -98,384 +90,352 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
 
     setIsFinished(true);
     if (onCompleted) onCompleted();
-
-    setTimeout(() => {
-      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 80);
   };
 
-  const handleSelectOption = (questionId: string, optionId: string) => {
-    if (checkedQuestions[questionId]) return;
-    soundFx.playClick();
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [questionId]: optionId,
-    }));
-    if (highlightedQuestionId === questionId) {
-      setHighlightedQuestionId(null);
-    }
-    if (missingWarning) {
-      setMissingWarning(null);
-    }
-  };
+  const handleSelectAndCheckSingle = (q: QuizQuestion, optionId: string) => {
+    if (checkedQuestions[q.id]) return;
 
-  const handleCheckSingleQuestion = (q: QuizQuestion) => {
-    const pickedId = selectedOptions[q.id];
-    if (!pickedId || checkedQuestions[q.id]) return;
+    const nextSelections = { ...selectedOptions, [q.id]: optionId };
+    setSelectedOptions(nextSelections);
 
-    const chosenOpt = q.options.find((o) => o.id === pickedId);
-    if (chosenOpt?.isCorrect) {
-      soundFx.playSuccessChime();
+    if (viewMode === 'single') {
+      const chosenOpt = q.options.find((o) => o.id === optionId);
+      if (chosenOpt?.isCorrect) {
+        soundFx.playSuccessChime();
+      } else {
+        soundFx.playFalseStartBuzz();
+      }
+      setCheckedQuestions((prev) => ({ ...prev, [q.id]: true }));
     } else {
-      soundFx.playFalseStartBuzz();
+      soundFx.playClick();
     }
-
-    const nextChecked = { ...checkedQuestions, [q.id]: true };
-    setCheckedQuestions(nextChecked);
-
-    if (questions.every((item) => nextChecked[item.id])) {
-      finalizeQuiz(selectedOptions);
-    }
-  };
-
-  const handleSubmitAll = () => {
-    const unanswered = questions.filter((q) => !selectedOptions[q.id]);
-    if (unanswered.length > 0) {
-      soundFx.playFalseStartBuzz();
-      const firstMissing = unanswered[0];
-      const firstIndex = questions.findIndex((q) => q.id === firstMissing.id) + 1;
-      setHighlightedQuestionId(firstMissing.id);
-      setMissingWarning(
-        `بقي ${unanswered.length} ${unanswered.length === 1 ? 'سؤال' : 'أسئلة'} دون إجابة — ابدأ بالسؤال رقم ${firstIndex}.`
-      );
-      questionRefs.current[firstMissing.id]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-      return;
-    }
-
-    soundFx.playClick();
-    finalizeQuiz(selectedOptions);
   };
 
   const handleRetake = () => {
     soundFx.playClick();
+    setCurrentIdx(0);
     setSelectedOptions({});
     setCheckedQuestions({});
     setIsFinished(false);
-    setMissingWarning(null);
-    setHighlightedQuestionId(null);
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const answeredCount = questions.filter((q) => Boolean(selectedOptions[q.id])).length;
-  const progressPercent = questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
+  if (questions.length === 0) return null;
+
+  const answeredCount = questions.filter((q) => Boolean(checkedQuestions[q.id])).length;
+  const progressPercent =
+    viewMode === 'single' && !isFinished
+      ? Math.round(((currentIdx + 1) / questions.length) * 100)
+      : Math.round((answeredCount / questions.length) * 100);
   const { correctCount, percent: scorePercent } = computeScore(selectedOptions);
 
-  if (questions.length === 0) {
-    return null;
-  }
+  const renderQuestionCard = (q: QuizQuestion, idx: number) => {
+    const pickedOptionId = selectedOptions[q.id];
+    const isChecked = Boolean(checkedQuestions[q.id]);
+    const pickedOpt = q.options.find((o) => o.id === pickedOptionId);
+    const difficultyMeta = q.difficulty ? DIFFICULTY_BADGE[q.difficulty] : null;
+    const speakPayload = `${q.questionAr}. الخيارات: ${q.options.map((o) => o.textAr).join('، أو ')}`;
+
+    return (
+      <div
+        key={q.id}
+        className={`rounded-3xl border p-5 sm:p-6 space-y-5 transition-all ${
+          isChecked && pickedOpt?.isCorrect
+            ? 'border-[#30A89A] bg-[#30A89A]/5'
+            : isChecked && pickedOpt && !pickedOpt.isCorrect
+            ? 'border-[#F47C62] bg-[#F47C62]/5'
+            : 'border-slate-200/90 bg-[#FAFAF6]'
+        }`}
+      >
+        {/* Top Metadata */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-3 py-1 rounded-full bg-[#6388D8]/15 text-[#203447] text-xs font-black">
+              السؤال {idx + 1} من {questions.length}
+            </span>
+
+            {difficultyMeta && (
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${difficultyMeta.badgeClass}`}
+              >
+                <span className={`w-2 h-2 rounded-full ${difficultyMeta.dotClass}`} />
+                {difficultyMeta.labelAr}
+              </span>
+            )}
+          </div>
+
+          <SpeakButton text={speakPayload} labelAr="اسمع السؤال" />
+        </div>
+
+        {/* Question Prompt */}
+        <h4 className="text-base sm:text-xl font-black text-[#203447] leading-relaxed">
+          <FormattedText text={q.questionAr} />
+        </h4>
+
+        {/* Optional Code Snippet */}
+        {q.codeSnippet && (
+          <div className="rounded-2xl border border-[#6388D8]/35 bg-white overflow-hidden shadow-xs">
+            <div className="px-3.5 py-2 bg-[#6388D8]/10 border-b border-[#6388D8]/20 flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#203447]">
+                <Code2 className="w-3.5 h-3.5 text-[#6388D8]" />
+                كود التجربة
+              </span>
+              <span className="text-[10px] font-mono text-[#6388D8] font-bold">Arduino C++</span>
+            </div>
+            <pre
+              dir="ltr"
+              className="p-4 text-xs sm:text-sm font-mono text-[#203447] bg-white overflow-x-auto leading-relaxed text-left"
+            >
+              <code>{q.codeSnippet}</code>
+            </pre>
+          </div>
+        )}
+
+        {/* Options */}
+        <div className="space-y-2.5">
+          {q.options.map((opt) => {
+            const isSelected = pickedOptionId === opt.id;
+            let optionStyle =
+              'border-slate-200 hover:border-[#30A89A] bg-white text-[#203447]';
+
+            if (isSelected && !isChecked) {
+              optionStyle =
+                'border-[#6388D8] bg-[#6388D8]/10 text-[#203447] font-bold ring-2 ring-[#6388D8]/20';
+            } else if (isChecked) {
+              if (opt.isCorrect) {
+                optionStyle =
+                  'border-[#30A89A] bg-[#30A89A]/12 text-[#203447] font-bold ring-2 ring-[#30A89A]/25';
+              } else if (isSelected && !opt.isCorrect) {
+                optionStyle = 'border-[#F47C62] bg-[#F47C62]/12 text-[#203447]';
+              } else {
+                optionStyle = 'border-slate-200/60 bg-white/70 text-slate-400';
+              }
+            }
+
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => handleSelectAndCheckSingle(q, opt.id)}
+                disabled={isChecked}
+                className={`w-full text-right p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 min-h-[52px] ${
+                  isChecked ? 'cursor-default' : 'cursor-pointer active:scale-[0.99]'
+                } ${optionStyle}`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                      isChecked && opt.isCorrect
+                        ? 'border-[#30A89A] bg-[#30A89A] text-white'
+                        : isChecked && isSelected && !opt.isCorrect
+                        ? 'border-[#F47C62] bg-[#F47C62] text-white'
+                        : isSelected
+                        ? 'border-[#6388D8] bg-[#6388D8] text-white'
+                        : 'border-slate-300 bg-white'
+                    }`}
+                  >
+                    {isChecked && opt.isCorrect ? (
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    ) : isChecked && isSelected && !opt.isCorrect ? (
+                      <X className="w-3.5 h-3.5 text-white" />
+                    ) : isSelected ? (
+                      <div className="w-2 h-2 rounded-full bg-white" />
+                    ) : null}
+                  </div>
+
+                  <span className="text-xs sm:text-sm font-bold leading-relaxed">
+                    <FormattedText text={opt.textAr} />
+                  </span>
+                </div>
+
+                {isChecked && opt.isCorrect && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#30A89A] text-white text-[10px] font-black shrink-0">
+                    إجابة صحيحة ✓
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Immediate Calm Explanation of Why */}
+        {isChecked && pickedOpt && (
+          <div className="p-4 rounded-2xl bg-[#FFC857]/20 border border-[#FFC857] text-[#203447] text-xs sm:text-sm space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-black">💡 لماذا؟ (التفسير المبسط)</span>
+              <SpeakButton text={pickedOpt.explanationAr} labelAr="اسمع السبب" />
+            </div>
+            <p className="leading-relaxed font-medium">
+              <FormattedText
+                text={
+                  pickedOpt.explanationAr ||
+                  'أحسنت! فهم السبب يساعدك على بناء مشاريع أذكى.'
+                }
+              />
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const currentQuestion = questions[currentIdx] || questions[0];
+  const isCurrentChecked = Boolean(checkedQuestions[currentQuestion.id]);
+  const isLastQuestion = currentIdx === questions.length - 1;
 
   return (
-    <div
-      ref={topRef}
-      className="bg-white rounded-3xl border border-slate-100 shadow-card p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6"
-    >
-      {/* Quiz Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-100">
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-card p-5 sm:p-7 space-y-6 animate-lab-enter max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
-            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="w-11 h-11 rounded-2xl bg-[#30A89A]/15 text-[#30A89A] flex items-center justify-center shrink-0">
+            <BookOpen className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base sm:text-xl font-black text-slate-800">
-              اختبار الفهم الذاتي — الأسبوع {weekNumber}
+            <h3 className="text-lg sm:text-xl font-black text-[#203447]">
+              اختبر نفسك — الأسبوع {weekNumber}
             </h3>
-            <p className="text-[11px] sm:text-xs text-slate-500">
-              أسئلة متدرجة من السهل إلى التحدّي لمراجعة المفاهيم والمشروع العملي
+            <p className="text-xs text-slate-500 font-medium">
+              {viewMode === 'single'
+                ? 'سؤال واحد في كل مرة مع توضيح السبب مباشرة'
+                : 'مراجعة جميع الأسئلة الثمانية متتالية'}
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold">
-            أجبت عن {answeredCount} من {questions.length}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              soundFx.playClick();
+              setViewMode((m) => (m === 'single' ? 'all' : 'single'));
+            }}
+            className="px-3 py-1.5 rounded-xl bg-[#FAFAF6] hover:bg-slate-100 border border-slate-200 text-[#203447] text-xs font-bold transition-colors"
+          >
+            {viewMode === 'single' ? 'عرض كل الأسئلة (8)' : 'عرض سؤال بسؤال'}
+          </button>
+          <span className="px-3 py-1.5 rounded-full bg-[#30A89A]/15 text-[#203447] text-xs font-black">
+            {viewMode === 'single' && !isFinished
+              ? `${currentIdx + 1} / ${questions.length}`
+              : `${answeredCount} / ${questions.length}`}
           </span>
-          {isFinished && (
-            <span className="px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black font-mono">
-              النتيجة: {scorePercent}%
-            </span>
-          )}
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="space-y-1.5">
-        <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-gradient-to-l from-indigo-500 via-blue-500 to-emerald-500 transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
-
-      {/* All Questions Stacked Vertically */}
-      <div className="space-y-5 sm:space-y-6">
-        {questions.map((q, idx) => {
-          const pickedOptionId = selectedOptions[q.id];
-          const isChecked = Boolean(checkedQuestions[q.id]);
-          const pickedOpt = q.options.find((o) => o.id === pickedOptionId);
-          const difficultyMeta = q.difficulty ? DIFFICULTY_BADGE[q.difficulty] : null;
-          const isMissingHighlight = highlightedQuestionId === q.id && !pickedOptionId;
-          const speakPayload = `${q.questionAr}. الخيارات: ${q.options.map((o) => o.textAr).join('، أو ')}`;
-
-          return (
-            <div
-              key={q.id}
-              ref={(el) => {
-                questionRefs.current[q.id] = el;
-              }}
-              className={`rounded-3xl border p-4 sm:p-5 md:p-6 space-y-4 transition-all ${
-                isMissingHighlight
-                  ? 'border-amber-400 bg-amber-50/40 ring-4 ring-amber-200/50'
-                  : isChecked && pickedOpt?.isCorrect
-                  ? 'border-emerald-300 bg-emerald-50/25'
-                  : isChecked && pickedOpt && !pickedOpt.isCorrect
-                  ? 'border-rose-300 bg-rose-50/25'
-                  : 'border-slate-200/80 bg-slate-50/50 hover:border-blue-200'
-              }`}
-            >
-              {/* Card Top Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-2.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-black">
-                    السؤال {idx + 1} من {questions.length}
-                  </span>
-
-                  {difficultyMeta && (
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${difficultyMeta.badgeClass}`}
-                    >
-                      <span className={`w-2 h-2 rounded-full ${difficultyMeta.dotClass}`} />
-                      {difficultyMeta.labelAr}
-                    </span>
-                  )}
-
-                  {q.category === 'find-bug' && (
-                    <span className="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">
-                      صائد الثغرات
-                    </span>
-                  )}
-                </div>
-
-                <SpeakButton text={speakPayload} labelAr="اسمع السؤال" />
-              </div>
-
-              {/* Question Prompt */}
-              <h4 className="text-sm sm:text-base md:text-lg font-black text-slate-900 leading-relaxed">
-                <FormattedText text={q.questionAr} />
-              </h4>
-
-              {/* Optional Code Snippet (Bright Light Card) */}
-              {q.codeSnippet && (
-                <div className="rounded-2xl border border-indigo-200 bg-white overflow-hidden shadow-sm">
-                  <div className="px-3.5 py-2 bg-indigo-50 border-b border-indigo-100 flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-indigo-800">
-                      <Code2 className="w-3.5 h-3.5" />
-                      جزء من كود الآردوينو
-                    </span>
-                    <span className="text-[10px] font-mono text-indigo-500">Arduino C++</span>
-                  </div>
-                  <pre
-                    dir="ltr"
-                    className="p-3.5 sm:p-4 text-xs sm:text-sm font-mono text-slate-800 bg-white overflow-x-auto leading-relaxed text-left"
-                  >
-                    <code>{q.codeSnippet}</code>
-                  </pre>
-                </div>
-              )}
-
-              {/* Options List */}
-              <div className="space-y-2.5">
-                {q.options.map((opt) => {
-                  const isSelected = pickedOptionId === opt.id;
-                  let optionStyle =
-                    'border-slate-200 hover:border-blue-300 bg-white text-slate-700';
-
-                  if (isSelected && !isChecked) {
-                    optionStyle =
-                      'border-blue-500 bg-blue-50 text-blue-950 font-bold ring-2 ring-blue-500/20';
-                  } else if (isChecked) {
-                    if (opt.isCorrect) {
-                      optionStyle =
-                        'border-emerald-500 bg-emerald-50 text-emerald-950 font-bold ring-2 ring-emerald-500/20';
-                    } else if (isSelected && !opt.isCorrect) {
-                      optionStyle = 'border-rose-400 bg-rose-50 text-rose-950';
-                    } else {
-                      optionStyle = 'border-slate-100 bg-white/70 text-slate-400';
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => handleSelectOption(q.id, opt.id)}
-                      disabled={isChecked}
-                      className={`w-full text-right p-3.5 sm:p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 sm:gap-4 min-h-[48px] ${
-                        isChecked ? 'cursor-default' : 'cursor-pointer'
-                      } ${optionStyle}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                            isChecked && opt.isCorrect
-                              ? 'border-emerald-600 bg-emerald-600 text-white'
-                              : isChecked && isSelected && !opt.isCorrect
-                              ? 'border-rose-500 bg-rose-500 text-white'
-                              : isSelected
-                              ? 'border-blue-600 bg-blue-600 text-white'
-                              : 'border-slate-300 bg-white'
-                          }`}
-                        >
-                          {isChecked && opt.isCorrect ? (
-                            <Check className="w-3.5 h-3.5 text-white" />
-                          ) : isChecked && isSelected && !opt.isCorrect ? (
-                            <X className="w-3.5 h-3.5 text-white" />
-                          ) : isSelected ? (
-                            <div className="w-2 h-2 rounded-full bg-white" />
-                          ) : null}
-                        </div>
-
-                        <span className="text-xs sm:text-sm font-medium leading-relaxed">
-                          <FormattedText text={opt.textAr} />
-                        </span>
-                      </div>
-
-                      {isChecked && opt.isCorrect && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black shrink-0">
-                          إجابة صحيحة ✓
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Quick Check Action per Question (before full submit) */}
-              {!isChecked && pickedOptionId && (
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="button"
-                    onClick={() => handleCheckSingleQuestion(q)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-black transition-all"
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                    <span>تأكد من إجابتي الآن</span>
-                  </button>
-                </div>
-              )}
-
-              {/* Scientific Explanation after Checking */}
-              {isChecked && pickedOpt && (
-                <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs sm:text-sm space-y-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-black text-amber-900">💡 التفسير المبسط:</span>
-                    <SpeakButton text={pickedOpt.explanationAr} labelAr="اسمع التفسير" />
-                  </div>
-                  <p className="leading-relaxed">
-                    <FormattedText
-                      text={
-                        pickedOpt.explanationAr ||
-                        'أحسنت! فهم الفكرة وراء الإجابة يجعلك مبتكراً حقيقياً.'
-                      }
-                    />
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Submit All Bar (when not yet finished) */}
-      {!isFinished && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-l from-blue-50 via-indigo-50 to-sky-50 border border-blue-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="space-y-1 text-center sm:text-right">
-            <p className="text-xs sm:text-sm font-bold text-slate-800">
-              {answeredCount === questions.length
-                ? 'أجبت عن كل الأسئلة! اضغط لعرض نتيجتك وتفسير كل سؤال.'
-                : 'اختر إجاباتك لكل الأسئلة أعلاه، ثم اضغط لعرض النتيجة النهائية.'}
-            </p>
-            {missingWarning && (
-              <p className="text-xs font-bold text-amber-700">{missingWarning}</p>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={handleSubmitAll}
-            className={`px-6 py-3 rounded-2xl font-black text-sm transition-all shadow-md inline-flex items-center justify-center gap-2 shrink-0 ${
-              answeredCount === questions.length
-                ? 'bg-[#FF5B5A] hover:bg-[#E84A5F] text-white shadow-coral-glow'
-                : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-            }`}
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>تصحيح الإجابات وعرض النتيجة</span>
-          </button>
-        </div>
-      )}
-
-      {/* Final Score Card (kept alongside all questions for easy review) */}
-      {isFinished && (
+      <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
         <div
-          ref={resultRef}
-          className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-50 via-indigo-50 to-emerald-50 border-2 border-blue-200 text-center space-y-5 shadow-sm"
-        >
-          <div className="relative inline-block">
-            <div className="w-20 h-20 rounded-3xl bg-white text-blue-600 mx-auto flex items-center justify-center shadow-md border-2 border-blue-200">
-              <Award className="w-10 h-10" />
-            </div>
-            {scorePercent >= 60 && (
-              <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow">
-                <Check className="w-4 h-4" />
-              </div>
-            )}
+          className="h-full rounded-full bg-[#30A89A] transition-all duration-300"
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+
+      {/* Body: Summary Card OR Single Question OR All Questions */}
+      {isFinished && viewMode === 'single' ? (
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#FAFAF6] border border-[#30A89A]/40 text-center space-y-5">
+          <div className="w-20 h-20 rounded-3xl bg-[#FFC857]/25 text-[#203447] mx-auto flex items-center justify-center border border-[#FFC857]">
+            <Award className="w-10 h-10 text-[#F47C62]" />
           </div>
 
-          <div className="space-y-2">
-            <h4 className="text-2xl md:text-3xl font-black text-slate-800">
+          <div className="space-y-1.5">
+            <h4 className="text-2xl font-black text-[#203447]">
               {scorePercent >= 80
-                ? '🎉 بطل! استيعاب ممتاز للمفاهيم والمشروع!'
+                ? '🎉 أحسنت يا بطل! ثقة وفهم ممتاز!'
                 : scorePercent >= 60
-                ? '👏 نتيجة رائعة! فهمت أغلب أفكار الدرس!'
-                : '💪 محاولة جميلة! راجع التفسيرات أعلاه وجرّب مرة أخرى.'}
+                ? '👏 نتيجة رائعة جداً!'
+                : '💪 محاولة جميلة! يمكنك مراجعة الإجابات والمحاولة مجدداً.'}
             </h4>
-            <p className="text-sm font-medium text-slate-600">
+            <p className="text-sm font-bold text-slate-600">
               أجبت عن {correctCount} من أصل {questions.length} أسئلة بشكل صحيح.
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-4 px-6 py-3 rounded-2xl bg-white border border-blue-200 shadow-sm">
-            <span className="text-3xl font-black text-blue-700 font-mono">{scorePercent}%</span>
+          <div className="inline-flex items-center gap-4 px-6 py-3 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <span className="text-3xl font-black text-[#30A89A] font-mono">{scorePercent}%</span>
             <div className="text-right">
-              <div className="text-xs font-bold text-blue-900">نسبة الإتقان</div>
-              <div className="text-[11px] text-blue-600">يمكنك مراجعة كل سؤال أعلاه</div>
+              <div className="text-xs font-black text-[#203447]">نسبة الإتقان</div>
+              <div className="text-[11px] text-slate-500">الأسبوع {weekNumber}</div>
             </div>
           </div>
 
-          <div className="pt-1">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                soundFx.playClick();
+                setViewMode('all');
+              }}
+              className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-[#203447] text-xs sm:text-sm font-black"
+            >
+              مراجعة كل الأسئلة والتفسيرات
+            </button>
             <button
               type="button"
               onClick={handleRetake}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#30A89A] hover:bg-[#279185] text-white text-xs sm:text-sm font-black shadow-teal-glow"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>إعادة الاختبار من جديد</span>
+              <span>إعادة الاختبار</span>
             </button>
           </div>
+        </div>
+      ) : viewMode === 'single' ? (
+        <div className="space-y-5">
+          {renderQuestionCard(currentQuestion, currentIdx)}
+
+          <div className="flex items-center justify-between gap-3 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                soundFx.playClick();
+                setCurrentIdx((i) => Math.max(0, i - 1));
+              }}
+              disabled={currentIdx === 0}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FAFAF6] hover:bg-slate-100 disabled:opacity-40 border border-slate-200 text-[#203447] text-xs sm:text-sm font-black transition-all"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>السؤال السابق</span>
+            </button>
+
+            {!isLastQuestion ? (
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setCurrentIdx((i) => Math.min(questions.length - 1, i + 1));
+                }}
+                disabled={!isCurrentChecked}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#30A89A] hover:bg-[#279185] disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs sm:text-sm font-black shadow-teal-glow disabled:shadow-none transition-all"
+              >
+                <span>السؤال التالي</span>
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => finalizeQuiz(selectedOptions)}
+                disabled={!isCurrentChecked}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#30A89A] hover:bg-[#279185] disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs sm:text-sm font-black shadow-teal-glow disabled:shadow-none transition-all"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>عرض النتيجة النهائية 🏆</span>
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {questions.map((q, idx) => renderQuestionCard(q, idx))}
+
+          {!isFinished && (
+            <button
+              type="button"
+              onClick={() => finalizeQuiz(selectedOptions)}
+              disabled={Object.keys(selectedOptions).length < questions.length}
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#30A89A] hover:bg-[#279185] disabled:bg-slate-200 disabled:text-slate-500 text-white font-black text-sm shadow-teal-glow disabled:shadow-none transition-all"
+            >
+              تصحيح كل الأسئلة وعرض النتيجة ({Object.keys(selectedOptions).length} / {questions.length})
+            </button>
+          )}
         </div>
       )}
     </div>

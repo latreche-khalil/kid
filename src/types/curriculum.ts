@@ -57,6 +57,27 @@ export interface QuizQuestion {
   category: 'multiple-choice' | 'predict-output' | 'find-bug' | 'true-false';
 }
 
+export interface InventorChallengeIdea {
+  id: string;
+  titleAr: string;
+  descriptionAr: string;
+  badgeAr: string;
+}
+
+export interface InventorChallengeData {
+  titleAr: string;
+  character: 'robo' | 'glitch';
+  scenarioAr: string;
+  questionAr: string;
+  starterPromptAr: string;
+  keySignals: {
+    keywords: string[];
+    labelAr: string;
+  }[];
+  ideas: InventorChallengeIdea[];
+  hintAr: string;
+}
+
 export interface LessonDetail extends LessonSummary {
   durationMinutes: number;
   timeline: {
@@ -76,9 +97,11 @@ export interface LessonDetail extends LessonSummary {
   theory: {
     titleAr: string;
     summaryAr: string;
+    planStepsAr?: string[];
     sections: {
       headingAr: string;
       contentAr: string;
+      bulletPointsAr?: string[];
       codeExample?: string;
       noteAr?: string;
     }[];
@@ -117,6 +140,7 @@ export interface LessonDetail extends LessonSummary {
     hintAr: string;
     codeSnippet?: string;
   }[];
+  inventorChallenge?: InventorChallengeData;
   quiz: QuizQuestion[];
 }
 
